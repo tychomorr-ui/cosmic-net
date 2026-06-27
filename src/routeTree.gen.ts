@@ -9,9 +9,21 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TruthPointRouteImport } from './routes/truth-point'
+import { Route as TruthCoinRouteImport } from './routes/truth-coin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiInngestRouteImport } from './routes/api/inngest'
 
+const TruthPointRoute = TruthPointRouteImport.update({
+  id: '/truth-point',
+  path: '/truth-point',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TruthCoinRoute = TruthCoinRouteImport.update({
+  id: '/truth-coin',
+  path: '/truth-coin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -25,32 +37,54 @@ const ApiInngestRoute = ApiInngestRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/truth-coin': typeof TruthCoinRoute
+  '/truth-point': typeof TruthPointRoute
   '/api/inngest': typeof ApiInngestRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/truth-coin': typeof TruthCoinRoute
+  '/truth-point': typeof TruthPointRoute
   '/api/inngest': typeof ApiInngestRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/truth-coin': typeof TruthCoinRoute
+  '/truth-point': typeof TruthPointRoute
   '/api/inngest': typeof ApiInngestRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/api/inngest'
+  fullPaths: '/' | '/truth-coin' | '/truth-point' | '/api/inngest'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/api/inngest'
-  id: '__root__' | '/' | '/api/inngest'
+  to: '/' | '/truth-coin' | '/truth-point' | '/api/inngest'
+  id: '__root__' | '/' | '/truth-coin' | '/truth-point' | '/api/inngest'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  TruthCoinRoute: typeof TruthCoinRoute
+  TruthPointRoute: typeof TruthPointRoute
   ApiInngestRoute: typeof ApiInngestRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/truth-point': {
+      id: '/truth-point'
+      path: '/truth-point'
+      fullPath: '/truth-point'
+      preLoaderRoute: typeof TruthPointRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/truth-coin': {
+      id: '/truth-coin'
+      path: '/truth-coin'
+      fullPath: '/truth-coin'
+      preLoaderRoute: typeof TruthCoinRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -70,6 +104,8 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  TruthCoinRoute: TruthCoinRoute,
+  TruthPointRoute: TruthPointRoute,
   ApiInngestRoute: ApiInngestRoute,
 }
 export const routeTree = rootRouteImport

@@ -1,13 +1,15 @@
-import { useSyncExternalStore } from "react";
 import { NODES } from "@/data/nodes";
 import { useProbeStatus } from "@/lib/probe-store";
 
-// We don't have a shared selector hook; rebuild by subscribing per-node via individual reads.
-// Simpler: derive on each render by reading the store snapshot for each probe node.
-
 export function TallyStrip() {
-  // Force a subscription per probe-capable node so this strip updates with probes.
-  const measuredCount = NODES.filter((n) => n.probe && usePromoted(n.id)).length;
+  // Subscribe to all probe-capable nodes at top level (hooks rule).
+  const monarch = useProbeStatus("xinus-monarch");
+  const valkyrie = useProbeStatus("xinus-valkyrie");
+
+  const promoted =
+    (monarch.state === "measured" ? 1 : 0) +
+    (valkyrie.state === "measured" ? 1 : 0);
+
   const declaredMeasured = NODES.filter((n) => n.tier === "measured").length;
   const attested = NODES.filter((n) => n.tier === "attested").length;
   const doctrine = NODES.filter((n) => n.tier === "doctrine").length;
@@ -15,17 +17,12 @@ export function TallyStrip() {
 
   return (
     <div className="grid grid-cols-2 gap-px border border-border bg-border md:grid-cols-4">
-      <Tile k="Measured" v={`${declaredMeasured + measuredCount} / ${total}`} hint="declared + probe-promoted" />
+      <Tile k="Measured" v={`${declaredMeasured + promoted} / ${total}`} hint="declared + probe-promoted" />
       <Tile k="Attested" v={`${attested}`} hint="claimed · unverified" />
       <Tile k="Doctrine" v={`${doctrine}`} hint="intent · not running" />
       <Tile k="Fleet" v={`${total}`} hint="total roster" />
     </div>
   );
-}
-
-function usePromoted(id: string) {
-  const s = useProbeStatus(id);
-  return s.state === "measured";
 }
 
 function Tile({ k, v, hint }: { k: string; v: string; hint: string }) {
@@ -37,6 +34,3 @@ function Tile({ k, v, hint }: { k: string; v: string; hint: string }) {
     </div>
   );
 }
-
-// Re-export to silence unused-import warning for useSyncExternalStore (kept for potential future use)
-void useSyncExternalStore;
