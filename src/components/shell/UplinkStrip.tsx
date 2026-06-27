@@ -13,11 +13,13 @@ export function UplinkStrip() {
         <Link to="/" className="font-display text-lg tracking-[0.2em] text-foreground">
           NEXINUS <span className="text-gold">◆</span> TERMINUS
         </Link>
-        <nav className="hidden gap-6 text-[0.72rem] uppercase tracking-[0.18em] text-muted-foreground sm:flex">
+        <nav className="hidden gap-5 text-[0.72rem] uppercase tracking-[0.18em] text-muted-foreground sm:flex">
           <Link to="/" activeOptions={{ exact: true }} activeProps={{ className: "text-gold" }} className="hover:text-foreground">Witness</Link>
+          <Link to="/gateway" activeProps={{ className: "text-gold" }} className="hover:text-foreground">Gateway</Link>
+          <Link to="/fleet" activeProps={{ className: "text-gold" }} className="hover:text-foreground">Fleet</Link>
+          <Link to="/ops" activeProps={{ className: "text-gold" }} className="hover:text-foreground">Ops</Link>
           <Link to="/truth-point" activeProps={{ className: "text-gold" }} className="hover:text-foreground">Truth Point</Link>
           <Link to="/truth-coin" activeProps={{ className: "text-gold" }} className="hover:text-foreground">Truth Coin</Link>
-          <Link to="/ops" activeProps={{ className: "text-gold" }} className="hover:text-foreground">Ops</Link>
           <Link to="/reclaim" activeProps={{ className: "text-gold" }} className="hover:text-foreground">Reclaim</Link>
         </nav>
         <div className="flex items-center gap-3 text-[0.7rem] uppercase tracking-[0.18em] text-muted-foreground">

@@ -1,0 +1,18 @@
+# Authoritative for `.xinus`, recursive for everything else.
+# Reload pulls zone changes every 30s (archangeld rewrites xinus.zone on
+# config updates from /gateway).
+
+xinus. {
+    file /etc/archangeld/xinus.zone
+    log
+    errors
+    reload 30s
+}
+
+. {
+    forward . 1.1.1.1 9.9.9.9
+    cache 300
+    log
+    errors
+    reload 30s
+}
