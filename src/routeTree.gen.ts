@@ -13,6 +13,8 @@ import { Route as TruthPointRouteImport } from './routes/truth-point'
 import { Route as TruthCoinRouteImport } from './routes/truth-coin'
 import { Route as ReclaimRouteImport } from './routes/reclaim'
 import { Route as OpsRouteImport } from './routes/ops'
+import { Route as GatewayRouteImport } from './routes/gateway'
+import { Route as FleetRouteImport } from './routes/fleet'
 import { Route as IndexRouteImport } from './routes/index'
 
 const TruthPointRoute = TruthPointRouteImport.update({
@@ -35,6 +37,16 @@ const OpsRoute = OpsRouteImport.update({
   path: '/ops',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GatewayRoute = GatewayRouteImport.update({
+  id: '/gateway',
+  path: '/gateway',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FleetRoute = FleetRouteImport.update({
+  id: '/fleet',
+  path: '/fleet',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -43,6 +55,8 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/fleet': typeof FleetRoute
+  '/gateway': typeof GatewayRoute
   '/ops': typeof OpsRoute
   '/reclaim': typeof ReclaimRoute
   '/truth-coin': typeof TruthCoinRoute
@@ -50,6 +64,8 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/fleet': typeof FleetRoute
+  '/gateway': typeof GatewayRoute
   '/ops': typeof OpsRoute
   '/reclaim': typeof ReclaimRoute
   '/truth-coin': typeof TruthCoinRoute
@@ -58,6 +74,8 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/fleet': typeof FleetRoute
+  '/gateway': typeof GatewayRoute
   '/ops': typeof OpsRoute
   '/reclaim': typeof ReclaimRoute
   '/truth-coin': typeof TruthCoinRoute
@@ -65,14 +83,38 @@ export interface FileRoutesById {
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/ops' | '/reclaim' | '/truth-coin' | '/truth-point'
+  fullPaths:
+    | '/'
+    | '/fleet'
+    | '/gateway'
+    | '/ops'
+    | '/reclaim'
+    | '/truth-coin'
+    | '/truth-point'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/ops' | '/reclaim' | '/truth-coin' | '/truth-point'
-  id: '__root__' | '/' | '/ops' | '/reclaim' | '/truth-coin' | '/truth-point'
+  to:
+    | '/'
+    | '/fleet'
+    | '/gateway'
+    | '/ops'
+    | '/reclaim'
+    | '/truth-coin'
+    | '/truth-point'
+  id:
+    | '__root__'
+    | '/'
+    | '/fleet'
+    | '/gateway'
+    | '/ops'
+    | '/reclaim'
+    | '/truth-coin'
+    | '/truth-point'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  FleetRoute: typeof FleetRoute
+  GatewayRoute: typeof GatewayRoute
   OpsRoute: typeof OpsRoute
   ReclaimRoute: typeof ReclaimRoute
   TruthCoinRoute: typeof TruthCoinRoute
@@ -109,6 +151,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OpsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/gateway': {
+      id: '/gateway'
+      path: '/gateway'
+      fullPath: '/gateway'
+      preLoaderRoute: typeof GatewayRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/fleet': {
+      id: '/fleet'
+      path: '/fleet'
+      fullPath: '/fleet'
+      preLoaderRoute: typeof FleetRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -121,6 +177,8 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  FleetRoute: FleetRoute,
+  GatewayRoute: GatewayRoute,
   OpsRoute: OpsRoute,
   ReclaimRoute: ReclaimRoute,
   TruthCoinRoute: TruthCoinRoute,
