@@ -1,0 +1,28 @@
+[Unit]
+Description=Nexinus archangeld — sovereign node daemon
+After=network-online.target wg-quick@wg0.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=archangeld
+Group=archangeld
+AmbientCapabilities=CAP_NET_ADMIN
+CapabilityBoundingSet=CAP_NET_ADMIN
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=/etc/archangeld
+ExecStart=/usr/local/bin/archangeld serve \
+    --endpoint=${ARCHANGELD_ENDPOINT} \
+    --iface=wg0 \
+    --etc=/etc/archangeld \
+    --tls-cert=/etc/archangeld/tls.crt \
+    --tls-key=/etc/archangeld/tls.key
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
