@@ -16,7 +16,7 @@ import (
 	"sort"
 	"time"
 
-	"nexinus/archangeld/internal/wg"
+	"nexinus/archangel/internal/wg"
 )
 
 type Signer struct {
@@ -138,7 +138,7 @@ func stableJSON(v any) ([]byte, error) {
 
 func countRecords() int {
 	// Read CoreDNS zone file; cheap and avoids tight coupling.
-	b, err := os.ReadFile("/etc/archangeld/xinus.zone")
+	b, err := os.ReadFile("/etc/archangel/xinus.zone")
 	if err != nil {
 		return 0
 	}

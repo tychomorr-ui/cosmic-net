@@ -1,4 +1,4 @@
-module nexinus/archangeld
+module nexinus/archangel
 
 go 1.22
 

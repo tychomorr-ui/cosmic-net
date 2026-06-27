@@ -1,4 +1,4 @@
-# archangeld
+# archangel
 
 Reference node-side daemon for the Nexinus Terminus sovereign control plane.
 
@@ -13,7 +13,7 @@ your nodes (Tesseract-A, Valkyrie, KetherGate, …).
 
 ```
 node-daemon/
-  cmd/archangeld/main.go     entry point, HTTPS listener, route table
+  cmd/archangel/main.go     entry point, HTTPS listener, route table
   internal/handshake/        ARCHANGEL/v0 challenge + enroll + allowlist
   internal/wg/               wgctrl-go peer add/remove, key load
   internal/status/           signed /status payload
@@ -21,7 +21,7 @@ node-daemon/
   internal/dns/              CoreDNS supervision + zone writer
   config/Corefile            CoreDNS config (.xinus zone + upstream)
   config/sing-box.json       SOCKS5 inbound bound to wg0
-  systemd/archangeld.service unit file
+  systemd/archangel.service unit file
   Makefile                   build + install targets
   go.mod / go.sum            (you `go mod tidy` once)
 ```
@@ -30,17 +30,17 @@ node-daemon/
 
 ```bash
 sudo make install        # builds, installs to /usr/local/bin, enables systemd
-sudo archangeld init     # generates server.ed25519 + server.x25519 in /etc/archangeld
-sudo archangeld pubkeys  # prints the two pubkeys — paste into /gateway
+sudo archangel init     # generates server.ed25519 + server.x25519 in /etc/archangel
+sudo archangel pubkeys  # prints the two pubkeys — paste into /gateway
 ```
 
-Then add your operator ed25519 pubkey to `/etc/archangeld/allowlist.json`:
+Then add your operator ed25519 pubkey to `/etc/archangel/allowlist.json`:
 
 ```json
 { "operators": ["<your operator ed25519 hex from /gateway>"] }
 ```
 
-`systemctl reload archangeld` (SIGHUP) reloads the allowlist without
+`systemctl reload archangel` (SIGHUP) reloads the allowlist without
 dropping peers.
 
 ## Contract
@@ -76,7 +76,7 @@ flipping the card to MEASURED.
 
 ## Security boundary
 
-- The daemon runs as a dedicated `archangeld` user under systemd with
+- The daemon runs as a dedicated `archangel` user under systemd with
   `CapabilityBoundingSet=CAP_NET_ADMIN` only. No root after start.
 - TLS is terminated by the daemon (autocert) — no reverse proxy required,
   no third-party load balancer in the trust path.

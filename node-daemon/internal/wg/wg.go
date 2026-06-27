@@ -70,7 +70,7 @@ func Open(iface, etc, poolCIDR string) (*Manager, error) {
 	}
 	priv, err := loadKey(filepath.Join(etc, wgPrivFile))
 	if err != nil {
-		return nil, fmt.Errorf("load wg key (run `archangeld init`): %w", err)
+		return nil, fmt.Errorf("load wg key (run `archangel init`): %w", err)
 	}
 	cli, err := wgctrl.New()
 	if err != nil {

@@ -20,12 +20,12 @@ export const Route = createFileRoute("/gateway")({
       {
         name: "description",
         content:
-          "Sovereign control plane for the archangeld fleet. In-browser ed25519/x25519 keygen, signed enrollment, WireGuard config issuance.",
+          "Sovereign control plane for the archangel fleet. In-browser ed25519/x25519 keygen, signed enrollment, WireGuard config issuance.",
       },
       { property: "og:title", content: "Gateway Registry · Nexinus Terminus" },
       {
         property: "og:description",
-        content: "Browser-side keygen and signed peer enrollment for the archangeld fleet.",
+        content: "Browser-side keygen and signed peer enrollment for the archangel fleet.",
       },
     ],
   }),
@@ -63,10 +63,10 @@ function GatewayPage() {
           Gateway · Master Registry · Reference Contract
         </div>
         <h1 className="mt-2 font-display text-3xl text-foreground">
-          archangeld control plane
+          archangel control plane
         </h1>
         <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground">
-          This page is the in-browser composer for the archangeld handshake. All key
+          This page is the in-browser composer for the archangel handshake. All key
           material is generated, stored, and signed on this device. The remote nodes
           remain agnostic executors — the wire format below is the only contract between
           this control plane and any conforming node-side daemon.
@@ -240,7 +240,7 @@ function EnrollPanel({
       </div>
       <p className="mt-2 text-xs text-muted-foreground">
         Generate a nonce, sign the canonical message with your ed25519 key, then issue
-        the WireGuard config locally. Node-side <code className="text-gold">archangeld</code>
+        the WireGuard config locally. Node-side <code className="text-gold">archangel</code>
         verifies the signature against its allow-list before binding the peer.
       </p>
 
@@ -256,7 +256,7 @@ function EnrollPanel({
           label="Node ed25519 pubkey (hex, 64)"
           v={edPubHex}
           set={setEdPubHex}
-          placeholder="paste from archangeld first boot"
+          placeholder="paste from archangel first boot"
         />
         <div className="sm:col-span-2">
           <TextField

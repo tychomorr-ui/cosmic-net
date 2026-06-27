@@ -17,7 +17,7 @@ export const Route = createFileRoute("/fleet")({
       { property: "og:title", content: "Fleet · Nexinus Terminus" },
       {
         property: "og:description",
-        content: "ed25519-verified status for every enrolled archangeld node.",
+        content: "ed25519-verified status for every enrolled archangel node.",
       },
     ],
   }),
@@ -69,7 +69,7 @@ function FleetPage() {
         <div className="mt-10 border border-border bg-card/30 p-8 text-sm text-muted-foreground">
           No enrolled nodes on this device. Visit{" "}
           <a href="/gateway" className="text-gold hover:underline">/gateway</a>{" "}
-          to mint operator keys and enroll your first archangeld node.
+          to mint operator keys and enroll your first archangel node.
         </div>
       ) : (
         <ul className="mt-8 grid gap-3 sm:grid-cols-2">
