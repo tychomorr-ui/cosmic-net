@@ -1,0 +1,135 @@
+export type Tier = "measured" | "attested" | "doctrine";
+
+export type SovereignNode = {
+  id: string;
+  name: string;
+  provider: string;
+  region: string;
+  role: string;
+  tier: Tier;
+  declared: string;
+  facts: string[];
+  truth: string;
+  probe?: {
+    kind: "cors-json" | "no-cors-head";
+    url: string;
+    okField?: string; // dot-path in JSON, defaults to "ok"
+  };
+};
+
+export const NODES: SovereignNode[] = [
+  {
+    id: "tesseract-a",
+    name: "Tesseract-A",
+    provider: "Local sovereign hardware",
+    region: "Operator-held",
+    role: "Anchor terminal · ed25519 signing surface",
+    tier: "attested",
+    declared: "ATTESTED · UNVERIFIED",
+    facts: [
+      "Holds the operator key for fleet liveness stamps.",
+      "Not directly reachable from the public web by design.",
+    ],
+    truth:
+      "Tesseract-A is held in operator custody. Its existence is asserted by signed receipts surfaced elsewhere in the fleet, not by a public endpoint here.",
+  },
+  {
+    id: "helsinki-vertex",
+    name: "Helsinki Vertex",
+    provider: "Doctrine placeholder",
+    region: "Helsinki",
+    role: "Topology vertex · Helsinki · Singapore · Falkenstein triangle",
+    tier: "doctrine",
+    declared: "DOCTRINE · INTENT",
+    facts: [
+      "Listed as a planned vertex of the triadaxial mist-mesh.",
+      "No live endpoint has been claimed.",
+    ],
+    truth:
+      "Helsinki Vertex describes a topology intent, not a running service. Promotion to ATTESTED requires a signed manifest; promotion to MEASURED requires a reachable health surface.",
+  },
+  {
+    id: "xinus-lens",
+    name: "XinUS-Lens",
+    provider: "Sovereign cognition layer",
+    region: "Browser-local",
+    role: "Lens · sovereign reflection surface",
+    tier: "doctrine",
+    declared: "DOCTRINE · INTENT",
+    facts: [
+      "Reads signals from local instrumentation only.",
+      "No remote callbacks, no third-party telemetry.",
+    ],
+    truth:
+      "XinUS-Lens is a client-local reflection module. It cannot be probed externally because it has no network surface by intent.",
+  },
+  {
+    id: "xinus-monarch",
+    name: "Xinus-Monarch",
+    provider: "xinus.one",
+    region: "Public reachable host",
+    role: "Telemetry-gated gateway · health surface",
+    tier: "attested",
+    declared: "ATTESTED · health probe in this card",
+    facts: [
+      "Exposes a JSON health endpoint at monarch.xinus.one/health.",
+      "Promotes to MEASURED below on a successful CORS probe.",
+    ],
+    truth:
+      "Monarch is the one node a browser can directly verify. If the live probe below returns ok:true, this card flips to MEASURED.",
+    probe: {
+      kind: "cors-json",
+      url: "https://monarch.xinus.one/health",
+      okField: "ok",
+    },
+  },
+  {
+    id: "xinus-valkyrie",
+    name: "XINUS-Valkyrie",
+    provider: "xinus.one",
+    region: "Public reachable host",
+    role: "Registered relay · health pending",
+    tier: "attested",
+    declared: "ATTESTED · reachability probe in this card",
+    facts: [
+      "Registered in the fleet manifest.",
+      "Does not currently expose a CORS-readable health JSON.",
+    ],
+    truth:
+      "Valkyrie is probed with an opaque HEAD request. Opaque success means the origin answered; it does not prove application health, only that the host is reachable from the browser's network path.",
+    probe: {
+      kind: "no-cors-head",
+      url: "https://valkyrie.xinus.one/",
+    },
+  },
+  {
+    id: "terminus-tesseractus",
+    name: "Terminus-Tesseractus",
+    provider: "Operator console",
+    region: "Browser-local",
+    role: "Witness console shell",
+    tier: "measured",
+    declared: "MEASURED · this render",
+    facts: [
+      "If you are reading this card, the Terminus shell rendered successfully.",
+      "Liveness equals page paint — no remote claim required.",
+    ],
+    truth:
+      "The Terminus console is observable directly: its measurement is the act of rendering this page on your device right now.",
+  },
+  {
+    id: "east-coast-relay",
+    name: "East Coast Relay",
+    provider: "Doctrine placeholder",
+    region: "US-East (planned)",
+    role: "Continental relay vertex",
+    tier: "doctrine",
+    declared: "DOCTRINE · INTENT",
+    facts: [
+      "Planned continental relay for the sovereign mist.",
+      "No host, no endpoint, no signed manifest yet.",
+    ],
+    truth:
+      "East Coast Relay is named in the topology vision. It is not a running service. Do not treat it as reachable.",
+  },
+];
