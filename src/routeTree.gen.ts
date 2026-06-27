@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TruthPointRouteImport } from './routes/truth-point'
 import { Route as TruthCoinRouteImport } from './routes/truth-coin'
+import { Route as ReclaimRouteImport } from './routes/reclaim'
 import { Route as OpsRouteImport } from './routes/ops'
 import { Route as IndexRouteImport } from './routes/index'
 
@@ -22,6 +23,11 @@ const TruthPointRoute = TruthPointRouteImport.update({
 const TruthCoinRoute = TruthCoinRouteImport.update({
   id: '/truth-coin',
   path: '/truth-coin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReclaimRoute = ReclaimRouteImport.update({
+  id: '/reclaim',
+  path: '/reclaim',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OpsRoute = OpsRouteImport.update({
@@ -38,12 +44,14 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/ops': typeof OpsRoute
+  '/reclaim': typeof ReclaimRoute
   '/truth-coin': typeof TruthCoinRoute
   '/truth-point': typeof TruthPointRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/ops': typeof OpsRoute
+  '/reclaim': typeof ReclaimRoute
   '/truth-coin': typeof TruthCoinRoute
   '/truth-point': typeof TruthPointRoute
 }
@@ -51,20 +59,22 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/ops': typeof OpsRoute
+  '/reclaim': typeof ReclaimRoute
   '/truth-coin': typeof TruthCoinRoute
   '/truth-point': typeof TruthPointRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/ops' | '/truth-coin' | '/truth-point'
+  fullPaths: '/' | '/ops' | '/reclaim' | '/truth-coin' | '/truth-point'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/ops' | '/truth-coin' | '/truth-point'
-  id: '__root__' | '/' | '/ops' | '/truth-coin' | '/truth-point'
+  to: '/' | '/ops' | '/reclaim' | '/truth-coin' | '/truth-point'
+  id: '__root__' | '/' | '/ops' | '/reclaim' | '/truth-coin' | '/truth-point'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   OpsRoute: typeof OpsRoute
+  ReclaimRoute: typeof ReclaimRoute
   TruthCoinRoute: typeof TruthCoinRoute
   TruthPointRoute: typeof TruthPointRoute
 }
@@ -83,6 +93,13 @@ declare module '@tanstack/react-router' {
       path: '/truth-coin'
       fullPath: '/truth-coin'
       preLoaderRoute: typeof TruthCoinRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reclaim': {
+      id: '/reclaim'
+      path: '/reclaim'
+      fullPath: '/reclaim'
+      preLoaderRoute: typeof ReclaimRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/ops': {
@@ -105,6 +122,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   OpsRoute: OpsRoute,
+  ReclaimRoute: ReclaimRoute,
   TruthCoinRoute: TruthCoinRoute,
   TruthPointRoute: TruthPointRoute,
 }
