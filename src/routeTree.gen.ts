@@ -12,7 +12,6 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TruthPointRouteImport } from './routes/truth-point'
 import { Route as TruthCoinRouteImport } from './routes/truth-coin'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ApiInngestRouteImport } from './routes/api/inngest'
 
 const TruthPointRoute = TruthPointRouteImport.update({
   id: '/truth-point',
@@ -29,44 +28,35 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiInngestRoute = ApiInngestRouteImport.update({
-  id: '/api/inngest',
-  path: '/api/inngest',
-  getParentRoute: () => rootRouteImport,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/truth-coin': typeof TruthCoinRoute
   '/truth-point': typeof TruthPointRoute
-  '/api/inngest': typeof ApiInngestRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/truth-coin': typeof TruthCoinRoute
   '/truth-point': typeof TruthPointRoute
-  '/api/inngest': typeof ApiInngestRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/truth-coin': typeof TruthCoinRoute
   '/truth-point': typeof TruthPointRoute
-  '/api/inngest': typeof ApiInngestRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/truth-coin' | '/truth-point' | '/api/inngest'
+  fullPaths: '/' | '/truth-coin' | '/truth-point'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/truth-coin' | '/truth-point' | '/api/inngest'
-  id: '__root__' | '/' | '/truth-coin' | '/truth-point' | '/api/inngest'
+  to: '/' | '/truth-coin' | '/truth-point'
+  id: '__root__' | '/' | '/truth-coin' | '/truth-point'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   TruthCoinRoute: typeof TruthCoinRoute
   TruthPointRoute: typeof TruthPointRoute
-  ApiInngestRoute: typeof ApiInngestRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -92,13 +82,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/inngest': {
-      id: '/api/inngest'
-      path: '/api/inngest'
-      fullPath: '/api/inngest'
-      preLoaderRoute: typeof ApiInngestRouteImport
-      parentRoute: typeof rootRouteImport
-    }
   }
 }
 
@@ -106,7 +89,6 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   TruthCoinRoute: TruthCoinRoute,
   TruthPointRoute: TruthPointRoute,
-  ApiInngestRoute: ApiInngestRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
