@@ -1,9 +1,9 @@
 // Browser-side sovereign key material. Private keys never leave this device.
 // x25519 = WireGuard peer key. ed25519 = operator identity for archangel handshake.
 
-import { ed25519, x25519 } from "@noble/curves/ed25519";
-import { sha256 } from "@noble/hashes/sha256";
-import { bytesToHex, hexToBytes, utf8ToBytes } from "@noble/hashes/utils";
+import { ed25519, x25519 } from "@noble/curves/ed25519.js";
+import { sha256 } from "@noble/hashes/sha2.js";
+import { bytesToHex, hexToBytes, utf8ToBytes } from "@noble/hashes/utils.js";
 
 const STORAGE_KEY = "nexinus.terminus.operator.v1";
 
