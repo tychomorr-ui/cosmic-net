@@ -1,0 +1,370 @@
+[
+  {
+    "ts": "2026-06-25T13:40:17.627Z",
+    "level": "CMD",
+    "subsystem": "OMNI-SAM",
+    "command": "sam.receipt",
+    "result": "SOVEREIGN ACTIVATION RECEIPT — 2026-06-25T13:40:17.627Z\n\n1. Receipt Type: Sovereign Activation\n2. Truth Mode: PRODUCTION-REAL ONLY\n3. Gateway Law: highest-priority reachable gateway wins\n4. Declared Domains: tesseract.manus.space · nexinus.net · valkyrie-nexinus.net · xinus.one\n5. Artifact Rule: uploads/imports are reference tools, not fabricated telemetry\n6. Next Objective: bind one verified artifact to one live gateway signal\n\nActivation chain state: gateway proof + Sovereign_Intelligence_Arch",
+    "sessionId": "6b40cbc9-1357-c584-d88e25f7"
+  },
+  {
+    "ts": "2026-06-25T13:40:02.490Z",
+    "level": "INFO",
+    "subsystem": "OMNI-SAM",
+    "command": "sam.status",
+    "result": "OMNI-SAM AXIS STATUS — 2026-06-25T13:40:02.490Z\n\nTruth mode: PRODUCTION-REAL ONLY\nTelemetry source: browser liveness probes against declared domains\nRouting law: highest-priority reachable gateway wins\n\nDeclared live domains:\n  1. https://tesseract.manus.space\n  2. https://nexinus.net\n  3. https://valkyrie-nexinus.net\n  4. https://xinus.one\n\nPlanetary geometry: the Hetzner/Manus/Namecheap topology is represented only by the actual reachable nodes. Any unverified node, tunnel, or metric remains S",
+    "sessionId": "6b40cbc9-1357-c584-d88e25f7"
+  },
+  {
+    "ts": "2026-06-25T12:54:12.693Z",
+    "level": "INFO",
+    "subsystem": "OMNI-SAM",
+    "command": "sam.status",
+    "result": "OMNI-SAM AXIS STATUS — 2026-06-25T12:54:12.692Z\n\nTruth mode: PRODUCTION-REAL ONLY\nTelemetry source: browser liveness probes against declared domains\nRouting law: highest-priority reachable gateway wins\n\nDeclared live domains:\n  1. https://tesseract.manus.space\n  2. https://nexinus.net\n  3. https://valkyrie-nexinus.net\n  4. https://xinus.one\n\nPlanetary geometry: the Hetzner/Manus/Namecheap topology",
+    "sessionId": "6b40cbc9-1357-c584-d88e25f7"
+  },
+  {
+    "ts": "2026-06-23T22:46:23.110Z",
+    "level": "CMD",
+    "subsystem": "NEBULA",
+    "command": "sam.server-setup",
+    "result": "NEBULA HEALTH ENDPOINT ACTIVATION — 2026-06-23T22:46:23.110Z\n\nObjective: turn registered headservers into measured live nodes.\n\nTruth rule: no node becomes LIVE because it exists in Hetzner. It becomes LIVE when a real endpoint/API/socket responds.\n\nVerified Monarch health endpoint:\n- Node: Xinus-Monarch\n- Sovereign endpoint: https://monarch.xinus.one/health  ← LIVE\n- DNS: Namecheap A record monar",
+    "sessionId": "e1366f9c-bc61-89b5-637e9008"
+  },
+  {
+    "ts": "2026-06-23T21:42:34.601Z",
+    "level": "CMD",
+    "subsystem": "NEBULA",
+    "command": "sam.headservers",
+    "result": "HEADSERVER REGISTRY RECEIPT — 2026-06-23T21:42:34.599Z\n\n1. Tesseract-A\n   Alias: TestRack\n   Provider: Hetzner\n   Server ID: #129345837\n   Plan: CPX62\n   Region: Hetzner Falkenstein (FSN) · confirmed 2026-06-18\n   IPv4: 167.235.228.31\n   IPv6: 2a01:4f8:c014:482::/64\n   Role: Light mirror / headserver / geometric triangle vertex · Falkenstein anchor\n   Facts: 16 vCPU · 32 GB RAM · 640 GB local disk",
+    "sessionId": "caba7e15-a1c5-0fad-f99defb8"
+  },
+  {
+    "ts": "2026-06-23T21:36:15.844Z",
+    "level": "CMD",
+    "subsystem": "OMNI-SAM",
+    "command": "sam.gateway-test / https://xinus.one /",
+    "result": "GATEWAY TEST — 2026-06-23T21:36:15.843Z\n\nTarget: https://monarch.xinus.one/health/ https://xinus.one /\nGateway: xinus-monarch\nResult: REQUEST SENT / OPAQUE RESPONSE ACCEPTED\nLatency: 339ms\nTruth mode: browser fetch completed without network rejection.\n\nReceipt: one reversible test request passed through the active gateway.",
+    "sessionId": "caba7e15-a1c5-0fad-f99defb8"
+  },
+  {
+    "ts": "2026-06-23T21:35:26.321Z",
+    "level": "CMD",
+    "subsystem": "OMNI-SAM",
+    "command": "sam.gateway-test /",
+    "result": "GATEWAY TEST — 2026-06-23T21:35:26.321Z\n\nTarget: https://monarch.xinus.one/health/\nGateway: xinus-monarch\nResult: REQUEST SENT / OPAQUE RESPONSE ACCEPTED\nLatency: 617ms\nTruth mode: browser fetch completed without network rejection.\n\nReceipt: one reversible test request passed through the active gateway.",
+    "sessionId": "caba7e15-a1c5-0fad-f99defb8"
+  },
+  {
+    "ts": "2026-06-23T21:34:56.585Z",
+    "level": "CMD",
+    "subsystem": "INTELLIGENCE",
+    "command": "sam.reflect KetherGate",
+    "result": "sam.reflect — input: \"KetherGate\"\n\nPERCEPT: recorded locally; no external model or hidden dataset invoked.\nASSERTICCALIBRATE: recorded locally; no external model or hidden dataset invoked.\nPROBABILITY: recorded locally; no external model or hidden dataset invoked.\nOVERWATCH: recorded locally; no external model or hidden dataset invoked.\nDIRECTRA: recorded locally; no external model or hidden datas",
+    "sessionId": "caba7e15-a1c5-0fad-f99defb8"
+  },
+  {
+    "ts": "2026-06-23T21:34:27.895Z",
+    "level": "CMD",
+    "subsystem": "NEBULA",
+    "command": "sam.mesh-verify",
+    "result": "NEBULA MESH VERIFICATION + HEALTH PUBLISH — 2026-06-23T21:34:27.895Z\n\nObjective: prove the WireGuard exit node is actually carrying traffic, then expose a measurable /wg-health endpoint so the mesh node flips from ATTESTED to MEASURED in Truth Point. No node goes green on faith — only on a served receipt.\n\nTruth boundary: the browser cannot read WireGuard counters or SSH the server. This generates",
+    "sessionId": "caba7e15-a1c5-0fad-f99defb8"
+  },
+  {
+    "ts": "2026-06-23T21:33:58.765Z",
+    "level": "WARN",
+    "subsystem": "OMNI-SAM",
+    "command": "sam.probe",
+    "result": "sam.probe — 2026-06-23T21:33:58.765Z\n\nSTANDBY\nUnknown or unbound command: \"sam.probe\".\n\nNo result has been fabricated. Bind a real service endpoint/API credential, then re-run the command.",
+    "sessionId": "caba7e15-a1c5-0fad-f99defb8"
+  },
+  {
+    "ts": "2026-06-23T21:33:52.115Z",
+    "level": "WARN",
+    "subsystem": "OMNI-SAM",
+    "command": "sam.ststus",
+    "result": "sam.ststus — 2026-06-23T21:33:52.115Z\n\nSTANDBY\nUnknown or unbound command: \"sam.ststus\".\n\nNo result has been fabricated. Bind a real service endpoint/API credential, then re-run the command.",
+    "sessionId": "caba7e15-a1c5-0fad-f99defb8"
+  },
+  {
+    "ts": "2026-06-23T21:33:15.728Z",
+    "level": "CMD",
+    "subsystem": "APEX",
+    "command": "apex.transcend Good — I have everything I need. Let me review the code before writing the instr",
+    "result": "REST · POSITIVE HANDSHAKE · Open Truth Point or run sam.headservers, confirm the server appears once, then bind a real /health endpoint when available.",
+    "sessionId": "caba7e15-a1c5-0fad-f99defb8"
+  },
+  {
+    "ts": "2026-06-21T12:43:07.286Z",
+    "level": "WARN",
+    "subsystem": "OMNI-SAM",
+    "command": "sam.forge-valkyrie.nexinus.net/health",
+    "result": "sam.forge-valkyrie.nexinus.net/health — 2026-06-21T12:43:07.286Z\n\nSTANDBY\nUnknown or unbound command: \"sam.forge-valkyrie.nexinus.net/health\".\n\nNo result has been fabricated. Bind a real service endpoint/API credential, then re-run the command.",
+    "sessionId": "7d5397bc-b193-55de-121565a4"
+  },
+  {
+    "ts": "2026-06-21T12:41:59.089Z",
+    "level": "CMD",
+    "subsystem": "SOVEREIGN-FORGE",
+    "command": "sam.forge contract",
+    "result": "sam.forge — 2026-06-21T12:41:59.089Z\n\nSTANDBY\nRequested target: \"contract\". This portal has no verified live backend binding for that operation in the current browser runtime.\n\nNo result has been fabricated. Bind a real service endpoint/API credential, then re-run the command.",
+    "sessionId": "7d5397bc-b193-55de-121565a4"
+  },
+  {
+    "ts": "2026-06-21T12:41:55.583Z",
+    "level": "CMD",
+    "subsystem": "SOVEREIGN-FORGE",
+    "command": "sam.deploy contract local",
+    "result": "sam.deploy — 2026-06-21T12:41:55.582Z\n\nSTANDBY\nRequested target: \"contract local\". This portal has no verified live backend binding for that operation in the current browser runtime.\n\nNo result has been fabricated. Bind a real service endpoint/API credential, then re-run the command.",
+    "sessionId": "7d5397bc-b193-55de-121565a4"
+  },
+  {
+    "ts": "2026-06-21T12:41:49.318Z",
+    "level": "CMD",
+    "subsystem": "SOVEREIGN-FORGE",
+    "command": "sam.deploy api local",
+    "result": "sam.deploy — 2026-06-21T12:41:49.318Z\n\nSTANDBY\nRequested target: \"api local\". This portal has no verified live backend binding for that operation in the current browser runtime.\n\nNo result has been fabricated. Bind a real service endpoint/API credential, then re-run the command.",
+    "sessionId": "7d5397bc-b193-55de-121565a4"
+  },
+  {
+    "ts": "2026-06-21T12:41:47.118Z",
+    "level": "CMD",
+    "subsystem": "SOVEREIGN-FORGE",
+    "command": "sam.forge api",
+    "result": "sam.forge — 2026-06-21T12:41:47.118Z\n\nSTANDBY\nRequested target: \"api\". This portal has no verified live backend binding for that operation in the current browser runtime.\n\nNo result has been fabricated. Bind a real service endpoint/API credential, then re-run the command.",
+    "sessionId": "7d5397bc-b193-55de-121565a4"
+  },
+  {
+    "ts": "2026-06-21T12:41:30.497Z",
+    "level": "CMD",
+    "subsystem": "SOVEREIGN-FORGE",
+    "command": "sam.deploy api Helsinki-01",
+    "result": "sam.deploy — 2026-06-21T12:41:30.497Z\n\nSTANDBY\nRequested target: \"api Helsinki-01\". This portal has no verified live backend binding for that operation in the current browser runtime.\n\nNo result has been fabricated. Bind a real service endpoint/API credential, then re-run the command.",
+    "sessionId": "7d5397bc-b193-55de-121565a4"
+  },
+  {
+    "ts": "2026-06-21T12:40:41.290Z",
+    "level": "CMD",
+    "subsystem": "SOVEREIGN-FORGE",
+    "command": "sam.deploy daemon Falkenstein-01",
+    "result": "sam.deploy — 2026-06-21T12:40:41.290Z\n\nSTANDBY\nRequested target: \"daemon Falkenstein-01\". This portal has no verified live backend binding for that operation in the current browser runtime.\n\nNo result has been fabricated. Bind a real service endpoint/API credential, then re-run the command.",
+    "sessionId": "7d5397bc-b193-55de-121565a4"
+  },
+  {
+    "ts": "2026-06-21T12:40:32.974Z",
+    "level": "CMD",
+    "subsystem": "SOVEREIGN-FORGE",
+    "command": "sam.deploy api Falkenstein-01",
+    "result": "sam.deploy — 2026-06-21T12:40:32.974Z\n\nSTANDBY\nRequested target: \"api Falkenstein-01\". This portal has no verified live backend binding for that operation in the current browser runtime.\n\nNo result has been fabricated. Bind a real service endpoint/API credential, then re-run the command.",
+    "sessionId": "7d5397bc-b193-55de-121565a4"
+  },
+  {
+    "ts": "2026-06-21T12:40:29.695Z",
+    "level": "CMD",
+    "subsystem": "SOVEREIGN-FORGE",
+    "command": "sam.forge api",
+    "result": "sam.forge — 2026-06-21T12:40:29.695Z\n\nSTANDBY\nRequested target: \"api\". This portal has no verified live backend binding for that operation in the current browser runtime.\n\nNo result has been fabricated. Bind a real service endpoint/API credential, then re-run the command.",
+    "sessionId": "7d5397bc-b193-55de-121565a4"
+  },
+  {
+    "ts": "2026-06-21T12:35:25.448Z",
+    "level": "CMD",
+    "subsystem": "NEBULA",
+    "command": "Sam.headservers",
+    "result": "HEADSERVER REGISTRY RECEIPT — 2026-06-21T12:35:25.448Z\n\n1. Tesseract-A\n   Alias: TestRack\n   Provider: Hetzner\n   Server ID: #129345837\n   Plan: CPX62\n   Region: Hetzner Falkenstein (FSN) · confirmed 2026-06-18\n   IPv4: 167.235.228.31\n   IPv6: 2a01:4f8:c014:482::/64\n   Role: Light mirror / headserver / geometric triangle vertex · Falkenstein anchor\n   Facts: 16 vCPU · 32 GB RAM · 640 GB local disk · 0/20 TB traffic out · 41.26 usage · 59.49/mo · Hetzner Falkenstein (FSN) datacenter confirmed by ",
+    "sessionId": "f7c7ebfb-b99c-c16c-69b46c9b"
+  },
+  {
+    "ts": "2026-06-21T12:33:21.382Z",
+    "level": "CMD",
+    "subsystem": "APEX",
+    "command": "apex.transcend {\n  \"exportedAt\": \"2026-06-21T12:31:54.769Z\",\n  \"activeGateway\": {\n    \"id\": \"te",
+    "result": "REST · POSITIVE HANDSHAKE · Open Truth Point or run sam.headservers, confirm the server appears once, then bind a real /health endpoint when available.",
+    "sessionId": "f7c7ebfb-b99c-c16c-69b46c9b"
+  },
+  {
+    "ts": "2026-06-21T12:30:26.915Z",
+    "level": "CMD",
+    "subsystem": "TRAVEL-GUARDIAN",
+    "command": "travel.megaract-bootstrap 39.03393, -122.91563 -> San Francisco, CA",
+    "result": "MEGARACT BOOTSTRAP ROUTE MEASURED · 39.03393, -122.91563 → San Francisco, CA · ETA 160m · 118.6mi · provider MEGARACT-BOOTSTRAP · OSM/Nominatim + OSRM · receipt megaract-bootstrap-mqnrlizn",
+    "sessionId": "f7c7ebfb-b99c-c16c-69b46c9b"
+  },
+  {
+    "ts": "2026-06-21T12:30:22.419Z",
+    "level": "CMD",
+    "subsystem": "TRAVEL-GUARDIAN",
+    "command": "travel.destination San Francisco, CA",
+    "result": "Destination set: San Francisco, CA. origin + destination ready. Route engine STANDBY until Nebula /api/nebula/route returns measured ETA.",
+    "sessionId": "f7c7ebfb-b99c-c16c-69b46c9b"
+  },
+  {
+    "ts": "2026-06-21T12:29:53.943Z",
+    "level": "CMD",
+    "subsystem": "TRAVEL-GUARDIAN",
+    "command": "travel.gps-lock",
+    "result": "GPS LOCK · 39.03393, -122.91563 · accuracy 29m",
+    "sessionId": "f7c7ebfb-b99c-c16c-69b46c9b"
+  },
+  {
+    "ts": "2026-06-21T12:29:49.579Z",
+    "level": "STANDBY",
+    "subsystem": "TRAVEL-GUARDIAN",
+    "command": "travel.gps-lock",
+    "result": "GPS request timed out",
+    "sessionId": "f7c7ebfb-b99c-c16c-69b46c9b"
+  },
+  {
+    "ts": "2026-06-21T12:29:00.215Z",
+    "level": "CMD",
+    "subsystem": "APEX",
+    "command": "apex.transcend MEGARACT BOOTSTRAP ROUTE MEASURED · Lakeport, CA → San Francisco, CA · ETA 162m ",
+    "result": "REST · POSITIVE HANDSHAKE · Open Travel Guardian and verify the MEGARACT canon card is present above Geospatial Binding.",
+    "sessionId": "f7c7ebfb-b99c-c16c-69b46c9b"
+  },
+  {
+    "ts": "2026-06-21T11:55:57.545Z",
+    "level": "CMD",
+    "subsystem": "APEX",
+    "command": "apex.transcend echo \"Target: Terminus-Tesseractus (Helsinki Vertex)\"\nnebula-wireguard-bootstrap",
+    "result": "REST · POSITIVE HANDSHAKE · Name the objective in one sentence, verify one live signal, and record the receipt before taking the next step.",
+    "sessionId": "b68d5a0e-d3c1-25da-730cafd9"
+  },
+  {
+    "ts": "2026-06-20T20:48:23.782Z",
+    "level": "CMD",
+    "subsystem": "APEX",
+    "command": "apex.transcend GATEWAY TEST — 2026-06-20T18:48:39.644Z\n\nTarget: https://monarch.xinus.one/healt",
+    "result": "REST · POSITIVE HANDSHAKE · Run sam.bind-artifact Sovereign_Intelligence_Architecture__Advanced_App_Concepts.md, then record the artifact binding receipt.",
+    "sessionId": "91d2cacc-11ab-5df9-e22cdd30"
+  },
+  {
+    "ts": "2026-06-20T19:12:29.759Z",
+    "level": "CMD",
+    "subsystem": "SOVEREIGN-FORGE",
+    "command": "sam.deploy api staging",
+    "result": "sam.deploy — 2026-06-20T19:12:29.759Z\n\nSTANDBY\nRequested target: \"api staging\". This portal has no verified live backend binding for that operation in the current browser runtime.\n\nNo result has been fabricated. Bind a real service endpoint/API credential, then re-run the command.",
+    "sessionId": "cda30832-4dae-89e4-bd8032f6"
+  },
+  {
+    "ts": "2026-06-20T19:12:23.873Z",
+    "level": "CMD",
+    "subsystem": "SOVEREIGN-FORGE",
+    "command": "sam.forge api",
+    "result": "sam.forge — 2026-06-20T19:12:23.872Z\n\nSTANDBY\nRequested target: \"api\". This portal has no verified live backend binding for that operation in the current browser runtime.\n\nNo result has been fabricated. Bind a real service endpoint/API credential, then re-run the command.",
+    "sessionId": "cda30832-4dae-89e4-bd8032f6"
+  },
+  {
+    "ts": "2026-06-20T19:11:57.335Z",
+    "level": "CMD",
+    "subsystem": "SOVEREIGN-FORGE",
+    "command": "sam.deploy api local",
+    "result": "sam.deploy — 2026-06-20T19:11:57.334Z\n\nSTANDBY\nRequested target: \"api local\". This portal has no verified live backend binding for that operation in the current browser runtime.\n\nNo result has been fabricated. Bind a real service endpoint/API credential, then re-run the command.",
+    "sessionId": "cda30832-4dae-89e4-bd8032f6"
+  },
+  {
+    "ts": "2026-06-20T19:11:49.146Z",
+    "level": "CMD",
+    "subsystem": "SOVEREIGN-FORGE",
+    "command": "sam.forge api",
+    "result": "sam.forge — 2026-06-20T19:11:49.146Z\n\nSTANDBY\nRequested target: \"api\". This portal has no verified live backend binding for that operation in the current browser runtime.\n\nNo result has been fabricated. Bind a real service endpoint/API credential, then re-run the command.",
+    "sessionId": "cda30832-4dae-89e4-bd8032f6"
+  },
+  {
+    "ts": "2026-06-20T19:11:37.127Z",
+    "level": "CMD",
+    "subsystem": "SOVEREIGN-FORGE",
+    "command": "sam.forge cli",
+    "result": "sam.forge — 2026-06-20T19:11:37.127Z\n\nSTANDBY\nRequested target: \"cli\". This portal has no verified live backend binding for that operation in the current browser runtime.\n\nNo result has been fabricated. Bind a real service endpoint/API credential, then re-run the command.",
+    "sessionId": "cda30832-4dae-89e4-bd8032f6"
+  },
+  {
+    "ts": "2026-06-20T19:11:12.370Z",
+    "level": "CMD",
+    "subsystem": "SOVEREIGN-FORGE",
+    "command": "sam.forge daemon",
+    "result": "sam.forge — 2026-06-20T19:11:12.370Z\n\nSTANDBY\nRequested target: \"daemon\". This portal has no verified live backend binding for that operation in the current browser runtime.\n\nNo result has been fabricated. Bind a real service endpoint/API credential, then re-run the command.",
+    "sessionId": "cda30832-4dae-89e4-bd8032f6"
+  },
+  {
+    "ts": "2026-06-20T19:11:07.964Z",
+    "level": "CMD",
+    "subsystem": "SOVEREIGN-FORGE",
+    "command": "sam.deploy daemon Falkenstein-01",
+    "result": "sam.deploy — 2026-06-20T19:11:07.964Z\n\nSTANDBY\nRequested target: \"daemon Falkenstein-01\". This portal has no verified live backend binding for that operation in the current browser runtime.\n\nNo result has been fabricated. Bind a real service endpoint/API credential, then re-run the command.",
+    "sessionId": "cda30832-4dae-89e4-bd8032f6"
+  },
+  {
+    "ts": "2026-06-20T19:10:54.950Z",
+    "level": "CMD",
+    "subsystem": "SOVEREIGN-FORGE",
+    "command": "sam.forge api",
+    "result": "sam.forge — 2026-06-20T19:10:54.950Z\n\nSTANDBY\nRequested target: \"api\". This portal has no verified live backend binding for that operation in the current browser runtime.\n\nNo result has been fabricated. Bind a real service endpoint/API credential, then re-run the command.",
+    "sessionId": "cda30832-4dae-89e4-bd8032f6"
+  },
+  {
+    "ts": "2026-06-20T19:08:08.288Z",
+    "level": "CMD",
+    "subsystem": "NEBULA",
+    "command": "Sam.testrack",
+    "result": "HEADSERVER REGISTRY RECEIPT — 2026-06-20T19:08:08.288Z\n\n1. Tesseract-A\n   Alias: TestRack\n   Provider: Hetzner\n   Server ID: #129345837\n   Plan: CPX62\n   Region: Hetzner Falkenstein (FSN) · confirmed 2026-06-18\n   IPv4: 167.235.228.31\n   IPv6: 2a01:4f8:c014:482::/64\n   Role: Light mirror / headserver / geometric triangle vertex · Falkenstein anchor\n   Facts: 16 vCPU · 32 GB RAM · 640 GB local disk · 0/20 TB traffic out · 41.26 usage · 59.49/mo · Hetzner Falkenstein (FSN) datacenter confirmed by ",
+    "sessionId": "cda30832-4dae-89e4-bd8032f6"
+  },
+  {
+    "ts": "2026-06-20T19:07:51.573Z",
+    "level": "WARN",
+    "subsystem": "OMNI-SAM",
+    "command": "Sam.bind-health /",
+    "result": "sam.bind-health — 2026-06-20T19:07:51.573Z\n\nSTANDBY\nUnknown or unbound command: \"sam.bind-health\".\n\nNo result has been fabricated. Bind a real service endpoint/API credential, then re-run the command.",
+    "sessionId": "cda30832-4dae-89e4-bd8032f6"
+  },
+  {
+    "ts": "2026-06-20T19:03:13.928Z",
+    "level": "CMD",
+    "subsystem": "NEBULA",
+    "command": "Sam.headservers",
+    "result": "HEADSERVER REGISTRY RECEIPT — 2026-06-20T19:03:13.927Z\n\n1. Tesseract-A\n   Alias: TestRack\n   Provider: Hetzner\n   Server ID: #129345837\n   Plan: CPX62\n   Region: Hetzner Falkenstein (FSN) · confirmed 2026-06-18\n   IPv4: 167.235.228.31\n   IPv6: 2a01:4f8:c014:482::/64\n   Role: Light mirror / headserver / geometric triangle vertex · Falkenstein anchor\n   Facts: 16 vCPU · 32 GB RAM · 640 GB local disk · 0/20 TB traffic out · 41.26 usage · 59.49/mo · Hetzner Falkenstein (FSN) datacenter confirmed by ",
+    "sessionId": "cda30832-4dae-89e4-bd8032f6"
+  },
+  {
+    "ts": "2026-06-20T19:01:49.989Z",
+    "level": "CMD",
+    "subsystem": "OMNI-SAM",
+    "command": "Sam.bind-artifact",
+    "result": "ARTIFACT BINDING RECEIPT — 2026-06-20T19:01:49.989Z\n\nArtifact: /src/imports/Sovereign_Intelligence_Architecture__Advanced_App_Concepts.md\nGateway Signal: highest-priority reachable gateway from live telemetry context\nBinding Law: reference artifact + live gateway signal + ops log receipt\nTruth Mode: PRODUCTION-REAL ONLY\n\nStatus: RECORDED LOCALLY · CANONICAL FIRST SOVEREIGN ACTIVATION ARTIFACT\n\nIntegration: this receipt is no longer a temporary state. It satisfies the artifact-binding step when p",
+    "sessionId": "cda30832-4dae-89e4-bd8032f6"
+  },
+  {
+    "ts": "2026-06-20T19:01:15.579Z",
+    "level": "CMD",
+    "subsystem": "OMNI-SAM",
+    "command": "sam.gateway-test /",
+    "result": "GATEWAY TEST — 2026-06-20T19:01:15.579Z\n\nTarget: https://tesseract.manus.space/\nGateway: tesseract-manus\nResult: REQUEST SENT / OPAQUE RESPONSE ACCEPTED\nLatency: 880ms\nTruth mode: browser fetch completed without network rejection.\n\nReceipt: one reversible test request passed through the active gateway.",
+    "sessionId": "cda30832-4dae-89e4-bd8032f6"
+  },
+  {
+    "ts": "2026-06-20T19:00:51.994Z",
+    "level": "WARN",
+    "subsystem": "OMNI-SAM",
+    "command": "Sam.gateway-test",
+    "result": "GATEWAY TEST — 2026-06-20T19:00:51.994Z\n\nSTANDBY\nNo active gateway is proven in this runtime. No request was sent.",
+    "sessionId": "cda30832-4dae-89e4-bd8032f6"
+  },
+  {
+    "ts": "2026-06-20T18:56:46.200Z",
+    "level": "INFO",
+    "subsystem": "OMNI-SAM",
+    "command": "sam.status",
+    "result": "OMNI-SAM AXIS STATUS — 2026-06-20T18:56:46.199Z\n\nTruth mode: PRODUCTION-REAL ONLY\nTelemetry source: browser liveness probes against declared domains\nRouting law: highest-priority reachable gateway wins\n\nDeclared live domains:\n  1. https://tesseract.manus.space\n  2. https://nexinus.net\n  3. https://valkyrie-nexinus.net\n  4. https://xinus.one\n\nPlanetary geometry: the Hetzner/Manus/Namecheap topology",
+    "sessionId": "cda30832-4dae-89e4-bd8032f6"
+  },
+  {
+    "ts": "2026-06-20T18:56:24.531Z",
+    "level": "STANDBY",
+    "subsystem": "OMNI-SAM",
+    "command": "system.init",
+    "result": "Metrics on STANDBY. Awaiting secure Hetzner API/socket handshake.",
+    "sessionId": "cda30832-4dae-89e4-bd8032f6"
+  }
+]
