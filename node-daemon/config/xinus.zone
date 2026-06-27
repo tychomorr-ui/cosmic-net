@@ -1,4 +1,4 @@
-; In-tunnel zone for .xinus names. Rewritten by archangeld when the
+; In-tunnel zone for .xinus names. Rewritten by archangel when the
 ; operator pushes a signed name manifest from /gateway. The numbers below
 ; are placeholders; bring up your wg0 with .1 of the pool to match the
 ; gateway record.

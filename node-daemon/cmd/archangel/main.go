@@ -1,4 +1,4 @@
-// archangeld — sovereign node daemon for the Nexinus Terminus fleet.
+// archangel — sovereign node daemon for the Nexinus Terminus fleet.
 //
 // One static binary per node. Owns kernel WireGuard, supervises sing-box
 // (SOCKS5) and CoreDNS (.xinus zone), and serves the ARCHANGEL/v0 handshake
@@ -18,16 +18,16 @@ import (
 	"syscall"
 	"time"
 
-	"nexinus/archangeld/internal/dns"
-	"nexinus/archangeld/internal/handshake"
-	"nexinus/archangeld/internal/socks"
-	"nexinus/archangeld/internal/status"
-	"nexinus/archangeld/internal/wg"
+	"nexinus/archangel/internal/dns"
+	"nexinus/archangel/internal/handshake"
+	"nexinus/archangel/internal/socks"
+	"nexinus/archangel/internal/status"
+	"nexinus/archangel/internal/wg"
 )
 
 const (
 	defaultListen   = ":8443"
-	defaultEtc      = "/etc/archangeld"
+	defaultEtc      = "/etc/archangel"
 	defaultIface    = "wg0"
 	defaultAllowNet = "10.42.0.0/16"
 )
@@ -38,7 +38,7 @@ func main() {
 		case "init":
 			must(handshake.Init(defaultEtc))
 			must(wg.Init(defaultEtc))
-			log.Println("archangeld initialized in", defaultEtc)
+			log.Println("archangel initialized in", defaultEtc)
 			return
 		case "pubkeys":
 			edPub, xPub, err := handshake.LoadPubkeys(defaultEtc)
@@ -107,7 +107,7 @@ func main() {
 	go reloadOnSIGHUP(hs)
 
 	go func() {
-		log.Printf("archangeld listening on %s (iface=%s endpoint=%s pool=%s)",
+		log.Printf("archangel listening on %s (iface=%s endpoint=%s pool=%s)",
 			*listen, *iface, *endpoint, *allowNet)
 		var err error
 		if *tlsCert != "" && *tlsKey != "" {

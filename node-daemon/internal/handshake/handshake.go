@@ -19,7 +19,7 @@ import (
 	"sync"
 	"time"
 
-	"nexinus/archangeld/internal/wg"
+	"nexinus/archangel/internal/wg"
 )
 
 const (
@@ -69,7 +69,7 @@ func Init(etc string) error {
 	if err := writePub(filepath.Join(etc, edPubFile), pub); err != nil {
 		return err
 	}
-	// x25519 server pubkey is the wg server key; archangeld also keeps a
+	// x25519 server pubkey is the wg server key; archangel also keeps a
 	// parallel x25519 keypair for any future application-layer ECDH.
 	x := make([]byte, 32)
 	if _, err := rand.Read(x); err != nil {
@@ -91,7 +91,7 @@ func Init(etc string) error {
 func Open(etc string) (*Service, error) {
 	priv, err := os.ReadFile(filepath.Join(etc, edPrivFile))
 	if err != nil {
-		return nil, fmt.Errorf("load ed25519 priv (run `archangeld init`): %w", err)
+		return nil, fmt.Errorf("load ed25519 priv (run `archangel init`): %w", err)
 	}
 	pub, err := os.ReadFile(filepath.Join(etc, edPubFile))
 	if err != nil {
