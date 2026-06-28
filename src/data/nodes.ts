@@ -139,14 +139,15 @@ export const NODES: SovereignNode[] = [
     region: "Public reachable host",
     role: "Schumann-resonance witness · planetary substrate node",
     tier: "attested",
-    declared: "ATTESTED · reachability probe in this card",
+    declared: "ATTESTED · sovereign handshake · reachability probe in this card",
     facts: [
       "Sovereign witness surface for Earth's electromagnetic substrate.",
-      "Reachability probed via opaque HEAD; no CORS-readable health JSON yet.",
-      "Treated as a first-class vertex of the substrate layer alongside SUDO-COIN.",
+      "Reachability probed via opaque HEAD; sovereign handshake recorded in Truth Chain.",
+      "First-class vertex of the substrate layer alongside Truth Substrate (◈).",
+      "Bound to the 7D unity CID — any change here re-hashes the unification certificate.",
     ],
     truth:
-      "Resonate-Earth couples the bitcoin substrate (work / pressure / density) to the planetary substrate (resonance / coherence). Promotion to MEASURED requires a signed /status surface; until then it is ATTESTED only.",
+      "Resonate-Earth couples the bitcoin substrate (work / pressure / density) to the planetary substrate (resonance / coherence). The sovereign handshake binds its origin into the Truth Chain heptagram; promotion to MEASURED requires a signed /status surface.",
     probe: {
       kind: "no-cors-head",
       url: "https://resonate-earth.live/",
