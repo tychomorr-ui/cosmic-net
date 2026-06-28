@@ -203,6 +203,18 @@ function SeventhDimensionPage() {
         </div>
       </section>
 
+      <section className="border border-primary/30 bg-background/40 p-6">
+        <Label a="EARTH ATTESTATION" b="resonate-earth · one-click sovereign verify" />
+        <p className="mt-2 max-w-3xl text-xs text-foreground/85">
+          Recomputes the resonate-earth declaration CID, probes reachability, surfaces drift against any
+          stored Truth-Chain link. Defaults to UNVERIFIED. Only an explicit pass flips the PISTIFUS-VALIDATED sigil.
+        </p>
+        <div className="mt-4 max-w-md">
+          <SovereignStatus nodeId="resonate-earth" label="resonate-earth.live" />
+        </div>
+      </section>
+
+
       <section className="border border-border bg-background/30 p-6">
         <Label a="DOCTRINE" b="X. UNIFICATION" />
         <p className="mt-3 text-sm leading-relaxed text-foreground/85">
