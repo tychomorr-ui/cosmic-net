@@ -87,8 +87,11 @@ export function ReclaimExport() {
       {receipt && (
         <div className="mt-4 border border-border bg-background/60 p-3 text-[0.7rem]">
           <div className="text-[0.6rem] uppercase tracking-[0.18em] text-muted-foreground">Export receipt</div>
-          <div className="mt-1 break-all font-mono text-foreground">{receipt.cid}</div>
-          <div className="mt-1 font-mono text-muted-foreground">
+          <div className="mt-2 text-[0.6rem] uppercase tracking-[0.18em] text-muted-foreground">payload CID (stable)</div>
+          <div className="break-all font-mono text-gold">{receipt.payload_cid}</div>
+          <div className="mt-2 text-[0.6rem] uppercase tracking-[0.18em] text-muted-foreground">envelope CID (per-export)</div>
+          <div className="break-all font-mono text-foreground">{receipt.cid}</div>
+          <div className="mt-2 font-mono text-muted-foreground">
             {receipt.bytes} bytes · truths {receipt.counts.truths} · envelopes {receipt.counts.envelopes} · chain {receipt.counts.truth_chain} · ops {receipt.counts.ops_log}
           </div>
         </div>
@@ -97,8 +100,9 @@ export function ReclaimExport() {
       {report && (
         <div className="mt-3 border border-border bg-background/60 p-3 text-[0.7rem]">
           <div className="text-[0.6rem] uppercase tracking-[0.18em] text-[color:var(--measured)]">
-            Import {report.mode} · verified
+            Import {report.mode} · {report.verified ? "verified" : "unverified"} · round-trip {report.round_trip_ok ? "ok" : "drift"}
           </div>
+          <div className="mt-1 break-all font-mono text-gold">{report.payload_cid}</div>
           <div className="mt-1 break-all font-mono text-foreground">{report.cid}</div>
           <div className="mt-1 font-mono text-muted-foreground">
             +{report.applied.truths} truths · +{report.applied.envelopes} envelopes · +{report.applied.truth_chain} chain · ops-log static
