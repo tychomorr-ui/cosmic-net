@@ -7,6 +7,7 @@ import { CentralizationInventory } from "@/components/audit/CentralizationInvent
 import { ExtractionAudit } from "@/components/audit/ExtractionAudit";
 import { BuildReceipt } from "@/components/audit/BuildReceipt";
 import { TelemetryToggle } from "@/components/audit/TelemetryToggle";
+import { ReclaimExport } from "@/components/audit/ReclaimExport";
 
 export const Route = createFileRoute("/ops")({
   head: () => ({
@@ -159,6 +160,7 @@ function OpsPage() {
       </section>
 
       <section className="mt-10 space-y-4">
+        <ReclaimExport />
         <ExtractionAudit />
         <BuildReceipt />
         <CentralizationInventory />
