@@ -156,10 +156,11 @@ function RootComponent() {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
+    void kvHydrate();
     initPostHog();
-    posthog.capture("$pageview", { $current_url: window.location.href });
+    capturePageview(window.location.href);
     const unsub = router.subscribe("onResolved", () => {
-      posthog.capture("$pageview", { $current_url: window.location.href });
+      capturePageview(window.location.href);
     });
     return () => unsub();
   }, [router]);
