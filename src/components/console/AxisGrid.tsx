@@ -31,7 +31,7 @@ function BladeTile({ blade }: { blade: Blade }) {
   return (
     <li>
       <Link
-        to={blade.route}
+        to={blade.route as "/"}
         className={`group block h-full rounded border bg-card/40 p-4 transition ${accent}`}
       >
         <div className="flex items-baseline justify-between">
