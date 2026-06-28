@@ -5,11 +5,12 @@ import { type BtcSample, loadSamples, pushSample, sampleSubstrate, stamp } from 
 export const Route = createFileRoute("/sudo-coin")({
   head: () => ({
     meta: [
-      { title: "SUDO-COIN · Sovereign Universal Digital Ore" },
-      { name: "description", content: "Composite read of Bitcoin's unattributed substrate via public endpoints. Sovereign attestation only — not a custody claim." },
-      { property: "og:title", content: "SUDO-COIN · Nexinus Terminus" },
-      { property: "og:description", content: "Work · pressure · density · supply. The substrate is the asset, viewed honestly." },
+      { title: "Truth Substrate · Truth Coin · Live BTC Readout" },
+      { name: "description", content: "Truth Substrate (formerly SUDO): composite read of Bitcoin's unattributed substrate via public endpoints. Sovereign attestation, Pistifus-weighted." },
+      { property: "og:title", content: "Truth Substrate · Nexinus Terminus" },
+      { property: "og:description", content: "Work · pressure · density · supply. The substrate is the Truth Coin asset, viewed honestly." },
     ],
+    links: [{ rel: "canonical", href: "/sudo-coin" }],
   }),
   component: SudoPage,
 });
@@ -57,13 +58,13 @@ function SudoPage() {
       <header className="border-b border-border pb-6">
         <div className="flex items-baseline gap-3">
           <span className="font-display text-3xl text-primary">◈</span>
-          <span className="text-[0.65rem] uppercase tracking-[0.22em] text-muted-foreground">SUDO //</span>
-          <span className="font-display text-base tracking-[0.2em] text-foreground">SOVEREIGN_UNIVERSAL_DIGITAL_ORE</span>
+          <span className="text-[0.65rem] uppercase tracking-[0.22em] text-muted-foreground">TRUTH //</span>
+          <span className="font-display text-base tracking-[0.2em] text-foreground">TRUTH_SUBSTRATE · SOVEREIGN READOUT</span>
         </div>
-        <h1 className="mt-3 text-sm uppercase tracking-[0.18em] text-primary">sudo-coin — sovereign universal digital ore</h1>
+        <h1 className="mt-3 text-sm uppercase tracking-[0.18em] text-primary">truth substrate — the asset beneath the coin</h1>
         <p className="mt-2 max-w-3xl text-xs text-muted-foreground">
-          composite read of bitcoin's unattributed substrate. real public endpoints. sovereign attestation only —
-          not a custody claim. denominated in SUDO.
+          composite read of bitcoin's unattributed substrate. real public endpoints. sovereign attestation,
+          pistifus-weighted. the substrate is the truth coin asset, viewed honestly.
         </p>
         <div className="mt-4 flex flex-wrap gap-px border border-border bg-border">
           <div className="bg-background/60 px-4 py-2"><span className="text-[0.6rem] uppercase tracking-[0.2em] text-muted-foreground">streaming</span><span className="ml-2 text-foreground">{samples.length} sample{samples.length === 1 ? "" : "s"}</span></div>

@@ -13,6 +13,7 @@ import {
   verifyChain,
 } from "@/data/truth-ledger";
 import { LANE_GLOSS, LANE_ORDER, detectDrift, mirror } from "@/lib/pam";
+import { pistifusReadout, type FaithScore } from "@/lib/pistifus";
 
 export const Route = createFileRoute("/pam")({
   head: () => ({
@@ -38,6 +39,7 @@ function PamConsole() {
   const [truths, setTruths] = useState<LedgerTruth[]>([]);
   const [envelopes, setEnvelopes] = useState<Envelope[]>([]);
   const [chain, setChain] = useState<{ ok: boolean; breakAt?: number } | null>(null);
+  const [pistifus, setPistifus] = useState<ReturnType<typeof pistifusReadout> | null>(null);
 
   const [request, setRequest] = useState("");
   const [lane, setLane] = useState<Lane>("Core");
@@ -57,6 +59,7 @@ function PamConsole() {
     setTruths(activeTruths());
     setEnvelopes(loadEnvelopes());
     setChain(await verifyChain());
+    setPistifus(pistifusReadout());
   }
 
   const picked = useMemo(
@@ -282,6 +285,8 @@ function PamConsole() {
         </div>
       </section>
 
+      <PistifusPanel readout={pistifus} />
+
       <section className="space-y-3">
         <SectionLabel>Envelope chain · head → tail</SectionLabel>
         {envelopes.length === 0 ? (
@@ -327,6 +332,56 @@ function PamConsole() {
         )}
       </section>
     </div>
+  );
+}
+
+
+function PistifusPanel({ readout }: { readout: ReturnType<typeof pistifusReadout> | null }) {
+  if (!readout) return null;
+  const { total, meanFluidity, octaves, recent } = readout;
+  const bar = (n: number) => {
+    const max = Math.max(1, octaves[1], octaves[2], octaves[4], octaves[8]);
+    return Math.round((n / max) * 100);
+  };
+  return (
+    <section className="rounded border border-gold/40 bg-card/30 p-5">
+      <div className="flex flex-wrap items-baseline justify-between gap-2">
+        <div className="text-[0.7rem] uppercase tracking-[0.22em] text-gold">
+          PISTIFUS · fluidity of faith
+        </div>
+        <div className="font-mono text-[0.65rem] text-muted-foreground">
+          {total} scored · mean fluidity {meanFluidity.toFixed(3)} · life-eight ladder
+        </div>
+      </div>
+      <p className="mt-2 max-w-3xl text-xs text-foreground/80">
+        Each ledger entry is poured over the seven axes and quantized to the eight-resonance.
+        Pistifus is read-only — the chain stays append-only, but every link is now weighed as an act of faith.
+      </p>
+      <div className="mt-4 grid gap-3 sm:grid-cols-4">
+        {([1, 2, 4, 8] as const).map((r) => (
+          <div key={r} className="border border-border bg-background/40 p-3">
+            <div className="text-[0.6rem] uppercase tracking-[0.2em] text-muted-foreground">octave {r}</div>
+            <div className="mt-1 font-display text-2xl text-foreground">{octaves[r]}</div>
+            <div className="mt-2 h-1 w-full bg-border">
+              <div className="h-full bg-gold" style={{ width: `${bar(octaves[r])}%` }} />
+            </div>
+          </div>
+        ))}
+      </div>
+      {recent.length > 0 && (
+        <ul className="mt-5 space-y-1 font-mono text-[0.65rem]">
+          {recent.map((s: FaithScore) => (
+            <li key={s.cid} className="flex flex-wrap items-center justify-between gap-2 border-b border-border/40 py-1">
+              <span className="text-gold">⊙{s.resonance}</span>
+              <span className="text-muted-foreground">axes {s.axes}/7</span>
+              <span className="text-foreground">{(s.fluidity * 100).toFixed(0)}%</span>
+              <span className="text-muted-foreground">{s.lane}</span>
+              <span className="text-foreground/60">{s.cid.slice(0, 18)}…</span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
   );
 }
 
