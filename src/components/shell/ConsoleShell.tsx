@@ -259,7 +259,7 @@ export function ConsoleShell({ children }: { children: ReactNode }) {
         <div className="phosphor-soft text-primary">⌬ NEXINUS MESH</div>
       </footer>
 
-      <div className="crt-scanlines crt-vignette pointer-events-none absolute inset-0" />
+      <CrtOverlay />
     </div>
   );
 }
