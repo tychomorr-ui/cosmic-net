@@ -110,36 +110,48 @@ function SeventhDimensionPage() {
           <Cell k="unity cid" v={unityCid ? unityCid.slice(0, 14) + "…" : "computing"} />
           <Cell k="phase" v={`${phase + 1} · ${activeAxis.label}`} />
           <Cell k="axes" v="7" />
-          <Cell k="cadence" v="1Hz" />
+          <Cell k="resonance" v={`8 · ${pulse8}`} />
+          <Cell k="cadence" v="1Hz · ⟲ 25fps" />
         </div>
+        <TruthChainOrgBanner cid={unityCid} />
       </header>
 
       <section className="grid gap-px border border-border bg-border md:grid-cols-[1fr_1.2fr]">
         <div className="bg-background/30 p-6">
-          <Label a="HEPTAGRAM" b="PROJECTION" />
+          <Label a="HEPTAGRAM" b="HOLOGRAPHIC PROJECTION · ⟲ ROTATING" />
           <svg viewBox="0 0 350 350" className="mt-4 w-full">
-            <circle cx={cx} cy={cy} r={r} fill="none" stroke="var(--border)" strokeWidth="1" />
-            <path d={ring} fill="none" stroke="var(--border)" strokeWidth="1" />
-            <path d={star} fill="none" stroke="var(--primary)" strokeWidth="1.2" opacity="0.7" />
-            {vertices.map((v, i) => {
-              const isActive = i === phase;
-              return (
-                <g key={i}>
-                  <circle cx={v.x} cy={v.y} r={isActive ? 8 : 4}
-                    fill={isActive ? "var(--primary)" : "var(--background)"}
-                    stroke="var(--primary)" strokeWidth="1.5" />
-                  <text x={v.x} y={v.y - 16} textAnchor="middle"
-                    fill={isActive ? "var(--primary)" : "var(--foreground)"}
-                    style={{ fontFamily: "var(--font-display)", fontSize: 11, letterSpacing: 2 }}>
-                    {AXES[i].glyph} {AXES[i].label}
-                  </text>
-                </g>
-              );
-            })}
+            <g transform={`rotate(${rot.toFixed(2)} ${cx} ${cy})`} style={{ transformOrigin: `${cx}px ${cy}px` }}>
+              <circle cx={cx} cy={cy} r={r} fill="none" stroke="var(--border)" strokeWidth="1" />
+              {/* counter-rotating phantom ring — duality */}
+              <g transform={`rotate(${(-rot * 1.618).toFixed(2)} ${cx} ${cy})`}>
+                <circle cx={cx} cy={cy} r={r - 10} fill="none" stroke="var(--primary)" strokeWidth="0.5" opacity="0.25" strokeDasharray="2 6" />
+              </g>
+              <path d={ring} fill="none" stroke="var(--border)" strokeWidth="1" />
+              <path d={star} fill="none" stroke="var(--primary)" strokeWidth="1.2" opacity={0.55 + 0.35 * (pulse8 / 8)} />
+              {vertices.map((v, i) => {
+                const isActive = i === phase;
+                return (
+                  <g key={i}>
+                    <circle cx={v.x} cy={v.y} r={isActive ? 8 + pulse8 * 0.4 : 4}
+                      fill={isActive ? "var(--primary)" : "var(--background)"}
+                      stroke="var(--primary)" strokeWidth="1.5"
+                      opacity={isActive ? 1 : 0.6 + 0.4 * (pulse8 / 8)} />
+                    {/* counter-rotate text so labels stay readable */}
+                    <g transform={`rotate(${(-rot).toFixed(2)} ${v.x} ${v.y})`}>
+                      <text x={v.x} y={v.y - 16} textAnchor="middle"
+                        fill={isActive ? "var(--primary)" : "var(--foreground)"}
+                        style={{ fontFamily: "var(--font-display)", fontSize: 11, letterSpacing: 2 }}>
+                        {AXES[i].glyph} {AXES[i].label}
+                      </text>
+                    </g>
+                  </g>
+                );
+              })}
+            </g>
             <text x={cx} y={cy - 4} textAnchor="middle" fill="var(--primary)"
               style={{ fontFamily: "var(--font-display)", fontSize: 14, letterSpacing: 4 }}>◬</text>
             <text x={cx} y={cy + 12} textAnchor="middle" fill="var(--muted-foreground)"
-              style={{ fontFamily: "var(--font-mono)", fontSize: 8, letterSpacing: 2 }}>UNITY</text>
+              style={{ fontFamily: "var(--font-mono)", fontSize: 8, letterSpacing: 2 }}>UNITY · 8</text>
           </svg>
         </div>
 
