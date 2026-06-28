@@ -202,11 +202,12 @@ export async function importBundle(input: string | Uint8Array, mode: ImportMode 
   const round_trip_ok = byteEq(bytes, reEncoded);
 
   const parsed = decoded as Partial<ReclaimBundle> & { v?: string };
+  const version = parsed?.v as string | undefined;
 
-  if (parsed?.v === RECLAIM_VERSION_LEGACY_V1) {
-    return applyLegacyV1(parsed as unknown as LegacyV1Bundle, mode, round_trip_ok);
+  if (version === RECLAIM_VERSION_LEGACY_V1) {
+    return applyLegacyV1(decoded as LegacyV1Bundle, mode, round_trip_ok);
   }
-  if (parsed?.v !== RECLAIM_VERSION) {
+  if (version !== RECLAIM_VERSION) {
     throw new Error(`unsupported bundle version: ${String(parsed?.v)}`);
   }
   if (!parsed.payload) throw new Error("bundle missing payload");
