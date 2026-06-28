@@ -120,15 +120,10 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="min-h-screen bg-background text-foreground">
-        <TickerBar />
-        <UplinkStrip />
-        <main>
-          <Outlet />
-        </main>
-        <Footer />
-        <ProbeRunner />
-      </div>
+      <ConsoleShell>
+        <Outlet />
+      </ConsoleShell>
+      <ProbeRunner />
     </QueryClientProvider>
   );
 }
