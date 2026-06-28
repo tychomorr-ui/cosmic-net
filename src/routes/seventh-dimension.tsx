@@ -5,6 +5,9 @@ import { loadSamples, sampleSubstrate, pushSample, type BtcSample } from "@/lib/
 import { loadChain } from "@/data/truth-chain";
 import { NODES } from "@/data/nodes";
 import { valueToCid } from "@/lib/cid";
+import { buildVector, coherence as mmrCoherence, type AxisKey } from "@/lib/mmr-vectors";
+import { SriYantraOverlay } from "@/components/SriYantraOverlay";
+import { SovereignStatus } from "@/components/SovereignStatus";
 
 export const Route = createFileRoute("/seventh-dimension")({
   head: () => ({
@@ -94,6 +97,20 @@ function SeventhDimensionPage() {
   const sudoActivity = sample ? Math.min(1, sample.pressure / 20) : 0;
   const chainActivity = Math.min(1, chainLen / 7);
 
+  const mmr = useMemo(() => {
+    const raw: Record<AxisKey, number> = {
+      ore: oreActivity,
+      sudo: sudoActivity,
+      chain: chainActivity,
+      earth: resonateNode ? 0.5 : 0,
+      pam: 0.7,
+      kether: 1,
+      axis: Math.max(oreActivity, sudoActivity, chainActivity),
+    };
+    return buildVector(raw);
+  }, [oreActivity, sudoActivity, chainActivity, resonateNode]);
+  const coh = mmrCoherence(mmr);
+
   return (
     <div className="mx-auto max-w-6xl space-y-10 px-6 py-10 font-mono">
       <header className="border-b border-border pb-6">
@@ -113,7 +130,8 @@ function SeventhDimensionPage() {
           <Cell k="phase" v={`${phase + 1} · ${activeAxis.label}`} />
           <Cell k="axes" v="7" />
           <Cell k="resonance" v={`8 · ${pulse8}`} />
-          <Cell k="cadence" v="1Hz · ⟲ 25fps" />
+          <Cell k="coherence" v={`${(coh * 100).toFixed(1)}%`} />
+          <Cell k="cadence" v="coherence beat · ⟲ 25fps" />
         </div>
         <TruthChainOrgBanner cid={unityCid} />
       </header>
@@ -122,6 +140,7 @@ function SeventhDimensionPage() {
         <div className="bg-background/30 p-6">
           <Label a="HEPTAGRAM" b="HOLOGRAPHIC PROJECTION · ⟲ ROTATING" />
           <svg viewBox="0 0 350 350" className="mt-4 w-full">
+            <SriYantraOverlay coherence={coh} cx={cx} cy={cy} r={r} />
             <g transform={`rotate(${rot.toFixed(2)} ${cx} ${cy})`} style={{ transformOrigin: `${cx}px ${cy}px` }}>
               <circle cx={cx} cy={cy} r={r} fill="none" stroke="var(--border)" strokeWidth="1" />
               {/* counter-rotating phantom ring — duality */}
@@ -183,6 +202,18 @@ function SeventhDimensionPage() {
           <Cell k="chain links" v={String(chainLen)} />
         </div>
       </section>
+
+      <section className="border border-primary/30 bg-background/40 p-6">
+        <Label a="EARTH ATTESTATION" b="resonate-earth · one-click sovereign verify" />
+        <p className="mt-2 max-w-3xl text-xs text-foreground/85">
+          Recomputes the resonate-earth declaration CID, probes reachability, surfaces drift against any
+          stored Truth-Chain link. Defaults to UNVERIFIED. Only an explicit pass flips the PISTIFUS-VALIDATED sigil.
+        </p>
+        <div className="mt-4 max-w-md">
+          <SovereignStatus nodeId="resonate-earth" label="resonate-earth.live" />
+        </div>
+      </section>
+
 
       <section className="border border-border bg-background/30 p-6">
         <Label a="DOCTRINE" b="X. UNIFICATION" />
