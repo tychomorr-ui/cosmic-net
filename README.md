@@ -28,15 +28,56 @@ witness — never the source of truth.
 
 ## Stack
 
-- TanStack Start v1 (React 19, Vite 7) on Cloudflare Workers.
+- TanStack Start v1 (React 19, Vite 7), currently distributed via a Cloudflare
+  Worker shell. The bundle is also IPFS-deployable — see "Sovereign deploy".
 - Tailwind v4 (`src/styles.css`), shadcn primitives.
 - `@cosmic-mesh/protocol` — frozen ARCHANGEL/v0 wire contract shared with
   the Go `archangel` daemon under `node-daemon/`.
-- PostHog (`src/lib/posthog.ts`) — direct to `us.posthog.com`, every event
-  carries `protocol: "cMAP"` for downstream filtering.
+- `src/lib/sovereign-store.ts` — synchronous reads from localStorage,
+  write-through mirror to IndexedDB. Truth Chain + Truth Ledger persist
+  through this layer; nothing is round-tripped to a backend.
+- `src/lib/telemetry.ts` — three-mode telemetry switch, default **OFF**.
+  `LOCAL` writes to IndexedDB only. `POSTHOG` is the only mode that
+  touches the network, and it is opt-in.
 
 ## Routes
 
 `/` is the unified console (uplink, tesseract projection, 13-blade AXIS).
-Doctrine, gateway, fleet, ops, truth-coin, reclaim, and 7th-dimension
-views are siblings under `src/routes/`.
+`/pam` carries the **Doctrine Audit** — every UI claim mapped to the
+in-browser evidence that proves it. `/ops` carries the **Centralization
+Inventory** + the sovereign **Telemetry** switch. Other views (doctrine,
+gateway, truth-chain, truth-coin, reclaim, 7th-dimension) are siblings
+under `src/routes/`.
+
+## Sovereign deploy (IPFS)
+
+The build output can be pinned to your own IPFS node. There is intentionally
+no managed pinning service in the loop.
+
+```bash
+bun run build
+node scripts/pin-ipfs.mjs            # requires Kubo `ipfs` on PATH
+# → bafy…cid printed on stdout
+```
+
+To publish a stable name, use **your** IPNS key or an ENS contenthash:
+
+```bash
+ipfs name publish --key=cmap /ipfs/<cid>
+# or: from your wallet, set ENS contenthash → ipfs://<cid>
+```
+
+Custom domain (`cosmic-mesh.dev`) → DNSLink TXT record on `_dnslink`
+pointing at the IPNS hash. The script never asks for a third-party API
+key; if a service is in the path, it is your node, your key, your name.
+
+## Pass log
+
+- **Pass 1** Doctrine Audit (`/pam`) — UI claims ↔ in-browser evidence.
+- **Pass 2** Centralization Inventory (`/ops`) — every non-sovereign dep
+  named honestly with its concrete sovereignty path.
+- **Pass 3** IPFS deploy helper (`scripts/pin-ipfs.mjs`) — operator-only,
+  Kubo-backed, no managed service.
+- **Pass 4** IndexedDB-backed sovereign store + opt-in telemetry switch
+  (default OFF; PostHog stays available but inert until flipped on).
+
