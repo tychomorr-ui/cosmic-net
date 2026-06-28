@@ -13,6 +13,7 @@ import {
   verifyChain,
 } from "@/data/truth-ledger";
 import { LANE_GLOSS, LANE_ORDER, detectDrift, mirror } from "@/lib/pam";
+import { pistifusReadout, type FaithScore } from "@/lib/pistifus";
 
 export const Route = createFileRoute("/pam")({
   head: () => ({
@@ -38,6 +39,7 @@ function PamConsole() {
   const [truths, setTruths] = useState<LedgerTruth[]>([]);
   const [envelopes, setEnvelopes] = useState<Envelope[]>([]);
   const [chain, setChain] = useState<{ ok: boolean; breakAt?: number } | null>(null);
+  const [pistifus, setPistifus] = useState<ReturnType<typeof pistifusReadout> | null>(null);
 
   const [request, setRequest] = useState("");
   const [lane, setLane] = useState<Lane>("Core");
@@ -57,6 +59,7 @@ function PamConsole() {
     setTruths(activeTruths());
     setEnvelopes(loadEnvelopes());
     setChain(await verifyChain());
+    setPistifus(pistifusReadout());
   }
 
   const picked = useMemo(
