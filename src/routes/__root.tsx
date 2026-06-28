@@ -102,6 +102,32 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         href: "https://fonts.googleapis.com/css2?family=Major+Mono+Display&family=VT323&family=JetBrains+Mono:wght@400;500;700&display=swap",
       },
     ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "SoftwareApplication",
+              name: "cMAP — Cosmic Mesh Alignment Protocol",
+              alternateName: "cMAP",
+              applicationCategory: "DeveloperApplication",
+              operatingSystem: "Web",
+              description:
+                "Sovereign, peer-to-peer alignment protocol. Local-first witness, signed provenance, zero telemetry.",
+              offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+            },
+            {
+              "@type": "WebSite",
+              name: "cMAP",
+              description:
+                "Cosmic Mesh Alignment Protocol — a sovereign, decentralized infrastructure layer.",
+            },
+          ],
+        }),
+      },
+    ],
   }),
   shellComponent: RootShell,
   component: RootComponent,
