@@ -1,5 +1,6 @@
-import { type ReactNode, useEffect, useState } from "react";
+import { type ReactNode, memo, useEffect, useMemo, useState } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
+import { useTickerEvents } from "@/lib/probe-store";
 import {
   LayoutGrid,
   Hammer,
