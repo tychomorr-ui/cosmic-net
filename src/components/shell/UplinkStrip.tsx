@@ -11,8 +11,9 @@ export function UplinkStrip() {
     <header className="border-b border-border bg-background/80 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
         <Link to="/" className="font-display text-lg tracking-[0.2em] text-foreground">
-          NEXINUS <span className="text-gold">◆</span> TERMINUS
+          cMAP <span className="text-gold">◆</span> COSMIC MESH
         </Link>
+
         <nav className="hidden gap-5 text-[0.72rem] uppercase tracking-[0.18em] text-muted-foreground sm:flex">
           <Link to="/" activeOptions={{ exact: true }} activeProps={{ className: "text-gold" }} className="hover:text-foreground">Witness</Link>
           <Link to="/pam" activeProps={{ className: "text-gold" }} className="hover:text-foreground">PAM</Link>
