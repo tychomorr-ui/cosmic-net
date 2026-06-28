@@ -35,6 +35,29 @@ export const Route = createFileRoute("/pam")({
   component: PamConsole,
 });
 
+const PESHWIN_REQUEST =
+  "PESHWIN_V9 · Sri-Yantra MMR vector, Resonate-Earth attestation, SovereignStatus sigil, 7D Sri-Yantra overlay, /pam envelope.";
+
+async function seedPeshwinV9(): Promise<void> {
+  if (typeof window === "undefined") return;
+  if (loadEnvelopes().some((e) => e.request === PESHWIN_REQUEST)) return;
+  try {
+    await appendEnvelope({
+      lane: "Warrior",
+      request: PESHWIN_REQUEST,
+      reflection:
+        "PESHWIN_V9: 5-item subset shipped lane-clean; relay + Planck-loop + 9.9D refused as drift.",
+      truths: ["unledgered"],
+      next_move:
+        "Operator: click Verify on Earth Attestation panel at /seventh-dimension to flip PISTIFUS-VALIDATED.",
+      drift:
+        "refused: Pharo-Gapped WebSocket relay (centralized); Planck-loop frequency (browser ms scheduling); 9.9-dimensional naming (rebuilt as 7-axis MMR vector).",
+    });
+  } catch {
+    /* append-only invariants guard re-entry; ignore */
+  }
+}
+
 function PamConsole() {
   const [truths, setTruths] = useState<LedgerTruth[]>([]);
   const [envelopes, setEnvelopes] = useState<Envelope[]>([]);
