@@ -1,0 +1,53 @@
+// OMNI-SAM AXIS · 13 canonical blades.
+// Each blade owns a unique route. Standby tiles are honest, not navigational fakes.
+
+export type BladeStatus = "LIVE" | "STANDBY" | "AWAITING";
+
+export type Blade = {
+  n: string;          // "01" .. "13"
+  glyph: string;      // single-char sigil
+  name: string;
+  route: string;      // canonical sovereign route
+  status: BladeStatus;
+  tagline: string;
+  awaiting?: string;  // what would flip it to LIVE
+};
+
+export const BLADES: Blade[] = [
+  { n: "01", glyph: "⊕", name: "Alpha Dashboard",   route: "/",                status: "LIVE",
+    tagline: "kether gate console · the axis itself" },
+  { n: "02", glyph: "⚒", name: "Sovereign Forge",   route: "/forge",           status: "STANDBY",
+    tagline: "manifest composer · local-first build records",
+    awaiting: "forge job emitter (browser-local; no remote required)" },
+  { n: "03", glyph: "◉", name: "Reflective Intel",  route: "/reflective-intel",status: "AWAITING",
+    tagline: "per-blade telemetry mirror",
+    awaiting: "per-blade telemetry endpoint" },
+  { n: "04", glyph: "✺", name: "Network NEBULA",    route: "/nebula",          status: "AWAITING",
+    tagline: "samm mist-flow · routed receipts",
+    awaiting: "signed health surface from a registered relay" },
+  { n: "05", glyph: "✦", name: "Payment Nexus",     route: "/payment-nexus",   status: "STANDBY",
+    tagline: "sovereign-node proxy · /api/saa/{stripe|paypal|chain|cashapp}",
+    awaiting: "node-side SAA endpoints (secrets stay node-side)" },
+  { n: "06", glyph: "⌖", name: "Investigation",     route: "/investigation",   status: "STANDBY",
+    tagline: "evidence lockers · OODA-bound queries",
+    awaiting: "first signed evidence packet" },
+  { n: "07", glyph: "▣", name: "TERMINUS",          route: "/ops",             status: "LIVE",
+    tagline: "ops ledger · live gateway probes" },
+  { n: "08", glyph: "✧", name: "SAM Command",       route: "/sam-command",     status: "AWAITING",
+    tagline: "time-series command surface",
+    awaiting: "real metrics stream (prometheus, etc.)" },
+  { n: "09", glyph: "♕", name: "PAM Monarch",       route: "/pam",             status: "LIVE",
+    tagline: "lane discipline · CID-chained Truth Ledger" },
+  { n: "10", glyph: "⛬", name: "Digital Ore",       route: "/digital-ore",     status: "STANDBY",
+    tagline: "intellectual byproduct ledger · local",
+    awaiting: "first ore claim from the operator" },
+  { n: "11", glyph: "◈", name: "SUDO-COIN",         route: "/sudo-coin",       status: "STANDBY",
+    tagline: "re-currency surface · operational uptime, not speculation",
+    awaiting: "first signed heartbeat from archangel" },
+  { n: "12", glyph: "◬", name: "QUANTOTALUS",       route: "/quantotalus",     status: "STANDBY",
+    tagline: "triadaxial spinner · Helsinki · Singapore · Falkenstein",
+    awaiting: "vertex registration manifest" },
+  { n: "13", glyph: "◇", name: "PROOF FULCRUM",     route: "/proof-fulcrum",   status: "STANDBY",
+    tagline: "ed25519 fleet witness · operator stamp",
+    awaiting: "first signed fleet receipt" },
+];
