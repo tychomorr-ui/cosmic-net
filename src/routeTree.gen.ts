@@ -11,11 +11,21 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TruthPointRouteImport } from './routes/truth-point'
 import { Route as TruthCoinRouteImport } from './routes/truth-coin'
+import { Route as SudoCoinRouteImport } from './routes/sudo-coin'
+import { Route as SamCommandRouteImport } from './routes/sam-command'
+import { Route as ReflectiveIntelRouteImport } from './routes/reflective-intel'
 import { Route as ReclaimRouteImport } from './routes/reclaim'
+import { Route as QuantotalusRouteImport } from './routes/quantotalus'
+import { Route as ProofFulcrumRouteImport } from './routes/proof-fulcrum'
+import { Route as PaymentNexusRouteImport } from './routes/payment-nexus'
 import { Route as PamRouteImport } from './routes/pam'
 import { Route as OpsRouteImport } from './routes/ops'
+import { Route as NebulaRouteImport } from './routes/nebula'
+import { Route as InvestigationRouteImport } from './routes/investigation'
 import { Route as GatewayRouteImport } from './routes/gateway'
+import { Route as ForgeRouteImport } from './routes/forge'
 import { Route as FleetRouteImport } from './routes/fleet'
+import { Route as DigitalOreRouteImport } from './routes/digital-ore'
 import { Route as IndexRouteImport } from './routes/index'
 
 const TruthPointRoute = TruthPointRouteImport.update({
@@ -28,9 +38,39 @@ const TruthCoinRoute = TruthCoinRouteImport.update({
   path: '/truth-coin',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SudoCoinRoute = SudoCoinRouteImport.update({
+  id: '/sudo-coin',
+  path: '/sudo-coin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SamCommandRoute = SamCommandRouteImport.update({
+  id: '/sam-command',
+  path: '/sam-command',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReflectiveIntelRoute = ReflectiveIntelRouteImport.update({
+  id: '/reflective-intel',
+  path: '/reflective-intel',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ReclaimRoute = ReclaimRouteImport.update({
   id: '/reclaim',
   path: '/reclaim',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const QuantotalusRoute = QuantotalusRouteImport.update({
+  id: '/quantotalus',
+  path: '/quantotalus',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProofFulcrumRoute = ProofFulcrumRouteImport.update({
+  id: '/proof-fulcrum',
+  path: '/proof-fulcrum',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PaymentNexusRoute = PaymentNexusRouteImport.update({
+  id: '/payment-nexus',
+  path: '/payment-nexus',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PamRoute = PamRouteImport.update({
@@ -43,14 +83,34 @@ const OpsRoute = OpsRouteImport.update({
   path: '/ops',
   getParentRoute: () => rootRouteImport,
 } as any)
+const NebulaRoute = NebulaRouteImport.update({
+  id: '/nebula',
+  path: '/nebula',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InvestigationRoute = InvestigationRouteImport.update({
+  id: '/investigation',
+  path: '/investigation',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const GatewayRoute = GatewayRouteImport.update({
   id: '/gateway',
   path: '/gateway',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ForgeRoute = ForgeRouteImport.update({
+  id: '/forge',
+  path: '/forge',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FleetRoute = FleetRouteImport.update({
   id: '/fleet',
   path: '/fleet',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DigitalOreRoute = DigitalOreRouteImport.update({
+  id: '/digital-ore',
+  path: '/digital-ore',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -61,32 +121,62 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/digital-ore': typeof DigitalOreRoute
   '/fleet': typeof FleetRoute
+  '/forge': typeof ForgeRoute
   '/gateway': typeof GatewayRoute
+  '/investigation': typeof InvestigationRoute
+  '/nebula': typeof NebulaRoute
   '/ops': typeof OpsRoute
   '/pam': typeof PamRoute
+  '/payment-nexus': typeof PaymentNexusRoute
+  '/proof-fulcrum': typeof ProofFulcrumRoute
+  '/quantotalus': typeof QuantotalusRoute
   '/reclaim': typeof ReclaimRoute
+  '/reflective-intel': typeof ReflectiveIntelRoute
+  '/sam-command': typeof SamCommandRoute
+  '/sudo-coin': typeof SudoCoinRoute
   '/truth-coin': typeof TruthCoinRoute
   '/truth-point': typeof TruthPointRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/digital-ore': typeof DigitalOreRoute
   '/fleet': typeof FleetRoute
+  '/forge': typeof ForgeRoute
   '/gateway': typeof GatewayRoute
+  '/investigation': typeof InvestigationRoute
+  '/nebula': typeof NebulaRoute
   '/ops': typeof OpsRoute
   '/pam': typeof PamRoute
+  '/payment-nexus': typeof PaymentNexusRoute
+  '/proof-fulcrum': typeof ProofFulcrumRoute
+  '/quantotalus': typeof QuantotalusRoute
   '/reclaim': typeof ReclaimRoute
+  '/reflective-intel': typeof ReflectiveIntelRoute
+  '/sam-command': typeof SamCommandRoute
+  '/sudo-coin': typeof SudoCoinRoute
   '/truth-coin': typeof TruthCoinRoute
   '/truth-point': typeof TruthPointRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/digital-ore': typeof DigitalOreRoute
   '/fleet': typeof FleetRoute
+  '/forge': typeof ForgeRoute
   '/gateway': typeof GatewayRoute
+  '/investigation': typeof InvestigationRoute
+  '/nebula': typeof NebulaRoute
   '/ops': typeof OpsRoute
   '/pam': typeof PamRoute
+  '/payment-nexus': typeof PaymentNexusRoute
+  '/proof-fulcrum': typeof ProofFulcrumRoute
+  '/quantotalus': typeof QuantotalusRoute
   '/reclaim': typeof ReclaimRoute
+  '/reflective-intel': typeof ReflectiveIntelRoute
+  '/sam-command': typeof SamCommandRoute
+  '/sudo-coin': typeof SudoCoinRoute
   '/truth-coin': typeof TruthCoinRoute
   '/truth-point': typeof TruthPointRoute
 }
@@ -94,42 +184,82 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/digital-ore'
     | '/fleet'
+    | '/forge'
     | '/gateway'
+    | '/investigation'
+    | '/nebula'
     | '/ops'
     | '/pam'
+    | '/payment-nexus'
+    | '/proof-fulcrum'
+    | '/quantotalus'
     | '/reclaim'
+    | '/reflective-intel'
+    | '/sam-command'
+    | '/sudo-coin'
     | '/truth-coin'
     | '/truth-point'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/digital-ore'
     | '/fleet'
+    | '/forge'
     | '/gateway'
+    | '/investigation'
+    | '/nebula'
     | '/ops'
     | '/pam'
+    | '/payment-nexus'
+    | '/proof-fulcrum'
+    | '/quantotalus'
     | '/reclaim'
+    | '/reflective-intel'
+    | '/sam-command'
+    | '/sudo-coin'
     | '/truth-coin'
     | '/truth-point'
   id:
     | '__root__'
     | '/'
+    | '/digital-ore'
     | '/fleet'
+    | '/forge'
     | '/gateway'
+    | '/investigation'
+    | '/nebula'
     | '/ops'
     | '/pam'
+    | '/payment-nexus'
+    | '/proof-fulcrum'
+    | '/quantotalus'
     | '/reclaim'
+    | '/reflective-intel'
+    | '/sam-command'
+    | '/sudo-coin'
     | '/truth-coin'
     | '/truth-point'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  DigitalOreRoute: typeof DigitalOreRoute
   FleetRoute: typeof FleetRoute
+  ForgeRoute: typeof ForgeRoute
   GatewayRoute: typeof GatewayRoute
+  InvestigationRoute: typeof InvestigationRoute
+  NebulaRoute: typeof NebulaRoute
   OpsRoute: typeof OpsRoute
   PamRoute: typeof PamRoute
+  PaymentNexusRoute: typeof PaymentNexusRoute
+  ProofFulcrumRoute: typeof ProofFulcrumRoute
+  QuantotalusRoute: typeof QuantotalusRoute
   ReclaimRoute: typeof ReclaimRoute
+  ReflectiveIntelRoute: typeof ReflectiveIntelRoute
+  SamCommandRoute: typeof SamCommandRoute
+  SudoCoinRoute: typeof SudoCoinRoute
   TruthCoinRoute: typeof TruthCoinRoute
   TruthPointRoute: typeof TruthPointRoute
 }
@@ -150,11 +280,53 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TruthCoinRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/sudo-coin': {
+      id: '/sudo-coin'
+      path: '/sudo-coin'
+      fullPath: '/sudo-coin'
+      preLoaderRoute: typeof SudoCoinRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sam-command': {
+      id: '/sam-command'
+      path: '/sam-command'
+      fullPath: '/sam-command'
+      preLoaderRoute: typeof SamCommandRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reflective-intel': {
+      id: '/reflective-intel'
+      path: '/reflective-intel'
+      fullPath: '/reflective-intel'
+      preLoaderRoute: typeof ReflectiveIntelRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/reclaim': {
       id: '/reclaim'
       path: '/reclaim'
       fullPath: '/reclaim'
       preLoaderRoute: typeof ReclaimRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/quantotalus': {
+      id: '/quantotalus'
+      path: '/quantotalus'
+      fullPath: '/quantotalus'
+      preLoaderRoute: typeof QuantotalusRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/proof-fulcrum': {
+      id: '/proof-fulcrum'
+      path: '/proof-fulcrum'
+      fullPath: '/proof-fulcrum'
+      preLoaderRoute: typeof ProofFulcrumRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/payment-nexus': {
+      id: '/payment-nexus'
+      path: '/payment-nexus'
+      fullPath: '/payment-nexus'
+      preLoaderRoute: typeof PaymentNexusRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/pam': {
@@ -171,6 +343,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OpsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/nebula': {
+      id: '/nebula'
+      path: '/nebula'
+      fullPath: '/nebula'
+      preLoaderRoute: typeof NebulaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/investigation': {
+      id: '/investigation'
+      path: '/investigation'
+      fullPath: '/investigation'
+      preLoaderRoute: typeof InvestigationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/gateway': {
       id: '/gateway'
       path: '/gateway'
@@ -178,11 +364,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GatewayRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/forge': {
+      id: '/forge'
+      path: '/forge'
+      fullPath: '/forge'
+      preLoaderRoute: typeof ForgeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/fleet': {
       id: '/fleet'
       path: '/fleet'
       fullPath: '/fleet'
       preLoaderRoute: typeof FleetRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/digital-ore': {
+      id: '/digital-ore'
+      path: '/digital-ore'
+      fullPath: '/digital-ore'
+      preLoaderRoute: typeof DigitalOreRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -197,11 +397,21 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  DigitalOreRoute: DigitalOreRoute,
   FleetRoute: FleetRoute,
+  ForgeRoute: ForgeRoute,
   GatewayRoute: GatewayRoute,
+  InvestigationRoute: InvestigationRoute,
+  NebulaRoute: NebulaRoute,
   OpsRoute: OpsRoute,
   PamRoute: PamRoute,
+  PaymentNexusRoute: PaymentNexusRoute,
+  ProofFulcrumRoute: ProofFulcrumRoute,
+  QuantotalusRoute: QuantotalusRoute,
   ReclaimRoute: ReclaimRoute,
+  ReflectiveIntelRoute: ReflectiveIntelRoute,
+  SamCommandRoute: SamCommandRoute,
+  SudoCoinRoute: SudoCoinRoute,
   TruthCoinRoute: TruthCoinRoute,
   TruthPointRoute: TruthPointRoute,
 }
