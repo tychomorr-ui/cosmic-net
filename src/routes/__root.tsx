@@ -11,9 +11,7 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
-import { TickerBar } from "@/components/shell/TickerBar";
-import { UplinkStrip } from "@/components/shell/UplinkStrip";
-import { Footer } from "@/components/shell/Footer";
+import { ConsoleShell } from "@/components/shell/ConsoleShell";
 import { ProbeRunner } from "@/components/shell/ProbeRunner";
 
 function NotFoundComponent() {
