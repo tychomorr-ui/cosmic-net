@@ -16,10 +16,17 @@ export function initPostHog(): typeof posthog | null {
     autocapture: true,
     session_recording: { maskAllInputs: false },
     disable_session_recording: false,
-            persistence: "localStorage+cookie",
+    persistence: "localStorage+cookie",
+  });
+  // Register cMAP nomenclature on every event for downstream filtering.
+  posthog.register({
+    protocol: "cMAP",
+    protocol_full: "Cosmic Mesh Alignment Protocol",
+    app: "cmap-terminus",
   });
   initialized = true;
   return posthog;
 }
 
 export { posthog };
+
