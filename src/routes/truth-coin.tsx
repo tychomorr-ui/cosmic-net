@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { DoctrineHero } from "@/components/truth-coin/DoctrineHero";
 import { AwaitingTile } from "@/components/truth-coin/AwaitingTile";
 import { DignityModel } from "@/components/truth-coin/DignityModel";
