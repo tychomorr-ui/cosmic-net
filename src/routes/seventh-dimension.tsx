@@ -5,6 +5,9 @@ import { loadSamples, sampleSubstrate, pushSample, type BtcSample } from "@/lib/
 import { loadChain } from "@/data/truth-chain";
 import { NODES } from "@/data/nodes";
 import { valueToCid } from "@/lib/cid";
+import { buildVector, coherence as mmrCoherence, type AxisKey } from "@/lib/mmr-vectors";
+import { SriYantraOverlay } from "@/components/SriYantraOverlay";
+import { SovereignStatus } from "@/components/SovereignStatus";
 
 export const Route = createFileRoute("/seventh-dimension")({
   head: () => ({
