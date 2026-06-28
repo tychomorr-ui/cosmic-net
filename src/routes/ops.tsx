@@ -160,6 +160,7 @@ function OpsPage() {
       </section>
 
       <section className="mt-10 space-y-4">
+        <ReclaimExport />
         <ExtractionAudit />
         <BuildReceipt />
         <CentralizationInventory />
