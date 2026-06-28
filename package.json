@@ -12,6 +12,9 @@
     "format": "prettier --write ."
   },
   "dependencies": {
+    "@fontsource/jetbrains-mono": "^5.2.8",
+    "@fontsource/major-mono-display": "^5.2.8",
+    "@fontsource/vt323": "^5.2.7",
     "@hookform/resolvers": "^5.2.2",
     "@ipld/dag-json": "^11.0.0",
     "@noble/curves": "^2.2.0",
