@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TruthPointRouteImport } from './routes/truth-point'
 import { Route as TruthCoinRouteImport } from './routes/truth-coin'
 import { Route as ReclaimRouteImport } from './routes/reclaim'
+import { Route as PamRouteImport } from './routes/pam'
 import { Route as OpsRouteImport } from './routes/ops'
 import { Route as GatewayRouteImport } from './routes/gateway'
 import { Route as FleetRouteImport } from './routes/fleet'
@@ -30,6 +31,11 @@ const TruthCoinRoute = TruthCoinRouteImport.update({
 const ReclaimRoute = ReclaimRouteImport.update({
   id: '/reclaim',
   path: '/reclaim',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PamRoute = PamRouteImport.update({
+  id: '/pam',
+  path: '/pam',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OpsRoute = OpsRouteImport.update({
@@ -58,6 +64,7 @@ export interface FileRoutesByFullPath {
   '/fleet': typeof FleetRoute
   '/gateway': typeof GatewayRoute
   '/ops': typeof OpsRoute
+  '/pam': typeof PamRoute
   '/reclaim': typeof ReclaimRoute
   '/truth-coin': typeof TruthCoinRoute
   '/truth-point': typeof TruthPointRoute
@@ -67,6 +74,7 @@ export interface FileRoutesByTo {
   '/fleet': typeof FleetRoute
   '/gateway': typeof GatewayRoute
   '/ops': typeof OpsRoute
+  '/pam': typeof PamRoute
   '/reclaim': typeof ReclaimRoute
   '/truth-coin': typeof TruthCoinRoute
   '/truth-point': typeof TruthPointRoute
@@ -77,6 +85,7 @@ export interface FileRoutesById {
   '/fleet': typeof FleetRoute
   '/gateway': typeof GatewayRoute
   '/ops': typeof OpsRoute
+  '/pam': typeof PamRoute
   '/reclaim': typeof ReclaimRoute
   '/truth-coin': typeof TruthCoinRoute
   '/truth-point': typeof TruthPointRoute
@@ -88,6 +97,7 @@ export interface FileRouteTypes {
     | '/fleet'
     | '/gateway'
     | '/ops'
+    | '/pam'
     | '/reclaim'
     | '/truth-coin'
     | '/truth-point'
@@ -97,6 +107,7 @@ export interface FileRouteTypes {
     | '/fleet'
     | '/gateway'
     | '/ops'
+    | '/pam'
     | '/reclaim'
     | '/truth-coin'
     | '/truth-point'
@@ -106,6 +117,7 @@ export interface FileRouteTypes {
     | '/fleet'
     | '/gateway'
     | '/ops'
+    | '/pam'
     | '/reclaim'
     | '/truth-coin'
     | '/truth-point'
@@ -116,6 +128,7 @@ export interface RootRouteChildren {
   FleetRoute: typeof FleetRoute
   GatewayRoute: typeof GatewayRoute
   OpsRoute: typeof OpsRoute
+  PamRoute: typeof PamRoute
   ReclaimRoute: typeof ReclaimRoute
   TruthCoinRoute: typeof TruthCoinRoute
   TruthPointRoute: typeof TruthPointRoute
@@ -142,6 +155,13 @@ declare module '@tanstack/react-router' {
       path: '/reclaim'
       fullPath: '/reclaim'
       preLoaderRoute: typeof ReclaimRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pam': {
+      id: '/pam'
+      path: '/pam'
+      fullPath: '/pam'
+      preLoaderRoute: typeof PamRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/ops': {
@@ -180,6 +200,7 @@ const rootRouteChildren: RootRouteChildren = {
   FleetRoute: FleetRoute,
   GatewayRoute: GatewayRoute,
   OpsRoute: OpsRoute,
+  PamRoute: PamRoute,
   ReclaimRoute: ReclaimRoute,
   TruthCoinRoute: TruthCoinRoute,
   TruthPointRoute: TruthPointRoute,

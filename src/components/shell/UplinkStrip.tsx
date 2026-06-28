@@ -15,6 +15,7 @@ export function UplinkStrip() {
         </Link>
         <nav className="hidden gap-5 text-[0.72rem] uppercase tracking-[0.18em] text-muted-foreground sm:flex">
           <Link to="/" activeOptions={{ exact: true }} activeProps={{ className: "text-gold" }} className="hover:text-foreground">Witness</Link>
+          <Link to="/pam" activeProps={{ className: "text-gold" }} className="hover:text-foreground">PAM</Link>
           <Link to="/gateway" activeProps={{ className: "text-gold" }} className="hover:text-foreground">Gateway</Link>
           <Link to="/fleet" activeProps={{ className: "text-gold" }} className="hover:text-foreground">Fleet</Link>
           <Link to="/ops" activeProps={{ className: "text-gold" }} className="hover:text-foreground">Ops</Link>
