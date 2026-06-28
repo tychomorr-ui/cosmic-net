@@ -97,6 +97,20 @@ function SeventhDimensionPage() {
   const sudoActivity = sample ? Math.min(1, sample.pressure / 20) : 0;
   const chainActivity = Math.min(1, chainLen / 7);
 
+  const mmr = useMemo(() => {
+    const raw: Record<AxisKey, number> = {
+      ore: oreActivity,
+      sudo: sudoActivity,
+      chain: chainActivity,
+      earth: resonateNode ? 0.5 : 0,
+      pam: 0.7,
+      kether: 1,
+      axis: Math.max(oreActivity, sudoActivity, chainActivity),
+    };
+    return buildVector(raw);
+  }, [oreActivity, sudoActivity, chainActivity, resonateNode]);
+  const coh = mmrCoherence(mmr);
+
   return (
     <div className="mx-auto max-w-6xl space-y-10 px-6 py-10 font-mono">
       <header className="border-b border-border pb-6">
