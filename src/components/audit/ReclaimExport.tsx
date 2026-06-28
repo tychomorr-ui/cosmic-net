@@ -13,7 +13,7 @@ export function ReclaimExport() {
     setErr(null); setBusy(true);
     try {
       const { bytes, receipt } = await exportBundle();
-      downloadBundle(bytes, receipt.cid);
+      downloadBundle(bytes, receipt.payload_cid);
       setReceipt(receipt);
     } catch (e) {
       setErr(e instanceof Error ? e.message : String(e));
