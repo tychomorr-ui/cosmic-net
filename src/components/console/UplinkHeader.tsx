@@ -27,8 +27,9 @@ export function UplinkHeader() {
       <div className="mx-auto max-w-6xl px-6 py-5">
         <div className="flex flex-wrap items-baseline justify-between gap-3">
           <div className="text-[0.7rem] uppercase tracking-[0.22em] text-gold">
-            tesseract terminus
+            cMAP · tesseract terminus
           </div>
+
           <div className="flex items-center gap-3 font-mono text-[0.7rem] uppercase tracking-[0.2em] text-muted-foreground">
             <button
               onClick={() => setMode("day")}
