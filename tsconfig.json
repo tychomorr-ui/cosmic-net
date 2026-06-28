@@ -30,8 +30,8 @@
     "noUncheckedSideEffectImports": true,
     "paths": {
       "@/*": ["./src/*"],
-      "@cosmic-net/protocol": ["./packages/protocol/ts/index.ts"],
-      "@cosmic-net/protocol/golden": ["./packages/protocol/spec/golden-vectors.json"]
+      "@cosmic-mesh/protocol": ["./packages/protocol/ts/index.ts"],
+      "@cosmic-mesh/protocol/golden": ["./packages/protocol/spec/golden-vectors.json"]
     }
   }
 }

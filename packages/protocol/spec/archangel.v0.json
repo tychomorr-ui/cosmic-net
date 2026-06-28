@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://cosmic-net.dev/spec/archangel.v0.json",
+  "$id": "https://cosmic-mesh.dev/spec/archangel.v0.json",
   "title": "ARCHANGEL/v0",
   "description": "Frozen wire contract between the archangel node daemon and any verifier (browser control plane, aggregator). The signature is computed over the canonical JSON bytes of SignedPayload (no whitespace, lexicographic keys, sig_ed25519 omitted) and serialized into the same object as a lowercase hex string in the sig_ed25519 field.",
   "version": "v0",

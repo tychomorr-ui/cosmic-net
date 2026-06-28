@@ -1,4 +1,4 @@
-# @cosmic-net/protocol
+# @cosmic-mesh/protocol
 
 Single source of truth for the **ARCHANGEL/v0** wire contract used by:
 
