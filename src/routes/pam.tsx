@@ -285,6 +285,8 @@ function PamConsole() {
         </div>
       </section>
 
+      <PistifusPanel readout={pistifus} />
+
       <section className="space-y-3">
         <SectionLabel>Envelope chain · head → tail</SectionLabel>
         {envelopes.length === 0 ? (
