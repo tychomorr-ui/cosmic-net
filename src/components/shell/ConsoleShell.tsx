@@ -74,6 +74,33 @@ export function ConsoleShell({ children }: { children: ReactNode }) {
   const nightHour = !isDay ? String(h < 6 ? h + 7 : h - 17).padStart(2, "0") : null;
   const utc = now.toISOString().slice(11, 19);
 
+  // Live ticker: Archangel probe events (sliding window, 64). Synced to the
+  // 1Hz global clock — `now` invalidates this memo each tick.
+  const events = useTickerEvents();
+  const tickerItems = useMemo(() => {
+    void now; // keep ticker re-render aligned to clock tick
+    const stateCls = (s: string) =>
+      s === "measured"     ? "text-gold"
+      : s === "reachable"  ? "text-primary"
+      : s === "probing"    ? "text-primary/70"
+      : s === "unreachable"? "text-destructive"
+      : "text-muted-foreground";
+    const live = events.slice(0, 24).map((e) => ({
+      key: `e-${e.id}`,
+      tag: e.tag,
+      cls: stateCls(e.state),
+      msg: e.detail,
+    }));
+    const stance = STANCE_FEED.map((f, i) => ({
+      key: `s-${i}`,
+      tag: f.tag,
+      cls: "text-primary/70",
+      msg: f.msg,
+    }));
+    return [...live, ...stance];
+  }, [events, now]);
+
+
   return (
     <div className="crt-flicker relative flex h-screen flex-col overflow-hidden bg-background text-foreground">
       <div className="absolute inset-0 z-0">
