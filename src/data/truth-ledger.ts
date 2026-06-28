@@ -9,6 +9,7 @@
 // as a drift fault.
 
 import { valueToCid } from "@/lib/cid";
+import { kvGet, kvSet } from "@/lib/sovereign-store";
 
 export const LANES = [
   "Core",
