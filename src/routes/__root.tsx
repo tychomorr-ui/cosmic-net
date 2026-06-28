@@ -11,9 +11,7 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
-import { TickerBar } from "@/components/shell/TickerBar";
-import { UplinkStrip } from "@/components/shell/UplinkStrip";
-import { Footer } from "@/components/shell/Footer";
+import { ConsoleShell } from "@/components/shell/ConsoleShell";
 import { ProbeRunner } from "@/components/shell/ProbeRunner";
 
 function NotFoundComponent() {
@@ -93,7 +91,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=JetBrains+Mono:wght@400;500;700&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Major+Mono+Display&family=VT323&family=JetBrains+Mono:wght@400;500;700&display=swap",
       },
     ],
   }),
@@ -122,15 +120,10 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="min-h-screen bg-background text-foreground">
-        <TickerBar />
-        <UplinkStrip />
-        <main>
-          <Outlet />
-        </main>
-        <Footer />
-        <ProbeRunner />
-      </div>
+      <ConsoleShell>
+        <Outlet />
+      </ConsoleShell>
+      <ProbeRunner />
     </QueryClientProvider>
   );
 }
