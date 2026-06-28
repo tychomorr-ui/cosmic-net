@@ -9,6 +9,7 @@
 // as a drift fault.
 
 import { valueToCid } from "@/lib/cid";
+import { kvGet, kvSet } from "@/lib/sovereign-store";
 
 export const LANES = [
   "Core",
@@ -49,7 +50,7 @@ const ENV_KEY = "nexinus.pam.envelopes.v1";
 export function loadTruths(): LedgerTruth[] {
   if (typeof window === "undefined") return [];
   try {
-    return JSON.parse(window.localStorage.getItem(TRUTH_KEY) ?? "[]") as LedgerTruth[];
+    return JSON.parse(kvGet(TRUTH_KEY) ?? "[]") as LedgerTruth[];
   } catch {
     return [];
   }
@@ -57,7 +58,7 @@ export function loadTruths(): LedgerTruth[] {
 
 export function saveTruths(t: LedgerTruth[]): void {
   if (typeof window === "undefined") return;
-  window.localStorage.setItem(TRUTH_KEY, JSON.stringify(t));
+  kvSet(TRUTH_KEY, JSON.stringify(t));
 }
 
 export function activeTruths(): LedgerTruth[] {
@@ -79,7 +80,7 @@ export function declareTruth(statement: string, supersedes?: string): LedgerTrut
 export function loadEnvelopes(): Envelope[] {
   if (typeof window === "undefined") return [];
   try {
-    return JSON.parse(window.localStorage.getItem(ENV_KEY) ?? "[]") as Envelope[];
+    return JSON.parse(kvGet(ENV_KEY) ?? "[]") as Envelope[];
   } catch {
     return [];
   }
@@ -87,7 +88,7 @@ export function loadEnvelopes(): Envelope[] {
 
 function saveEnvelopes(e: Envelope[]): void {
   if (typeof window === "undefined") return;
-  window.localStorage.setItem(ENV_KEY, JSON.stringify(e));
+  kvSet(ENV_KEY, JSON.stringify(e));
 }
 
 export function head(): Envelope | null {

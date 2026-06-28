@@ -13,7 +13,8 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { ConsoleShell } from "@/components/shell/ConsoleShell";
 import { ProbeRunner } from "@/components/shell/ProbeRunner";
-import { initPostHog, posthog } from "@/lib/posthog";
+import { initPostHog, capturePageview } from "@/lib/posthog";
+import { kvHydrate } from "@/lib/sovereign-store";
 
 function NotFoundComponent() {
   return (
@@ -155,10 +156,11 @@ function RootComponent() {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
+    void kvHydrate();
     initPostHog();
-    posthog.capture("$pageview", { $current_url: window.location.href });
+    capturePageview(window.location.href);
     const unsub = router.subscribe("onResolved", () => {
-      posthog.capture("$pageview", { $current_url: window.location.href });
+      capturePageview(window.location.href);
     });
     return () => unsub();
   }, [router]);

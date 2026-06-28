@@ -3,8 +3,11 @@
 // operator. There is no global ledger and no token — each link is a
 // verifiable continuation of a node's operational truth.
 //
-// Persisted client-side in localStorage; the source of truth is the node
-// itself (its ed25519 key, its signed /status response).
+// Persisted client-side via the sovereign-store (localStorage front, IDB
+// mirror); the source of truth is the node itself (its ed25519 key, its
+// signed /status response).
+
+import { kvGet, kvSet } from "@/lib/sovereign-store";
 
 export type TruthChainLink = {
   id: string;            // slug
@@ -23,14 +26,10 @@ const LEGACY_KEY = "nexinus.terminus.fleet.v1";
 export function loadChain(): TruthChainLink[] {
   if (typeof window === "undefined") return [];
   try {
-    const raw =
-      window.localStorage.getItem(STORAGE_KEY) ??
-      window.localStorage.getItem(LEGACY_KEY);
+    const raw = kvGet(STORAGE_KEY) ?? kvGet(LEGACY_KEY);
     if (!raw) return [];
     const parsed = JSON.parse(raw) as TruthChainLink[];
-    if (window.localStorage.getItem(STORAGE_KEY) === null) {
-      window.localStorage.setItem(STORAGE_KEY, raw);
-    }
+    if (kvGet(STORAGE_KEY) === null) kvSet(STORAGE_KEY, raw);
     return parsed;
   } catch {
     return [];
@@ -39,7 +38,7 @@ export function loadChain(): TruthChainLink[] {
 
 export function saveChain(links: TruthChainLink[]): void {
   if (typeof window === "undefined") return;
-  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(links));
+  kvSet(STORAGE_KEY, JSON.stringify(links));
 }
 
 export function upsertLink(n: TruthChainLink): TruthChainLink[] {

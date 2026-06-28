@@ -4,6 +4,7 @@ import { OPS_LOG, DECLARED_GATEWAYS, OPS_ARTIFACT_NAME, type OpsEntry } from "@/
 import { canonicalize, valueToCid } from "@/lib/cid";
 import { probeCorsJson, probeOpaqueHead, type ProbeStatus } from "@/lib/probes";
 import { CentralizationInventory } from "@/components/audit/CentralizationInventory";
+import { TelemetryToggle } from "@/components/audit/TelemetryToggle";
 
 export const Route = createFileRoute("/ops")({
   head: () => ({
@@ -155,8 +156,9 @@ function OpsPage() {
         </ul>
       </section>
 
-      <section className="mt-10">
+      <section className="mt-10 space-y-4">
         <CentralizationInventory />
+        <TelemetryToggle />
       </section>
     </div>
   );
