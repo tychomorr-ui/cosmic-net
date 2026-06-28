@@ -58,6 +58,30 @@ if (add.status !== 0) {
 
 const cid = add.stdout.trim().split(/\r?\n/).pop();
 console.log(cid);
+
+// Pass 5c — write a local build receipt so the /ops surface can display
+// the CIDv1 of the artifact that was actually pinned. Public/ so that
+// any subsequent build copies it into the served bundle; we also drop
+// one alongside the build dir itself for direct inspection.
+import { mkdirSync, writeFileSync, statSync } from "node:fs";
+import { join } from "node:path";
+const receipt = {
+  cid,
+  dir: abs,
+  bytes: (() => { try { return statSync(abs).size; } catch { return undefined; } })(),
+  generated_at: new Date().toISOString(),
+  tool: "scripts/pin-ipfs.mjs",
+};
+const receiptJson = JSON.stringify(receipt, null, 2) + "\n";
+try {
+  mkdirSync("public", { recursive: true });
+  writeFileSync(join("public", "build-receipt.json"), receiptJson);
+  writeFileSync(join(abs, "build-receipt.json"), receiptJson);
+  console.error("pin-ipfs: wrote public/build-receipt.json + " + join(abs, "build-receipt.json"));
+} catch (e) {
+  console.error("pin-ipfs: could not write build-receipt.json:", e?.message ?? e);
+}
+
 console.error("");
 console.error("Sovereign-aligned next steps (operator-only, no managed deps):");
 console.error(`  ipfs name publish --key=cmap /ipfs/${cid}     # IPNS, your key`);
