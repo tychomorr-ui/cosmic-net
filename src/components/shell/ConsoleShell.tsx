@@ -1,5 +1,6 @@
-import { type ReactNode, useEffect, useState } from "react";
+import { type ReactNode, memo, useEffect, useMemo, useState } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
+import { useTickerEvents } from "@/lib/probe-store";
 import {
   LayoutGrid,
   Hammer,
@@ -42,14 +43,20 @@ const NAV: NavItem[] = [
   { name: "PROOF FULCRUM",    path: "/proof-fulcrum",   icon: ShieldCheck,    sigil: "◇", code: "PROOF" },
 ];
 
-const FEED = [
-  { tag: "TESSERACT-A", msg: "nexinus.net · 5.223.65.20 · SSL valid · sovereign auth" },
-  { tag: "VALKYRIE",    msg: "valkyrie.nexinus.net · 5.78.148.244 · SSL valid · dark mirror" },
-  { tag: "KETHER-GATE", msg: "kether.nexinus.net · SSL pending · node hub/mesh" },
+const STANCE_FEED: Array<{ tag: string; msg: string }> = [
   { tag: "STANCE",      msg: "zero third-party telemetry · zero vendor middleware · local-first" },
   { tag: "PAM",         msg: "in-browser WebGPU runtime · no packets leave during inference" },
   { tag: "SAA",         msg: "sovereign-node proxy · /api/saa/{stripe|paypal|chain|cashapp} · secrets node-side" },
 ];
+
+const CrtOverlay = memo(function CrtOverlay() {
+  return (
+    <div
+      className="crt-scanlines crt-vignette pointer-events-none absolute inset-0"
+      style={{ willChange: "transform" }}
+    />
+  );
+});
 
 export function ConsoleShell({ children }: { children: ReactNode }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
@@ -66,6 +73,33 @@ export function ConsoleShell({ children }: { children: ReactNode }) {
   const dayHour = isDay ? String(h - 5).padStart(2, "0") : null;
   const nightHour = !isDay ? String(h < 6 ? h + 7 : h - 17).padStart(2, "0") : null;
   const utc = now.toISOString().slice(11, 19);
+
+  // Live ticker: Archangel probe events (sliding window, 64). Synced to the
+  // 1Hz global clock — `now` invalidates this memo each tick.
+  const events = useTickerEvents();
+  const tickerItems = useMemo(() => {
+    void now; // keep ticker re-render aligned to clock tick
+    const stateCls = (s: string) =>
+      s === "measured"     ? "text-gold"
+      : s === "reachable"  ? "text-primary"
+      : s === "probing"    ? "text-primary/70"
+      : s === "unreachable"? "text-destructive"
+      : "text-muted-foreground";
+    const live = events.slice(0, 24).map((e) => ({
+      key: `e-${e.id}`,
+      tag: e.tag,
+      cls: stateCls(e.state),
+      msg: e.detail,
+    }));
+    const stance = STANCE_FEED.map((f, i) => ({
+      key: `s-${i}`,
+      tag: f.tag,
+      cls: "text-primary/70",
+      msg: f.msg,
+    }));
+    return [...live, ...stance];
+  }, [events, now]);
+
 
   return (
     <div className="crt-flicker relative flex h-screen flex-col overflow-hidden bg-background text-foreground">
@@ -144,13 +178,18 @@ export function ConsoleShell({ children }: { children: ReactNode }) {
             <span className="terminal-font text-sm leading-none text-primary">UPLINK {utc} UTC</span>
           </div>
           <div className="flex-1 overflow-hidden">
-            <div className="ticker-scroll flex whitespace-nowrap will-change-transform">
-              {[...FEED, ...FEED].map((it, i) => (
-                <span key={i} className="inline-flex items-center gap-2 px-6 text-[11px]">
-                  <span className="phosphor-soft text-primary">▸ {it.tag}</span>
-                  <span className="text-muted-foreground">{it.msg}</span>
-                </span>
-              ))}
+            <div className="flex h-full items-center gap-0 overflow-x-auto whitespace-nowrap" style={{ scrollbarWidth: "none" }}>
+              {tickerItems.length === 0 ? (
+                <span className="px-4 text-[11px] text-muted-foreground">awaiting first archangel heartbeat…</span>
+              ) : (
+                tickerItems.map((it) => (
+                  <span key={it.key} className="inline-flex items-center gap-2 px-4 text-[11px]">
+                    <span className={`phosphor-soft ${it.cls}`}>▸ {it.tag}</span>
+                    <span className="text-muted-foreground">{it.msg}</span>
+                    <span className="text-muted-foreground/40">·</span>
+                  </span>
+                ))
+              )}
             </div>
           </div>
         </div>
@@ -220,7 +259,7 @@ export function ConsoleShell({ children }: { children: ReactNode }) {
         <div className="phosphor-soft text-primary">⌬ NEXINUS MESH</div>
       </footer>
 
-      <div className="crt-scanlines crt-vignette pointer-events-none absolute inset-0" />
+      <CrtOverlay />
     </div>
   );
 }
