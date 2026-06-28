@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cosmic-net.dev/spec/archangel.v0.json",
+  "title": "ARCHANGEL/v0",
+  "description": "Frozen wire contract between the archangel node daemon and any verifier (browser control plane, aggregator). The signature is computed over the canonical JSON bytes of SignedPayload (no whitespace, lexicographic keys, sig_ed25519 omitted) and serialized into the same object as a lowercase hex string in the sig_ed25519 field.",
+  "version": "v0",
+  "endpoints": {
+    "GET /archangel/status": {
+      "auth": "none",
+      "response": { "$ref": "#/$defs/SignedStatus" },
+      "notes": "Returned on every probe. MEASURED state requires a valid ed25519 signature over canonicalize(payload \\ sig_ed25519) using the node's pinned public key."
+    }
+  },
+  "$defs": {
+    "SignedStatus": {
+      "type": "object",
+      "description": "Status payload with embedded ed25519 signature. Verifier MUST re-canonicalize the object minus sig_ed25519 and verify against the pinned node public key.",
+      "required": ["ts", "wg", "socks5", "dns", "sig_ed25519"],
+      "additionalProperties": false,
+      "properties": {
+        "ts":  { "type": "integer", "description": "Unix seconds at which the daemon assembled the payload." },
+        "wg": {
+          "type": "object",
+          "required": ["iface", "peers", "last_handshake_max_age_s"],
+          "additionalProperties": false,
+          "properties": {
+            "iface": { "type": "string" },
+            "peers": { "type": "integer", "minimum": 0 },
+            "last_handshake_max_age_s": { "type": "integer", "minimum": 0 }
+          }
+        },
+        "socks5": {
+          "type": "object",
+          "required": ["listen", "active_conns"],
+          "additionalProperties": false,
+          "properties": {
+            "listen": { "type": "string" },
+            "active_conns": { "type": "integer", "minimum": 0 }
+          }
+        },
+        "dns": {
+          "type": "object",
+          "required": ["zone", "records"],
+          "additionalProperties": false,
+          "properties": {
+            "zone": { "type": "string" },
+            "records": { "type": "integer", "minimum": 0 }
+          }
+        },
+        "sig_ed25519": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{128}$",
+          "description": "Lowercase hex of the 64-byte ed25519 signature."
+        }
+      }
+    }
+  },
+  "canonicalization": {
+    "spec": "RFC 8785 subset — JSON object only, lexicographic UTF-8 byte order on keys, no insignificant whitespace, JSON.stringify default number formatting. Integers only in v0; no floats.",
+    "key_order": ["dns", "socks5", "ts", "wg"],
+    "wg_key_order": ["iface", "last_handshake_max_age_s", "peers"],
+    "socks5_key_order": ["active_conns", "listen"],
+    "dns_key_order": ["records", "zone"],
+    "sig_field": "sig_ed25519 is REMOVED before canonicalization, then attached to the same object for transport.",
+    "encoding": "UTF-8"
+  },
+  "rules": [
+    "Private key generated only on the node (setup.sh, idempotent). Only the public half ever leaves.",
+    "Verifier defaults every render cycle to UNVERIFIED; only an explicit true verification transitions out.",
+    "Any thrown exception during verification ⇒ UNVERIFIED. Never reuse a prior render as fallback.",
+    "Verifier signs over the raw response bytes of the canonicalized payload, before any JSON.parse-derived re-serialization.",
+    "Stateless verifiers (browser) enforce a tight TTL on `ts` (≤120s). Aggregators add counter monotonicity (M3+).",
+    "Replay-defense level is labeled in UI: `tight-TTL` (stateless) vs `counter-monotonic` (aggregator)."
+  ]
+}
