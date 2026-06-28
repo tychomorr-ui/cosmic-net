@@ -130,7 +130,8 @@ function SeventhDimensionPage() {
           <Cell k="phase" v={`${phase + 1} · ${activeAxis.label}`} />
           <Cell k="axes" v="7" />
           <Cell k="resonance" v={`8 · ${pulse8}`} />
-          <Cell k="cadence" v="1Hz · ⟲ 25fps" />
+          <Cell k="coherence" v={`${(coh * 100).toFixed(1)}%`} />
+          <Cell k="cadence" v="coherence beat · ⟲ 25fps" />
         </div>
         <TruthChainOrgBanner cid={unityCid} />
       </header>
@@ -139,6 +140,7 @@ function SeventhDimensionPage() {
         <div className="bg-background/30 p-6">
           <Label a="HEPTAGRAM" b="HOLOGRAPHIC PROJECTION · ⟲ ROTATING" />
           <svg viewBox="0 0 350 350" className="mt-4 w-full">
+            <SriYantraOverlay coherence={coh} cx={cx} cy={cy} r={r} />
             <g transform={`rotate(${rot.toFixed(2)} ${cx} ${cy})`} style={{ transformOrigin: `${cx}px ${cy}px` }}>
               <circle cx={cx} cy={cy} r={r} fill="none" stroke="var(--border)" strokeWidth="1" />
               {/* counter-rotating phantom ring — duality */}
