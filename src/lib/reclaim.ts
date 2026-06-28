@@ -208,7 +208,7 @@ export async function importBundle(input: string | Uint8Array, mode: ImportMode 
     return applyLegacyV1(decoded as LegacyV1Bundle, mode, round_trip_ok);
   }
   if (version !== RECLAIM_VERSION) {
-    throw new Error(`unsupported bundle version: ${String(parsed?.v)}`);
+    throw new Error(`unsupported bundle version: ${String(version)}`);
   }
   if (!parsed.payload) throw new Error("bundle missing payload");
 
