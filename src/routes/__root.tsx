@@ -13,6 +13,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { ConsoleShell } from "@/components/shell/ConsoleShell";
 import { ProbeRunner } from "@/components/shell/ProbeRunner";
+import { initPostHog, posthog } from "@/lib/posthog";
 
 function NotFoundComponent() {
   return (
@@ -117,6 +118,17 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    initPostHog();
+    posthog.capture("$pageview", { $current_url: window.location.href });
+    const unsub = router.subscribe("onResolved", () => {
+      posthog.capture("$pageview", { $current_url: window.location.href });
+    });
+    return () => unsub();
+  }, [router]);
 
   return (
     <QueryClientProvider client={queryClient}>
