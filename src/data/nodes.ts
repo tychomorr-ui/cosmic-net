@@ -132,4 +132,24 @@ export const NODES: SovereignNode[] = [
     truth:
       "East Coast Relay is named in the topology vision. It is not a running service. Do not treat it as reachable.",
   },
+  {
+    id: "resonate-earth",
+    name: "Resonate-Earth",
+    provider: "resonate-earth.live",
+    region: "Public reachable host",
+    role: "Schumann-resonance witness · planetary substrate node",
+    tier: "attested",
+    declared: "ATTESTED · reachability probe in this card",
+    facts: [
+      "Sovereign witness surface for Earth's electromagnetic substrate.",
+      "Reachability probed via opaque HEAD; no CORS-readable health JSON yet.",
+      "Treated as a first-class vertex of the substrate layer alongside SUDO-COIN.",
+    ],
+    truth:
+      "Resonate-Earth couples the bitcoin substrate (work / pressure / density) to the planetary substrate (resonance / coherence). Promotion to MEASURED requires a signed /status surface; until then it is ATTESTED only.",
+    probe: {
+      kind: "no-cors-head",
+      url: "https://resonate-earth.live/",
+    },
+  },
 ];
