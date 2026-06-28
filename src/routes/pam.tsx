@@ -52,7 +52,7 @@ function PamConsole() {
   const [supersedes, setSupersedes] = useState("");
 
   useEffect(() => {
-    refresh();
+    void seedPeshwinV9().then(refresh);
   }, []);
 
   async function refresh() {
