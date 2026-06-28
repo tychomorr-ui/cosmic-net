@@ -43,14 +43,20 @@ const NAV: NavItem[] = [
   { name: "PROOF FULCRUM",    path: "/proof-fulcrum",   icon: ShieldCheck,    sigil: "◇", code: "PROOF" },
 ];
 
-const FEED = [
-  { tag: "TESSERACT-A", msg: "nexinus.net · 5.223.65.20 · SSL valid · sovereign auth" },
-  { tag: "VALKYRIE",    msg: "valkyrie.nexinus.net · 5.78.148.244 · SSL valid · dark mirror" },
-  { tag: "KETHER-GATE", msg: "kether.nexinus.net · SSL pending · node hub/mesh" },
+const STANCE_FEED: Array<{ tag: string; msg: string }> = [
   { tag: "STANCE",      msg: "zero third-party telemetry · zero vendor middleware · local-first" },
   { tag: "PAM",         msg: "in-browser WebGPU runtime · no packets leave during inference" },
   { tag: "SAA",         msg: "sovereign-node proxy · /api/saa/{stripe|paypal|chain|cashapp} · secrets node-side" },
 ];
+
+const CrtOverlay = memo(function CrtOverlay() {
+  return (
+    <div
+      className="crt-scanlines crt-vignette pointer-events-none absolute inset-0"
+      style={{ willChange: "transform" }}
+    />
+  );
+});
 
 export function ConsoleShell({ children }: { children: ReactNode }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
