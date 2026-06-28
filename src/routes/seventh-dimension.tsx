@@ -35,6 +35,7 @@ function SeventhDimensionPage() {
   const [chainLen, setChainLen] = useState(0);
   const [unityCid, setUnityCid] = useState<string>("");
   const [tick, setTick] = useState(0);
+  const [rot, setRot] = useState(0);
 
   useEffect(() => {
     const ore = loadOre();
@@ -47,7 +48,9 @@ function SeventhDimensionPage() {
       try { setSample(pushSample(await sampleSubstrate()).slice(-1)[0]); } catch { /* offline */ }
     })();
     const t = setInterval(() => setTick((x) => x + 1), 1000);
-    return () => clearInterval(t);
+    // 8-fold resonance: rotation advances by 360/8 = 45° each beat, smoothed.
+    const r = setInterval(() => setRot((x) => (x + 0.6) % 360), 40);
+    return () => { clearInterval(t); clearInterval(r); };
   }, []);
 
   const resonateNode = NODES.find((n) => n.id === "resonate-earth");
