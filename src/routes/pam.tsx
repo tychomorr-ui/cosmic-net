@@ -14,6 +14,7 @@ import {
 } from "@/data/truth-ledger";
 import { LANE_GLOSS, LANE_ORDER, detectDrift, mirror } from "@/lib/pam";
 import { pistifusReadout, type FaithScore } from "@/lib/pistifus";
+import { DoctrineAudit } from "@/components/audit/DoctrineAudit";
 
 export const Route = createFileRoute("/pam")({
   head: () => ({
@@ -354,6 +355,8 @@ function PamConsole() {
           </ol>
         )}
       </section>
+
+      <DoctrineAudit />
     </div>
   );
 }

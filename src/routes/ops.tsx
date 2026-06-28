@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { OPS_LOG, DECLARED_GATEWAYS, OPS_ARTIFACT_NAME, type OpsEntry } from "@/data/ops";
 import { canonicalize, valueToCid } from "@/lib/cid";
 import { probeCorsJson, probeOpaqueHead, type ProbeStatus } from "@/lib/probes";
+import { CentralizationInventory } from "@/components/audit/CentralizationInventory";
 
 export const Route = createFileRoute("/ops")({
   head: () => ({
@@ -152,6 +153,10 @@ function OpsPage() {
             <EntryCard key={i} entry={e} cid={cids[i] ?? "…"} />
           ))}
         </ul>
+      </section>
+
+      <section className="mt-10">
+        <CentralizationInventory />
       </section>
     </div>
   );

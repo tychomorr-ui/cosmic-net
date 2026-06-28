@@ -1,122 +1,65 @@
 
-# Cosmic Mesh Alignment — Unification Plan
+# cMAP Sovereignty Migration — Staged Plan
 
-Synthesis of the GitHub scan (`tychomorr-ui/nexinus-bootstrap`, `nexinus-net`, `tesseract`, `sudo-coin`) into this Terminus project. The bootstrap repo already contains the production doctrine — we adopt it verbatim and stop reinventing it.
+Goal: make cMAP infrastructure-independent (no Hetzner, no always-on backend) **without** breaking the current build or making un-cryptographic claims in the UI. Work is staged so each pass is independently shippable and reversible.
 
-## What the scan returned
+## Current reality (audit, before any code changes)
 
-- **`nexinus-bootstrap`** — the real source of truth. Ed25519 on-node keygen (`setup.sh`), signed heartbeat with monotonic `counter` + `measured_at` inside the signed payload, systemd timer rewriting every 15s, fail-closed verifier doctrine (`VERIFIER.md`), authenticated pubkey handoff over SSH (no TOFU), Zapier second-witness probe that refuses optimistic timestamps.
-- **`nexinus-net`** — Express+Drizzle+SSE platform with the canonical `state → content → done` wire format and constant-time auth on privileged modes. We reuse the SSE shape and constant-time gate, not the Express server.
-- **`tesseract` / `sudo-coin`** — doctrine/manifesto material. Becomes `/doctrine` content, not code.
-- **Current Terminus** — already has `node-daemon/` (Go, ARCHANGEL/v0), `src/lib/sovereign-keys.ts` (Noble curves), `src/lib/probe-signed.ts`. Roughly 60% of the target; the gaps are the shared spec, one-command enroll, and counter-aware verifier.
+- Frontend is TanStack Start running on a Cloudflare Worker (`src/server.ts`, `src/start.ts`). It is **not** hosted on Hetzner. The only Hetzner-shaped surface is the **node-daemon** (`archangel`) the operator deploys per node, plus probes against `monarch.xinus.one`, `valkyrie.xinus.one`, `resonate-earth.live`.
+- There are **no app-internal server functions** that hold secrets. All "backend" calls in the running app are direct browser → node HTTP/HEAD probes (see network log).
+- PostHog is the one centralized dependency baked into the client.
+- "Truth Chain" state already lives in `localStorage`; CIDs are already content-addressed via `@ipld/dag-json` + `multiformats`.
 
-## Target architecture — Nx monorepo
+So the migration is mostly: (a) prove the above in the UI, (b) make the static bundle IPFS-deployable, (c) name the centralized pieces honestly instead of removing things that were never there.
 
-```text
-cosmic-mesh/
-  apps/
-    web/                 # TanStack Start — current src/ moves here
-    daemon/              # Go archangel — current node-daemon/ moves here
-    bootstrap/           # static install.sh + pairing-code printer
-  packages/
-    protocol/            # ARCHANGEL/v0 spec — single source of truth
-      spec/archangel.v0.json
-      ts/                # generated TS types + canonical-bytes helper
-      go/                # generated Go structs + canonical-bytes helper
-    crypto/              # ed25519/x25519 wrappers (TS @noble, Go crypto/ed25519)
-    verifier/            # fail-closed verifier per VERIFIER.md
-    ui/                  # shared shadcn primitives + terminus theme tokens
-  nx.json, pnpm-workspace.yaml, go.work
-  tools/codegen/         # spec → ts + go generator
-```
+## Pass 1 — Verifiability Audit (UI ↔ doctrine)
 
-Nx targets: `web:build`, `web:dev`, `daemon:build` (custom executor → `go build`), `protocol:codegen`, `verifier:test` (golden vectors). `nx affected` drives CI.
+Cross-reference every user-visible claim against what the code can actually prove in-browser. Three categories:
 
-## Protocol — ARCHANGEL/v0
+1. **Provable now** — leave as-is, add a `verify` affordance if missing (CID recompute, HEAD reach, signature check).
+2. **Aspirational** — re-label with an `UNVERIFIED` / `DECLARED` sigil so the UI never overstates the mesh state.
+3. **Drift** — fix the string.
 
-Frozen wire contract, codegenned into both stacks. No hand-written struct drift.
+Deliverable: `src/lib/doctrine-audit.ts` exporting a typed list of `{ surface, claim, evidence, status }`, rendered at `/pam` under a new "Doctrine Audit" panel. No silent renames.
 
-**Identity envelope** (`GET /archangel/identity`, unauthenticated):
-```json
-{ "v":"ARCHANGEL/v0", "node_id":"valkyrie", "ed_pub":"<base64>", "x_pub":"<base64>",
-  "endpoint":"valkyrie.nexinus.net:51820", "issued_at":"<RFC3339>" }
-```
+## Pass 2 — Honest centralization inventory
 
-**Signed status** (`GET /archangel/status`):
-```json
-{ "payload":"<exact-bytes-string>", "sig":"<base64 ed25519>", "alg":"ed25519" }
-```
-`payload` is a canonical JSON string (sorted keys, no whitespace) containing `{ node, status, counter, measured_at, health }`.
+Add `src/lib/centralization-inventory.ts` enumerating every non-sovereign dependency the running app actually has:
 
-**Non-negotiable rules** (from `ATTESTATION.md` / `VERIFIER.md`):
-1. Private key generated only on the node. Only the public half leaves.
-2. `counter` and `measured_at` are inside the signed bytes — not envelope fields.
-3. Verifier signs over the raw response bytes of `payload`, before any `JSON.parse`.
-4. `counter` stays an opaque string until after verify (no Number precision loss).
-5. Every render cycle defaults to `UNVERIFIED`; only an explicit `true` transitions out. Thrown exception ⇒ `UNVERIFIED`, never green.
-6. Stateless verifier (browser) enforces tight TTL (≤120s). Aggregator (Cloud) enforces counter monotonicity per `node_id`.
-7. Replay defense is split and labeled in UI — never silently downgraded.
+- PostHog (`us.i.posthog.com`) — analytics, optional.
+- Google Fonts CDN — typography, replaceable with self-hosted woff2 in `public/`.
+- `monarch.xinus.one`, `valkyrie.xinus.one`, `resonate-earth.live` — probe targets.
+- Cloudflare Worker SSR host — currently serves the bundle.
 
-**Pairing handshake** (`POST /archangel/pair`, one-shot, 120s window): client posts pairing code + its ed_pub; daemon constant-time compares against local `/etc/archangel/pairing`, returns identity envelope signed by node_ed; client verifies sig against the ed_pub it just received, posts enrollment to Cloud.
+Surface this inventory at `/ops` so the user (and any auditor) can see exactly what would have to move before "infrastructure-independent" is a true statement.
 
-## One-command enrollment
+## Pass 3 — IPFS-ready static build
 
-```bash
-curl -fsSL https://cosmic.net/install.sh | sudo bash
-```
-A hardened evolution of `setup.sh`:
-1. Generates Ed25519 + X25519 keypairs (idempotent — never rotates if files exist).
-2. Installs `archangel` binary + systemd unit + 15s signed-heartbeat timer.
-3. Generates a 6-word BIP39 pairing code (~66 bits, single-use, 120s TTL), printed once + rendered as QR in TTY.
-4. Operator pastes code (or scans QR) into `/gateway`. Browser hits `/archangel/pair`, verifies signature, posts enrollment to Cloud.
-5. Cloud stores `{node_id, ed_pub, x_pub, endpoint, enrolled_at, enrolled_by}` with RLS scoped to the operator.
+Make the bundle deployable to IPFS without breaking the current Worker deploy.
 
-No pubkey paste. No TOFU on the pairing call — the code itself is the out-of-band secret, exactly as `ATTESTATION.md` requires.
+- Add `bun run build:static` that runs Vite in SPA mode (no SSR), emits `dist-static/` with **relative** asset paths (`base: './'`) so it works under any IPFS gateway path prefix.
+- Move the SSR-only bits (`src/server.ts`, `src/start.ts`, `routes/api/*` if any) out of the static graph via a conditional entry.
+- Self-host the two Google Fonts (`VT323`, `Major Mono Display`, `JetBrains Mono`) into `public/fonts/` and switch `__root.tsx` to a local `<link>` so the static bundle has zero third-party font fetches.
+- Add `scripts/pin-ipfs.mjs` — takes `dist-static/`, computes a CIDv1 locally with `@helia/unixfs`, prints the CID, and optionally pins via a `PINATA_JWT` if the user provides one later. No secret is required for the CID computation itself.
+- Document the IPNS / ENS mapping step in `README.md`. We do **not** auto-publish IPNS; that requires a key the user must hold.
 
-## Truth Chain (re-currency)
+This pass leaves the Worker deploy intact. IPFS becomes an additional, equally valid distribution channel.
 
-The chain is the per-node monotonic counter sequence, append-only in Cloud: `{node_id, counter, payload, sig, received_at, prev_counter_hash}`. A gap or non-monotonic counter is a hard red fault, not silently smoothed. State continuity *is* the asset; no token, no balance.
+## Pass 4 — Frontend-only state hardening
 
-## UX — native networking dashboard
+- Move `truth-chain` and `truth-ledger` from `localStorage` to **IndexedDB** via a thin `idb-keyval` wrapper, keeping the existing key shape. localStorage stays as a read-through fallback for one release so no operator loses their chain.
+- Replace the PostHog client with an **opt-in** local-only event log written to IndexedDB, gated behind a `cMAP · telemetry` toggle that defaults to OFF. PostHog stays removable in one commit; we don't silently keep it.
+- Document (not implement) the libp2p peer-discovery direction. Bundling js-libp2p into a static SPA is a real piece of work and should be its own plan once the IPFS distribution is live.
 
-Single Terminus shell. Routes collapse to:
-- `/` — fleet overview: live map, per-node UNVERIFIED→VERIFIED state machine, counter ribbon.
-- `/node/$id` — inspector: latest signed payload (raw-bytes view), counter sparkline, replay-defense badge (`tight-TTL` vs `counter-monotonic`).
-- `/gateway` — single field: pairing code. Whole enrollment UI.
-- `/doctrine` — `ATTESTATION.md` + `VERIFIER.md` rendered, with the guarantee-boundary table.
-- `/proof` — drop `{payload, sig, ed_pub}`, get fail-closed verification in-browser.
+## What this plan does NOT do
 
-Existing route sprawl (`/observatory`, `/ooda`, `/reclaim`, `/ops`, `/fleet`, `/forge`, `/ore`, etc.) consolidates into `/` tabs or moves to `/lab` behind a flag. That sprawl is the "patchwork" — we cut it.
+- Does not claim to remove Hetzner from anywhere it isn't. The Worker host is Cloudflare; the node-daemon is operator-chosen.
+- Does not auto-publish to IPNS or buy an ENS name — both need keys/funds only the user holds.
+- Does not bundle libp2p yet; that is Pass 5 once Passes 1–4 are shipped.
 
-## Iterative milestones
+## Decisions I need from you before I start
 
-**M1 — Protocol extraction (zero behavior change).** Create `packages/protocol/spec/archangel.v0.json`. Generate TS + Go. Replace hand-written types in `src/lib/probe-signed.ts` and `node-daemon/internal/status/`. Golden test vectors in `packages/verifier`.
-
-**M2 — Fail-closed verifier.** Rewrite browser verifier per `VERIFIER.md` 2A/2B/2C: raw-bytes verify, opaque counter, default-UNVERIFIED render. SPKI import test vector must pass on boot or the app refuses to render fleet data.
-
-**M3 — Daemon hardening.** Daemon emits canonical-JSON payload, signs with on-disk ed25519 key, includes `counter` + `measured_at` inside signed bytes. Persist counter to `/etc/archangel/counter`. Add `/archangel/identity`.
-
-**M4 — One-command enrollment.** `apps/bootstrap/install.sh` + pairing-code flow. `/gateway` reduced to one input. Cloud table `enrollments` with RLS + GRANTs in same migration.
-
-**M5 — Aggregator + counter monotonicity.** TanStack server function pulls `/archangel/status` every 15s, stores rows, flags gaps/regressions. `/node/$id` shows counter ribbon + replay-defense badge.
-
-**M6 — Nx monorepo cutover.** Move `src/` → `apps/web/`, `node-daemon/` → `apps/daemon/`. Wire `go.work`, Nx custom executor for Go, `nx affected` CI. Delete duplicate types.
-
-**M7 — UX consolidation.** Collapse routes to the 5 above. Move legacy blades to `/lab`. Render `/doctrine` from the same Markdown files the bootstrap repo ships.
-
-## Out of scope
-
-- No SUDO-COIN tokenomics, no Bitcoin anchoring — re-currency is the counter chain.
-- No replacement of WireGuard; daemon manages keys, OS handles traffic.
-- No port of `nexinus-net`'s Express server — we keep TanStack Start.
-- No automatic key rotation in M1–M7 — rotation stays a deliberate, separate act per `ATTESTATION.md`.
-
-## Technical notes
-
-- Codegen: `quicktype` for TS, `text/template` for Go, both consume `spec/archangel.v0.json`. CI fails if generated files drift.
-- Canonical JSON: RFC 8785 (JCS). TS and Go implementations must produce byte-identical output — enforced by golden vectors.
-- Pairing code: 6 BIP39 words, single-use, 120s TTL, constant-time compare on daemon.
-- Cloud schema (M5): `nodes`, `attestations`; `GRANT` + RLS in same migration; `TO anon` SELECT only on non-sensitive columns.
-- Nx Go executor: thin wrapper invoking `go build ./...` in `apps/daemon/`, cache key = hashed Go files + `go.sum`.
-
-Approve and I start at **M1** — it changes zero runtime behavior and is the prerequisite for everything else.
+1. **PostHog**: remove entirely, or keep as opt-in local-only (Pass 4)?
+2. **Fonts**: self-host the three Google Fonts now, or defer until Pass 3 ships?
+3. **Pinning**: do you want `scripts/pin-ipfs.mjs` wired to Pinata (needs a JWT secret later) or kept gateway-agnostic (CID only, you pin manually)?
+4. Approve staged shipping (Pass 1 first), or want all four passes in one batch?
