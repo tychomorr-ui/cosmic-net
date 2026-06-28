@@ -79,9 +79,11 @@ function UplinkRow({ row }: { row: Row }) {
   const dot =
     !row.probeId
       ? "bg-muted-foreground/40"
-      : probe.state === "ok"
+      : probe.state === "measured"
       ? "bg-[color:var(--measured)]"
-      : probe.state === "fail"
+      : probe.state === "reachable"
+      ? "bg-gold"
+      : probe.state === "unreachable"
       ? "bg-destructive"
       : probe.state === "probing"
       ? "bg-gold animate-pulse"
