@@ -87,6 +87,8 @@ function SeventhDimensionPage() {
 
   const phase = (tick % 7);
   const activeAxis = AXES[phase];
+  // Life-number-eight ladder: 8-fold pulse derived from the rotation phase.
+  const pulse8 = Math.round(((Math.sin(rot * Math.PI / 180) + 1) / 2) * 8);
 
   const oreActivity = Math.min(1, oreCount / 20);
   const sudoActivity = sample ? Math.min(1, sample.pressure / 20) : 0;
