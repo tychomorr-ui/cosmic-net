@@ -1,4 +1,9 @@
 @import "tailwindcss" source(none);
+@import "@fontsource/major-mono-display/400.css";
+@import "@fontsource/vt323/400.css";
+@import "@fontsource/jetbrains-mono/400.css";
+@import "@fontsource/jetbrains-mono/500.css";
+@import "@fontsource/jetbrains-mono/700.css";
 @source "../src";
 @import "tw-animate-css";
 
