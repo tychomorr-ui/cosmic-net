@@ -2,14 +2,14 @@
 // canonical payload, NOT on HTTP 200. Opaque-success and unsigned 200s are
 // REACHABLE at best.
 //
-// Wire types + canonicalizer come from @cosmic-net/protocol — the single
+// Wire types + canonicalizer come from @cosmic-mesh/protocol — the single
 // source of truth shared with the Go daemon (../packages/protocol/spec/).
 // Golden vectors in CI guarantee byte-identical canonical output between
 // stacks; any drift would silently invalidate every signature.
 
 import { verifyNodeStatus } from "./sovereign-keys";
 import type { ProbeStatus } from "./probes";
-import { splitSigned, type SignedStatus } from "@cosmic-net/protocol";
+import { splitSigned, type SignedStatus } from "@cosmic-mesh/protocol";
 
 // Re-export the wire type under its historical name so existing call sites
 // don't churn during the M1 protocol-extraction commit.

@@ -1,5 +1,5 @@
 
-# Cosmic Net — Unification Plan
+# Cosmic Mesh Alignment — Unification Plan
 
 Synthesis of the GitHub scan (`tychomorr-ui/nexinus-bootstrap`, `nexinus-net`, `tesseract`, `sudo-coin`) into this Terminus project. The bootstrap repo already contains the production doctrine — we adopt it verbatim and stop reinventing it.
 
@@ -13,7 +13,7 @@ Synthesis of the GitHub scan (`tychomorr-ui/nexinus-bootstrap`, `nexinus-net`, `
 ## Target architecture — Nx monorepo
 
 ```text
-cosmic-net/
+cosmic-mesh/
   apps/
     web/                 # TanStack Start — current src/ moves here
     daemon/              # Go archangel — current node-daemon/ moves here
