@@ -66,7 +66,7 @@ export function UplinkHeader() {
           <span>·</span>
           <span className="text-gold">#RealChange</span>
           <span className="text-border">·</span>
-          <span>KETHER_GATE · v1.3.0</span>
+          <span>cMAP · KETHER_GATE · v1.3.0</span>
           <span className="text-border">·</span>
           <span>SOV-ROOT</span>
         </div>
