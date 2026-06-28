@@ -151,13 +151,18 @@ export function ConsoleShell({ children }: { children: ReactNode }) {
             <span className="terminal-font text-sm leading-none text-primary">UPLINK {utc} UTC</span>
           </div>
           <div className="flex-1 overflow-hidden">
-            <div className="ticker-scroll flex whitespace-nowrap will-change-transform">
-              {[...FEED, ...FEED].map((it, i) => (
-                <span key={i} className="inline-flex items-center gap-2 px-6 text-[11px]">
-                  <span className="phosphor-soft text-primary">▸ {it.tag}</span>
-                  <span className="text-muted-foreground">{it.msg}</span>
-                </span>
-              ))}
+            <div className="flex h-full items-center gap-0 overflow-x-auto whitespace-nowrap" style={{ scrollbarWidth: "none" }}>
+              {tickerItems.length === 0 ? (
+                <span className="px-4 text-[11px] text-muted-foreground">awaiting first archangel heartbeat…</span>
+              ) : (
+                tickerItems.map((it) => (
+                  <span key={it.key} className="inline-flex items-center gap-2 px-4 text-[11px]">
+                    <span className={`phosphor-soft ${it.cls}`}>▸ {it.tag}</span>
+                    <span className="text-muted-foreground">{it.msg}</span>
+                    <span className="text-muted-foreground/40">·</span>
+                  </span>
+                ))
+              )}
             </div>
           </div>
         </div>
