@@ -236,3 +236,23 @@ function AxisRow({ glyph, name, desc, v, activity, href }: {
     </Link>
   );
 }
+
+function TruthChainOrgBanner({ cid }: { cid: string }) {
+  return (
+    <div className="mt-4 border border-primary/40 bg-primary/5 px-4 py-3 text-xs">
+      <div className="flex flex-wrap items-baseline justify-between gap-2">
+        <span className="text-[0.62rem] uppercase tracking-[0.22em] text-primary">
+          DOMAIN MIGRATION · truth-chain.org · ready
+        </span>
+        <span className="font-mono text-[0.65rem] text-muted-foreground">
+          unity {cid ? cid.slice(0, 22) + "…" : "computing"}
+        </span>
+      </div>
+      <p className="mt-1 text-foreground/80">
+        every unity CIDv1 above is ready for immediate deployment to the sovereign root.
+        no migration of state required — the hash IS the address.
+      </p>
+    </div>
+  );
+}
+
