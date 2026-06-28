@@ -1,31 +1,19 @@
 // Signed /status probe. MEASURED only on valid ed25519 signature over the
 // canonical payload, NOT on HTTP 200. Opaque-success and unsigned 200s are
 // REACHABLE at best.
+//
+// Wire types + canonicalizer come from @cosmic-net/protocol — the single
+// source of truth shared with the Go daemon (../packages/protocol/spec/).
+// Golden vectors in CI guarantee byte-identical canonical output between
+// stacks; any drift would silently invalidate every signature.
 
 import { verifyNodeStatus } from "./sovereign-keys";
 import type { ProbeStatus } from "./probes";
+import { splitSigned, type SignedStatus } from "@cosmic-net/protocol";
 
-export type NodeStatus = {
-  ts: number;
-  wg: { iface: string; peers: number; last_handshake_max_age_s: number };
-  socks5: { listen: string; active_conns: number };
-  dns: { zone: string; records: number };
-  sig_ed25519: string;
-};
-
-// Canonical form: stable key order, no whitespace, drop sig field.
-function canonicalize(o: Omit<NodeStatus, "sig_ed25519">): string {
-  return JSON.stringify({
-    dns: { records: o.dns.records, zone: o.dns.zone },
-    socks5: { active_conns: o.socks5.active_conns, listen: o.socks5.listen },
-    ts: o.ts,
-    wg: {
-      iface: o.wg.iface,
-      last_handshake_max_age_s: o.wg.last_handshake_max_age_s,
-      peers: o.wg.peers,
-    },
-  });
-}
+// Re-export the wire type under its historical name so existing call sites
+// don't churn during the M1 protocol-extraction commit.
+export type NodeStatus = SignedStatus;
 
 export async function probeSignedStatus(
   url: string,
@@ -39,13 +27,20 @@ export async function probeSignedStatus(
     const res = await fetch(url, { mode: "cors", signal: ctl.signal, cache: "no-store" });
     if (!res.ok) return { state: "unreachable", at, detail: `HTTP ${res.status}` };
     const body = (await res.json()) as NodeStatus;
-    if (!body.sig_ed25519) {
-      return { state: "reachable", at, detail: "200 · unsigned payload" };
+    let canon: string;
+    let sig: string;
+    try {
+      ({ canonical: canon, sig } = splitSigned(body));
+    } catch (e) {
+      return {
+        state: "reachable",
+        at,
+        detail: e instanceof Error ? `200 · ${e.message}` : "200 · malformed payload",
+      };
     }
-    const { sig_ed25519, ...rest } = body;
-    const canon = canonicalize(rest);
-    const valid = verifyNodeStatus(canon, sig_ed25519, expectedEdPubHex);
-    if (!valid) return { state: "reachable", at, detail: "200 · signature invalid" };
+    const valid = verifyNodeStatus(canon, sig, expectedEdPubHex);
+    // Fail-closed: any non-true result is UNVERIFIED.
+    if (valid !== true) return { state: "reachable", at, detail: "200 · signature invalid" };
     const stale = body.wg.last_handshake_max_age_s > 180;
     return {
       state: "measured",
@@ -60,3 +55,4 @@ export async function probeSignedStatus(
     clearTimeout(timer);
   }
 }
+

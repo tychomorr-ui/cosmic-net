@@ -1,0 +1,35 @@
+{
+  "$comment": "Byte-identical canonicalization fixtures. TS and Go implementations MUST produce `canonical_bytes_utf8_hex` for the given `payload`. Any drift fails CI on both stacks. Do not edit values without bumping the spec version.",
+  "vectors": [
+    {
+      "name": "valkyrie-quiet",
+      "payload": {
+        "ts": 1735689600,
+        "wg": { "iface": "wg0", "peers": 0, "last_handshake_max_age_s": 0 },
+        "socks5": { "listen": "10.42.0.1:1080", "active_conns": 0 },
+        "dns": { "zone": "xinus.", "records": 12 }
+      },
+      "canonical_utf8": "{\"dns\":{\"records\":12,\"zone\":\"xinus.\"},\"socks5\":{\"active_conns\":0,\"listen\":\"10.42.0.1:1080\"},\"ts\":1735689600,\"wg\":{\"iface\":\"wg0\",\"last_handshake_max_age_s\":0,\"peers\":0}}"
+    },
+    {
+      "name": "valkyrie-active",
+      "payload": {
+        "ts": 1735693200,
+        "wg": { "iface": "wg0", "peers": 7, "last_handshake_max_age_s": 42 },
+        "socks5": { "listen": "10.42.0.1:1080", "active_conns": 3 },
+        "dns": { "zone": "xinus.", "records": 18 }
+      },
+      "canonical_utf8": "{\"dns\":{\"records\":18,\"zone\":\"xinus.\"},\"socks5\":{\"active_conns\":3,\"listen\":\"10.42.0.1:1080\"},\"ts\":1735693200,\"wg\":{\"iface\":\"wg0\",\"last_handshake_max_age_s\":42,\"peers\":7}}"
+    },
+    {
+      "name": "tesseract-stale",
+      "payload": {
+        "ts": 1735696800,
+        "wg": { "iface": "wg0", "peers": 2, "last_handshake_max_age_s": 600 },
+        "socks5": { "listen": "10.42.0.1:1080", "active_conns": 0 },
+        "dns": { "zone": "xinus.", "records": 5 }
+      },
+      "canonical_utf8": "{\"dns\":{\"records\":5,\"zone\":\"xinus.\"},\"socks5\":{\"active_conns\":0,\"listen\":\"10.42.0.1:1080\"},\"ts\":1735696800,\"wg\":{\"iface\":\"wg0\",\"last_handshake_max_age_s\":600,\"peers\":2}}"
+    }
+  ]
+}
