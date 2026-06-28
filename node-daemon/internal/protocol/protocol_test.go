@@ -22,7 +22,9 @@ type vectors struct {
 
 func loadVectors(t *testing.T) vectors {
 	t.Helper()
-	path := filepath.Join("..", "spec", "golden-vectors.json")
+	// Single source of truth: packages/protocol/spec/golden-vectors.json,
+	// resolved from node-daemon/internal/protocol/.
+	path := filepath.Join("..", "..", "..", "packages", "protocol", "spec", "golden-vectors.json")
 	b, err := os.ReadFile(path)
 	if err != nil {
 		t.Fatalf("read golden vectors: %v", err)
