@@ -1,8 +1,11 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { parseProvenance } from "@/lib/provenance";
+import { getAnchor, subscribeAnchors, type Anchor } from "@/lib/anchors";
 
 export function ProvenanceReceipts() {
   const receipts = useMemo(() => parseProvenance(), []);
+  const [, force] = useState(0);
+  useEffect(() => subscribeAnchors(() => force((n) => n + 1)), []);
   return (
     <section className="border border-border bg-card/30 p-6">
       <div className="flex items-baseline justify-between">
@@ -58,14 +61,24 @@ export function ProvenanceReceipts() {
                     SHA-256
                   </div>
                   <ul className="mt-1 space-y-1">
-                    {r.hashes.map((h) => (
-                      <li
-                        key={h}
-                        className="break-all font-mono text-[0.7rem] text-foreground"
-                      >
-                        {h}
-                      </li>
-                    ))}
+                    {r.hashes.map((h) => {
+                      const a: Anchor | undefined = getAnchor(h);
+                      return (
+                        <li key={h} className="border border-border bg-background/60 p-2">
+                          <div className="break-all font-mono text-[0.7rem] text-foreground">{h}</div>
+                          {a ? (
+                            <div className="mt-1 font-mono text-[0.6rem] uppercase tracking-[0.16em] text-[color:var(--measured)]">
+                              ANCHORED · block #{a.block_height}
+                              {a.txid ? ` · tx ${a.txid.slice(0, 12)}…` : ""}
+                            </div>
+                          ) : (
+                            <div className="mt-1 font-mono text-[0.6rem] uppercase tracking-[0.16em] text-gold">
+                              PENDING · record anchor in Final Manifest
+                            </div>
+                          )}
+                        </li>
+                      );
+                    })}
                   </ul>
                 </div>
               )}
