@@ -60,3 +60,6 @@ fs.writeFileSync("/mnt/documents/golden-truth.manifest.json", bytes);
 fs.writeFileSync("/mnt/documents/golden-truth.manifest.sha256.txt",
   `${shaHex}  golden-truth.manifest.json\nCID: ${cid}\nbytes: ${bytes.length}\npayload_cid: ${payload_cid}\nanchored: ${anchored}/${enriched.length}\n`);
 console.log({cid, sha256: shaHex, bytes: bytes.length, anchored, total: enriched.length});
+
+console.log("\nPENDING receipts:");
+for (const r of enriched) if (!r.anchor) console.log(" -", r.sha256, "·", r.subsystem, "·", r.command, "·", r.ts);
