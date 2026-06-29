@@ -10,6 +10,7 @@ import { TelemetryToggle } from "@/components/audit/TelemetryToggle";
 import { ReclaimExport } from "@/components/audit/ReclaimExport";
 import { MeshHealth } from "@/components/audit/MeshHealth";
 import { ProvenanceReceipts } from "@/components/audit/ProvenanceReceipts";
+import { FinalManifest } from "@/components/audit/FinalManifest";
 
 export const Route = createFileRoute("/ops")({
   head: () => ({
@@ -162,6 +163,7 @@ function OpsPage() {
       </section>
 
       <section className="mt-10 space-y-4">
+        <FinalManifest />
         <MeshHealth />
         <ProvenanceReceipts />
         <ReclaimExport />
