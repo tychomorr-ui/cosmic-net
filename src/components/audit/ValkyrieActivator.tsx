@@ -124,7 +124,7 @@ function probeLine(s: ProbeStatus): { label: string; tone: string; detail: strin
     case "measured":
       return { label: "LIVE", tone: "text-[color:var(--measured)]", detail: s.detail };
     case "reachable":
-      return { label: "THEATER", tone: "text-gold", detail: s.detail };
+      return { label: "UNSIGNED", tone: "text-gold", detail: s.detail };
     case "unreachable":
       return { label: "BROKEN", tone: "text-destructive", detail: s.detail };
     case "probing":
