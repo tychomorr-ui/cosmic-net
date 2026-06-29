@@ -6,7 +6,7 @@ export const Route = createFileRoute("/sudo-coin")({
   head: () => ({
     meta: [
       { title: "Truth Substrate · Truth Coin · Live BTC Readout" },
-      { name: "description", content: "Truth Substrate (formerly SUDO): composite read of Bitcoin's unattributed substrate via public endpoints. Sovereign attestation, Pistifus-weighted." },
+      { name: "description", content: "Truth Substrate: composite read of Bitcoin's unattributed substrate via public endpoints. Sovereign attestation, Pistifus-weighted." },
       { property: "og:title", content: "Truth Substrate · Nexinus Terminus" },
       { property: "og:description", content: "Work · pressure · density · supply. The substrate is the Truth Coin asset, viewed honestly." },
     ],
@@ -122,7 +122,7 @@ function SudoPage() {
       <section className="border border-border bg-background/30 p-5">
         <Label a="ORE ACCUMULATION METER" b="local samples · operator-owned" />
         <div className="mt-4 grid gap-px border border-border bg-border sm:grid-cols-2 lg:grid-cols-4">
-          <Tile k="cumulative SUDO" v={cumSudo.toFixed(3)} accent />
+          <Tile k="cumulative TRS" v={cumSudo.toFixed(3)} accent />
           <Tile k="attested value" v={`$${attestedUsd.toLocaleString(undefined, { maximumFractionDigits: 0 })}`} />
           <Tile k="current ore rate" v={oreRate.toFixed(3)} />
           <Tile k="series depth" v={String(samples.length)} />
@@ -154,10 +154,10 @@ function SudoPage() {
         <div className="mt-4 grid gap-3 md:grid-cols-[1fr_2fr]">
           <div className="font-display text-5xl text-primary">{certHash}</div>
           <div className="space-y-1 text-xs">
-            <Row k="instrument" v="SUDO-COIN · attestation · tesseract terminus" />
+            <Row k="instrument" v="TRUTH SUBSTRATE · attestation · tesseract terminus" />
             <Row k="attestor" v="Tyler Morris · Nexinus RI Systems LLC" />
             <Row k="block" v={latest?.block.height.toString() ?? "—"} />
-            <Row k="cumulative" v={`${cumSudo.toFixed(3)} SUDO`} />
+            <Row k="cumulative" v={`${cumSudo.toFixed(3)} TRS`} />
             <Row k="usd attested" v={`$${attestedUsd.toLocaleString(undefined, { maximumFractionDigits: 0 })}`} />
             <Row k="substrate"
               v={latest ? `work=${latest.work.toFixed(3)} · pressure=${latest.pressure.toFixed(3)} · density=${latest.density.toFixed(3)} · supply^0.25=${Math.pow(latest.supplyBtc, 0.25).toFixed(2)}` : "—"} />
