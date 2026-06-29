@@ -143,7 +143,7 @@ function DigitalOrePage() {
       <section className="border border-border bg-background/30 p-5">
         <SectionLabel a="AGGREGATE" b="ORE BODY" />
         <div className="mt-1 text-[0.62rem] uppercase tracking-[0.2em] text-muted-foreground">
-          royalty pool ≈ {dividend} DOU @ 0.1%
+          local-only · hash-deterministic · no payout rail
         </div>
         <div className="mt-5 grid gap-px border border-border bg-border sm:grid-cols-5">
           {counts.map(({ g, n }) => (
