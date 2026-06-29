@@ -166,6 +166,7 @@ function RootComponent() {
         <Outlet />
       </ConsoleShell>
       <ProbeRunner />
+      <Toaster />
     </QueryClientProvider>
   );
 }
