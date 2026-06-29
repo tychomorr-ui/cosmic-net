@@ -75,7 +75,7 @@ export const DOCTRINE_AUDIT: AuditRow[] = [
     status: "declared",
   },
   {
-    surface: "Truth Coin / SUDO-Coin labels",
+    surface: "Truth Coin / Truth Substrate labels",
     claim: "Coin substrate.",
     evidence: "src/lib/btc-substrate.ts reads live BTC headers; no minting, no token.",
     status: "provable",

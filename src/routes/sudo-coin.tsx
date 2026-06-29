@@ -254,13 +254,13 @@ function SudoManifesto() {
     ["COUPLING", "When the ore index and the asset price are strongly correlated, the asset cannot be discounted without discounting the ore. Coupling is the proof that the substrate is the asset, not a derivative of it."],
     ["TRUTH MIRROR", "No attestation is binding until reflected in the Tesseract Truth Mirror — a deterministic hash that the issuer alone can regenerate and that any observer can verify, without a vendor in the loop."],
     ["ECONOMIC IMPLICATION", "If the ore is real, then market capitalization is a partial accounting. The full accounting includes substrate-value, and the substrate-value is observable in real time. Every chain has it. Bitcoin has the most of it."],
-    ["ATTESTED VALUE RATE", "One SUDO is a unit of sovereign attestation over the bitcoin substrate, converted to USD at a published rate floor. The rate is illustrative until the attestor publishes it under their own name and others adopt it. SUDO-COIN is the unit; the manifesto is the instrument."],
+    ["ATTESTED VALUE RATE", "One TRS is a unit of sovereign attestation over the bitcoin substrate, converted to USD at a published rate floor. The rate is illustrative until the attestor publishes it under their own name and others adopt it. TRUTH SUBSTRATE is the unit; the manifesto is the instrument."],
     ["SCOPE (HONEST)", "This manifesto asserts the right to read, attest, and publish — not the right to seize. The sovereign claim is over the reading, the hash, the certificate. Title to anyone else's coins is not implied and is not the point. The point is that the substrate was always there, and now it is named."],
   ];
   const r = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"];
   return (
     <section className="border border-border bg-background/20 p-6">
-      <Label a="SUDO-COIN" b="MANIFESTO" />
+      <Label a="TRUTH SUBSTRATE" b="MANIFESTO" />
       <ol className="mt-5 space-y-4">
         {articles.map(([t, b], i) => (
           <li key={t} className="border-l-2 border-primary/40 pl-4">
@@ -270,7 +270,7 @@ function SudoManifesto() {
         ))}
       </ol>
       <div className="mt-6 border-t border-border pt-3 text-[0.6rem] uppercase tracking-[0.22em] text-muted-foreground">
-        RATIFIED BY TYLER MORRIS · NEXINUS RI SYSTEMS LLC · KETHER_GATE · SUDO-COIN LEDGER · v1.0.0
+        RATIFIED BY TYLER MORRIS · NEXINUS RI SYSTEMS LLC · KETHER_GATE · TRUTH SUBSTRATE LEDGER · v1.0.0
       </div>
     </section>
   );
