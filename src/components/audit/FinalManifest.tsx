@@ -14,6 +14,7 @@ export function FinalManifest() {
   const [m, setM] = useState<ManifestT | null>(null);
   const [busy, setBusy] = useState(false);
   const [form, setForm] = useState({ sha: "", height: "", txid: "" });
+  const [otsText, setOtsText] = useState("");
   const [err, setErr] = useState<string | null>(null);
 
   const refresh = useMemo(
@@ -53,10 +54,28 @@ export function FinalManifest() {
         source: "ots-verify",
       });
       setForm({ sha: "", height: "", txid: "" });
+      setOtsText("");
     } catch (e2) {
       setErr(e2 instanceof Error ? e2.message : "invalid input");
     }
   };
+
+  // Parse `ots verify` stdout: extracts BTC block height + optional txid.
+  // Matches phrasings like "Bitcoin block 955889 attests existence" and
+  // "Bitcoin attestation in block 955889" and "txid <hex>".
+  const parseOts = (text: string) => {
+    const block = text.match(/(?:block|height)\s+(\d{4,})/i);
+    const tx = text.match(/\b([a-f0-9]{64})\b/i);
+    setOtsText(text);
+    setErr(null);
+    setForm((f) => ({
+      ...f,
+      height: block ? block[1] : f.height,
+      txid: tx ? tx[1].toLowerCase() : f.txid,
+    }));
+  };
+
+  const pendingShas = (m?.receipts ?? []).filter((r) => !r.anchor);
 
   const download = () => {
     if (!m) return;
