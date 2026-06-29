@@ -3,6 +3,7 @@
 // an honest anchor-entry form and a JSON download.
 
 import { useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
 import {
   buildFinalManifest,
   type FinalManifest as ManifestT,
