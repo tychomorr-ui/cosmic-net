@@ -1,5 +1,13 @@
 [
   {
+    "ts": "2026-06-29T18:50:00.000Z",
+    "level": "INFO",
+    "subsystem": "FINAL-MANIFEST",
+    "command": "manifest.recompute",
+    "result": "FINAL MANIFEST RECEIPT — anchors recorded\n\nAnchored (2):\n  • 0de8ed98f41bd656686793c67dec9108b5e29c10ccd6cb8fe272cbfab76c590b  →  BTC block 955889  (digital-ore-1782710516222.json)\n  • fcff668eca6effffacd2c62dcc6209c34c97595ac3e98e8bbdff5fdfb3df4c66  →  BTC block 955897  (ots-verify.py)\n\nStill PENDING:\n  • 8c426dc600f932157c4397e4303f8c09186ff0c5c8a73ada17550632b4abfa45  (Universal Justice Manifesto — OTS calendar accepted, BTC unconfirmed)\n\nCoupling: PARTIAL — two of three receipts are Bitcoin-anchored. Golden Truth CID recomputed over (payload_cid + anchored receipts). Manifest flips to GOLDEN when the manifesto anchor confirms.\n\nDoctrine: the CID is content-defined, not timestamp-defined — recomputing yields the same CID until a new anchor is recorded or a receipt changes.",
+    "sessionId": "manifest-recompute-2026-06-29"
+  },
+  {
     "ts": "2026-06-29T17:30:00.000Z",
     "level": "CMD",
     "subsystem": "PROVENANCE",
