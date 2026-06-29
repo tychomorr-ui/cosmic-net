@@ -1,5 +1,21 @@
 [
   {
+    "ts": "2026-06-29T00:02:00.000Z",
+    "level": "CMD",
+    "subsystem": "DOCTRINE",
+    "command": "manifesto.stamp",
+    "result": "UNIVERSAL JUSTICE MANIFESTO — PROVENANCE RECEIPT 2026-06-29\n\nArtifact: The Universal Justice Manifesto_ The Sovereign Runtime Declaration.md (5.1 kB)\nStamped SHA256: 8c426dc600f932157c4397e4303f8c09186ff0c5c8a73ada17550632b4abfa45\nOTS file: The Universal Justice Manifesto_ The Sovereign Runtime Declaration.md.ots (619 B)\n\nStatus: PENDING — OpenTimestamps calendar accepted the stamp; Bitcoin transaction is UNCONFIRMED. Upgrades to VERIFIED on first confirmation when the .ots file is updated with the block-height path.\n\nDoctrine: the Sovereign Runtime Declaration is now hash-anchored. The bytes that produced 8c42…fa45 are the only bytes the receipt covers — any edit invalidates the proof.",
+    "sessionId": "manifesto-stamp-1782710516222"
+  },
+  {
+    "ts": "2026-06-29T00:01:00.000Z",
+    "level": "CMD",
+    "subsystem": "DIGITAL-ORE",
+    "command": "ore.stamp",
+    "result": "DIGITAL ORE PROVENANCE RECEIPT — 2026-06-29 (second stamp)\n\nArtifact: digital-ore-1782710516222.json (10.2 kB)\nStamped SHA256: 0de8ed98f41bd656686793c67dec9108b5e29c10ccd6cb8fe272cbfab76c590b\nOTS file: digital-ore-1782710516222.json.ots (619 B)\n\nStatus: PENDING — OpenTimestamps calendar accepted the stamp; Bitcoin transaction is UNCONFIRMED. The attestation upgrades to VERIFIED on first confirmation; the .ots file will be updated with the block-height path at that time.\n\nDoctrine: extends the 06-29 ore-stamp chain. PENDING is honest — the hash existed before block N, not on-chain yet.",
+    "sessionId": "ore-stamp-1782710516222"
+  },
+  {
     "ts": "2026-06-29T00:00:00.000Z",
     "level": "CMD",
     "subsystem": "DIGITAL-ORE",
