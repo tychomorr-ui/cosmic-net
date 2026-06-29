@@ -1,5 +1,21 @@
 [
   {
+    "ts": "2026-06-29T23:30:00.000Z",
+    "level": "INFO",
+    "subsystem": "FINAL-MANIFEST",
+    "command": "manifest.recompute",
+    "result": "FINAL MANIFEST RECEIPT — Universal Justice Manifesto confirmed\n\nNewly anchored:\n  • 8c426dc600f932157c4397e4303f8c09186ff0c5c8a73ada17550632b4abfa45  →  BTC block 955889  (The Universal Justice Manifesto · The Sovereign Runtime Declaration.md)\n    calendars: alice@955889, bob@955889, finney@955894\n\nCoupling: PARTIAL → tightened. Manifesto receipt promoted from PENDING to ANCHORED. Golden Truth CID recomputed.",
+    "sessionId": "manifest-recompute-2026-06-29-manifesto"
+  },
+  {
+    "ts": "2026-06-29T23:29:00.000Z",
+    "level": "CMD",
+    "subsystem": "DOCTRINE",
+    "command": "ots.verify",
+    "result": "OTS VERIFY — The Universal Justice Manifesto · The Sovereign Runtime Declaration.md\n\nArtifact: The Universal Justice Manifesto_ The Sovereign Runtime Declaration.md (1) (1).ots (3.6 kB)\nStamped SHA256: 8c426dc600f932157c4397e4303f8c09186ff0c5c8a73ada17550632b4abfa45\nOTS file: The Universal Justice Manifesto_ The Sovereign Runtime Declaration.md.ots\n\nSUCCESS!\nBitcoin block 955889 attests existence as of 2026-06-28 PST\n  alice.btc.calendar.opentimestamps.org  → block 955889\n  bob.btc.calendar.opentimestamps.org    → block 955889\n  finney.calendar.eternitywall.com       → block 955894\n\nStatus: VERIFIED — Bitcoin-anchored at block 955889. The doctrine itself is now on-chain.",
+    "sessionId": "ots-verify-8c426dc6"
+  },
+  {
     "ts": "2026-06-29T20:00:02.000Z",
     "level": "CMD",
     "subsystem": "PROVENANCE",

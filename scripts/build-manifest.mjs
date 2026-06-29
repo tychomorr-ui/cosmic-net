@@ -25,6 +25,7 @@ const anchors = {
   "0faeb10d3cf69ec65907f3de833d413f132a935aa7dd90d3557e7d5a18838ec3": {anchored_at:1782774403019, block_height:955974, note:"GO_OMNI_GO-001.txt", source:"ots-verify"},
   "0de8ed98f41bd656686793c67dec9108b5e29c10ccd6cb8fe272cbfab76c590b": {anchored_at:1782758859621, block_height:955889, note:"digital-ore-1782710516222.json — Bitcoin block 955889, 2026-06-28 PST", source:"ots-verify"},
   "fcff668eca6effffacd2c62dcc6209c34c97595ac3e98e8bbdff5fdfb3df4c66": {anchored_at:1782758859621, block_height:955897, note:"ots-verify.py — Bitcoin block 955897, 2026-06-28 PST", source:"ots-verify"},
+  "8c426dc600f932157c4397e4303f8c09186ff0c5c8a73ada17550632b4abfa45": {anchored_at:Date.now(), block_height:955889, note:"Universal Justice Manifesto · Sovereign Runtime Declaration — alice@955889 bob@955889 finney@955894", source:"ots-verify"},
 };
 for (const [sha,a] of Object.entries(anchors)) a.sha256 = sha;
 
