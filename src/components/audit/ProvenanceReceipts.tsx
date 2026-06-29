@@ -1,6 +1,28 @@
 import { useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
 import { parseProvenance } from "@/lib/provenance";
 import { getAnchor, subscribeAnchors, type Anchor } from "@/lib/anchors";
+
+function CopyShaButton({ sha }: { sha: string }) {
+  const [copied, setCopied] = useState(false);
+  return (
+    <button
+      onClick={async () => {
+        try {
+          await navigator.clipboard.writeText(sha);
+          setCopied(true);
+          toast.success("SHA-256 copied", { description: `${sha.slice(0, 12)}…${sha.slice(-8)}` });
+          setTimeout(() => setCopied(false), 1200);
+        } catch {
+          toast.error("Clipboard unavailable");
+        }
+      }}
+      className="shrink-0 border border-border px-2 py-0.5 text-[0.6rem] uppercase tracking-[0.16em] text-muted-foreground hover:text-gold"
+    >
+      {copied ? "copied" : "copy sha"}
+    </button>
+  );
+}
 
 export function ProvenanceReceipts() {
   const receipts = useMemo(() => parseProvenance(), []);
