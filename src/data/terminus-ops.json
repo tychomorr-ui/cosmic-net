@@ -1,5 +1,29 @@
 [
   {
+    "ts": "2026-06-29T20:00:02.000Z",
+    "level": "CMD",
+    "subsystem": "PROVENANCE",
+    "command": "ots.verify",
+    "result": "OTS VERIFY — truth-substrate-ledger-01-1.mhtml\n\nArtifact: truth-substrate-ledger-01-1.mhtml (12.0 kB)\nStamped SHA256: 325037bda158c135794fb097f365822e7c5da01147282cb3cde032bc5e251f02\nOTS file: truth-substrate-ledger-01-1.mhtml.ots (584 B)\n\nSUCCESS!\nBitcoin block 955974 attests existence as of 2026-06-29 PST\n\nStatus: VERIFIED — Bitcoin-anchored at block 955974.",
+    "sessionId": "ots-verify-325037bd"
+  },
+  {
+    "ts": "2026-06-29T20:00:01.000Z",
+    "level": "CMD",
+    "subsystem": "PROVENANCE",
+    "command": "ots.verify",
+    "result": "OTS VERIFY — The XinUS Movement.txt\n\nArtifact: The XinUS Movement.txt (251.0 kB)\nStamped SHA256: e54f67b589ff65af66e12f219e2693b8f341e26ec52ee89a69f57cfa2f30d0bc\nOTS file: The XinUS Movement.txt.ots (3.5 kB)\n\nSUCCESS!\nBitcoin block 955967 attests existence as of 2026-06-29 PST\n\nStatus: VERIFIED — Bitcoin-anchored at block 955967.",
+    "sessionId": "ots-verify-e54f67b5"
+  },
+  {
+    "ts": "2026-06-29T20:00:00.000Z",
+    "level": "CMD",
+    "subsystem": "PROVENANCE",
+    "command": "ots.verify",
+    "result": "OTS VERIFY — GO_OMNI_GO-001.txt\n\nArtifact: GO_OMNI_GO-001.txt (1.5 MB)\nStamped SHA256: 0faeb10d3cf69ec65907f3de833d413f132a935aa7dd90d3557e7d5a18838ec3\nOTS file: GO_OMNI_GO-001.txt.ots (514 B)\n\nSUCCESS!\nBitcoin block 955974 attests existence as of 2026-06-29 PST\n\nStatus: VERIFIED — Bitcoin-anchored at block 955974.",
+    "sessionId": "ots-verify-0faeb10d"
+  },
+  {
     "ts": "2026-06-29T18:50:00.000Z",
     "level": "INFO",
     "subsystem": "FINAL-MANIFEST",
