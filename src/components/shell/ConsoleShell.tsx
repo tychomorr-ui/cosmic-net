@@ -38,7 +38,7 @@ const NAV: NavItem[] = [
   { name: "SAM Command",      path: "/sam-command",     icon: Compass,        sigil: "✧", code: "OMNI" },
   { name: "PAM Monarch",      path: "/pam",             icon: Crown,          sigil: "♕", code: "PAM" },
   { name: "Digital Ore",      path: "/digital-ore",     icon: Gem,            sigil: "⛬", code: "ORE" },
-  { name: "SUDO-COIN",        path: "/sudo-coin",       icon: Sparkles,       sigil: "◈", code: "SUDO" },
+  { name: "Truth Substrate",  path: "/sudo-coin",       icon: Sparkles,       sigil: "◈", code: "TRS" },
   { name: "QUANTOTALUS",      path: "/quantotalus",     icon: Triangle,       sigil: "◬", code: "QUANT" },
   { name: "PROOF FULCRUM",    path: "/proof-fulcrum",   icon: ShieldCheck,    sigil: "◇", code: "PROOF" },
 ];

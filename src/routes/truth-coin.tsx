@@ -42,11 +42,11 @@ function TruthCoin() {
       </section>
 
       <section className="border border-primary/40 bg-background/40 p-6">
-        <div className="text-[0.65rem] uppercase tracking-[0.22em] text-primary">SUBSTRATE BRIDGE · TRC ↔ DOU ↔ SUDO</div>
+        <div className="text-[0.65rem] uppercase tracking-[0.22em] text-primary">SUBSTRATE BRIDGE · TRC ↔ DOU ↔ TRS</div>
         <h2 className="mt-2 font-display text-2xl text-foreground">Truth Chain carries Digital Ore</h2>
         <p className="mt-2 max-w-3xl text-sm text-foreground/85">
           Truth Coin is the redistribution arc. <strong>Digital Ore</strong> is the operator's claim on intellectual byproduct.
-          <strong> SUDO-COIN</strong> is the sovereign reading of the underlying chain's substrate. Together they form one
+          <strong> Truth Substrate</strong> is the sovereign reading of the underlying chain's substrate. Together they form one
           continuity: refined ore → attested substrate → issued truth. The Truth Chain links them — every link is a CID-anchored
           witness, not a custodial entry.
         </p>
@@ -57,7 +57,7 @@ function TruthCoin() {
             <div className="mt-1 text-[0.65rem] text-muted-foreground">FNV-1a · local ledger · truth mirror</div>
           </Link>
           <Link to="/sudo-coin" className="block border border-border bg-card/40 p-4 hover:border-primary">
-            <div className="text-[0.6rem] uppercase tracking-[0.2em] text-primary">◈ SUDO-COIN</div>
+            <div className="text-[0.6rem] uppercase tracking-[0.2em] text-primary">◈ Truth Substrate</div>
             <div className="mt-1 text-sm text-foreground">Bitcoin substrate · attested</div>
             <div className="mt-1 text-[0.65rem] text-muted-foreground">work × pressure × density × supply^¼</div>
           </Link>

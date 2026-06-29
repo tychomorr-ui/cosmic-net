@@ -13,7 +13,7 @@ import { NODES, type SovereignNode } from "@/data/nodes";
 import { useProbeStatus } from "@/lib/probe-store";
 import type { ProbeStatus } from "@/lib/probes";
 
-type CouplingState = "live" | "broken" | "theater" | "doctrine";
+type CouplingState = "live" | "broken" | "unsigned" | "doctrine";
 
 function classify(node: SovereignNode, s: ProbeStatus): { tone: CouplingState; label: string; detail: string } {
   if (!node.probe) {
@@ -29,15 +29,15 @@ function classify(node: SovereignNode, s: ProbeStatus): { tone: CouplingState; l
   }
   if (s.state === "measured") {
     return {
-      tone: "theater",
-      label: "THEATER",
+      tone: "unsigned",
+      label: "UNSIGNED",
       detail: `${kind} · ${s.detail ?? "200 OK without signed payload"}`,
     };
   }
   if (s.state === "reachable") {
     return {
-      tone: "theater",
-      label: "THEATER",
+      tone: "unsigned",
+      label: "UNSIGNED",
       detail: `opaque reachability · ${s.detail ?? "no signed payload"}`,
     };
   }
@@ -53,7 +53,7 @@ function classify(node: SovereignNode, s: ProbeStatus): { tone: CouplingState; l
 const TONE: Record<CouplingState, string> = {
   live: "text-[color:var(--measured)] border-[color:var(--measured)]/40",
   broken: "text-destructive border-destructive/40",
-  theater: "text-gold border-gold/40",
+  unsigned: "text-gold border-gold/40",
   doctrine: "text-muted-foreground border-border",
 };
 
@@ -81,10 +81,10 @@ export function MeshHealth() {
         </span>
       </div>
       <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
-        THEATER means the origin answered but did not satisfy the ARCHANGEL/v0 signed-status
-        contract. Promote a node by serving signed <code className="font-mono">/status</code>{" "}
-        from the daemon and switching its <code className="font-mono">probe.kind</code> to{" "}
-        <code className="font-mono">signed-status</code>.
+        UNSIGNED means the origin answered but did not satisfy the ARCHANGEL/v0 signed-status
+        contract — opaque 200s never pass as LIVE. Promote a node by serving signed{" "}
+        <code className="font-mono">/status</code> from the daemon and switching its{" "}
+        <code className="font-mono">probe.kind</code> to <code className="font-mono">signed-status</code>.
       </p>
       <ul className="mt-4 grid gap-2 sm:grid-cols-2">
         {NODES.map((n) => (

@@ -1,5 +1,5 @@
 // Operator-only form: bind a node's ed25519 public key + signed-status URL
-// at runtime so MeshHealth can promote it from THEATER to LIVE the moment
+// at runtime so MeshHealth can promote it from UNSIGNED to LIVE the moment
 // the daemon serves a valid ARCHANGEL/v0 signed /status.
 //
 // Stored locally (localStorage + IDB). No key is ever shipped to the repo.
@@ -60,7 +60,7 @@ export function ValkyrieActivator() {
         Blade Activator · signed-status override
       </div>
       <h3 className="mt-2 font-display text-lg text-foreground">
-        Promote a node from THEATER → LIVE
+        Promote a node from UNSIGNED → LIVE
       </h3>
       <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
         Paste the daemon's 32-byte ed25519 public key (64 hex chars) and the
@@ -124,7 +124,7 @@ function probeLine(s: ProbeStatus): { label: string; tone: string; detail: strin
     case "measured":
       return { label: "LIVE", tone: "text-[color:var(--measured)]", detail: s.detail };
     case "reachable":
-      return { label: "THEATER", tone: "text-gold", detail: s.detail };
+      return { label: "UNSIGNED", tone: "text-gold", detail: s.detail };
     case "unreachable":
       return { label: "BROKEN", tone: "text-destructive", detail: s.detail };
     case "probing":

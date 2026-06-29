@@ -13,7 +13,7 @@ export const Route = createFileRoute("/seventh-dimension")({
   head: () => ({
     meta: [
       { title: "Seventh Dimension · Unification Surface" },
-      { name: "description", content: "The 7D unifier: Digital Ore × SUDO-COIN × Truth Chain × Resonate-Earth, projected as a single sovereign axis." },
+      { name: "description", content: "The 7D unifier: Digital Ore × Truth Substrate × Truth Chain × Resonate-Earth, projected as a single sovereign axis." },
       { property: "og:title", content: "Seventh Dimension · Nexinus Terminus" },
       { property: "og:description", content: "Refined ore, attested substrate, and planetary resonance — one CID, one witness, one axis." },
     ],
@@ -23,7 +23,7 @@ export const Route = createFileRoute("/seventh-dimension")({
 
 const AXES = [
   { id: "ore", label: "ORE", glyph: "⛬", desc: "intellectual byproduct" },
-  { id: "sudo", label: "SUDO", glyph: "◈", desc: "chain substrate" },
+  { id: "sudo", label: "TRS", glyph: "◈", desc: "chain substrate" },
   { id: "chain", label: "CHAIN", glyph: "◇", desc: "truth links" },
   { id: "earth", label: "EARTH", glyph: "⬡", desc: "planetary resonance" },
   { id: "pam", label: "PAM", glyph: "♕", desc: "lane discipline" },
@@ -121,7 +121,7 @@ function SeventhDimensionPage() {
         </div>
         <h1 className="mt-3 text-sm uppercase tracking-[0.18em] text-primary">one axis · seven projections</h1>
         <p className="mt-2 max-w-3xl text-xs text-muted-foreground">
-          the seventh-dimensional projection collapses ore (operator byproduct), sudo (chain substrate),
+          the seventh-dimensional projection collapses ore (operator byproduct), truth substrate (chain substrate read),
           truth-chain links, resonate-earth resonance, pam lane discipline, and kether key custody onto a single
           recomputable witness. nothing here is novel state — it is the existing local sovereign field, seen as one.
         </p>
@@ -178,7 +178,7 @@ function SeventhDimensionPage() {
 
         <div className="space-y-px bg-border">
           <AxisRow glyph="⛬" name="ORE" desc="operator-refined byproduct" v={`${oreCount} claims · ${oreDou.toFixed(2)} DOU`} activity={oreActivity} href="/digital-ore" />
-          <AxisRow glyph="◈" name="SUDO" desc="bitcoin substrate read" v={sample ? `block ${sample.block.height.toLocaleString()} · ore=${sample.oreIndex.toFixed(2)}` : "awaiting sample"} activity={sudoActivity} href="/sudo-coin" />
+          <AxisRow glyph="◈" name="TRS" desc="bitcoin substrate read" v={sample ? `block ${sample.block.height.toLocaleString()} · ore=${sample.oreIndex.toFixed(2)}` : "awaiting sample"} activity={sudoActivity} href="/sudo-coin" />
           <AxisRow glyph="◇" name="CHAIN" desc="truth-chain links enrolled" v={`${chainLen} link${chainLen === 1 ? "" : "s"}`} activity={chainActivity} href="/fleet" />
           <AxisRow glyph="⬡" name="EARTH" desc="resonate-earth.live" v={resonateNode?.declared ?? "—"} activity={0.5} href="/nebula" />
           <AxisRow glyph="♕" name="PAM" desc="lane discipline ledger" v="CID-chained envelopes" activity={0.7} href="/pam" />
@@ -198,7 +198,7 @@ function SeventhDimensionPage() {
         <div className="mt-3 grid gap-px border border-border bg-border sm:grid-cols-4">
           <Cell k="ore claims" v={String(oreCount)} />
           <Cell k="cum DOU" v={oreDou.toFixed(2)} />
-          <Cell k="sudo block" v={sample?.block.height.toLocaleString() ?? "—"} />
+          <Cell k="trs block" v={sample?.block.height.toLocaleString() ?? "—"} />
           <Cell k="chain links" v={String(chainLen)} />
         </div>
       </section>
