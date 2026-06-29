@@ -20,7 +20,7 @@
     "level": "CMD",
     "subsystem": "DIGITAL-ORE",
     "command": "ore.stamp",
-    "result": "DIGITAL ORE PROVENANCE RECEIPT — 2026-06-29 (second stamp)\n\nArtifact: digital-ore-1782710516222.json (10.2 kB)\nStamped SHA256: 0de8ed98f41bd656686793c67dec9108b5e29c10ccd6cb8fe272cbfab76c590b\nOTS file: digital-ore-1782710516222.json.ots (619 B)\n\nStatus: PENDING — OpenTimestamps calendar accepted the stamp; Bitcoin transaction is UNCONFIRMED. The attestation upgrades to VERIFIED on first confirmation; the .ots file will be updated with the block-height path at that time.\n\nDoctrine: extends the 06-29 ore-stamp chain. PENDING is honest — the hash existed before block N, not on-chain yet.",
+    "result": "DIGITAL ORE PROVENANCE RECEIPT — 2026-06-29 (second stamp)\n\nArtifact: digital-ore-1782710516222.json (10.2 kB)\nStamped SHA256: 0de8ed98f41bd656686793c67dec9108b5e29c10ccd6cb8fe272cbfab76c590b\nOTS file: digital-ore-1782710516222.json.ots (619 B)\n\nStatus: VERIFIED — Bitcoin block 955889 attests existence as of 2026-06-28 PST. Record this anchor in the Final Manifest (block 955889) to fold it into the Golden Truth CID.\n\nDoctrine: extends the 06-29 ore-stamp chain. The hash 0de8…c590b is now Bitcoin-anchored; any edit to the source bytes invalidates the proof.",
     "sessionId": "ore-stamp-1782710516222"
   },
   {
