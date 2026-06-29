@@ -65,7 +65,10 @@ export function ProvenanceReceipts() {
                       const a: Anchor | undefined = getAnchor(h);
                       return (
                         <li key={h} className="border border-border bg-background/60 p-2">
-                          <div className="break-all font-mono text-[0.7rem] text-foreground">{h}</div>
+                          <div className="flex flex-wrap items-start justify-between gap-2">
+                            <div className="break-all font-mono text-[0.7rem] text-foreground">{h}</div>
+                            <CopyShaButton sha={h} />
+                          </div>
                           {a ? (
                             <div className="mt-1 font-mono text-[0.6rem] uppercase tracking-[0.16em] text-[color:var(--measured)]">
                               ANCHORED · block #{a.block_height}
