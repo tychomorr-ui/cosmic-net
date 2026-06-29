@@ -32,7 +32,7 @@ function DigitalOrePage() {
   const live = useMemo(() => refine(text, source), [text, source]);
   const totalDou = useMemo(() => ledger.reduce((s, x) => s + x.dou, 0), [ledger]);
   const motherlode = ledger.filter((x) => x.grade === "MOTHERLODE").length;
-  const dividend = +(totalDou * 0.001).toFixed(3);
+  const avgYield = ledger.length ? +(totalDou / ledger.length).toFixed(2) : 0;
 
   const mirrorComputed = mirrorText.trim() ? fnv1a(`${source}::${mirrorText.trim()}`) : "";
   const mirrorValid = mirrorText.trim() && mirrorHash.trim()
