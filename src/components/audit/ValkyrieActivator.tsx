@@ -13,6 +13,8 @@ import {
   subscribeOverrides,
   type NodeOverride,
 } from "@/lib/node-overrides";
+import { useProbeStatus } from "@/lib/probe-store";
+import type { ProbeStatus } from "@/lib/probes";
 
 const PROMOTABLE = NODES.filter((n) => n.probe && n.probe.kind !== "signed-status");
 
