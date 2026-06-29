@@ -118,3 +118,57 @@ export function ValkyrieActivator() {
     </section>
   );
 }
+
+function probeLine(s: ProbeStatus): { label: string; tone: string; detail: string } {
+  switch (s.state) {
+    case "measured":
+      return { label: "LIVE", tone: "text-[color:var(--measured)]", detail: s.detail };
+    case "reachable":
+      return { label: "THEATER", tone: "text-gold", detail: s.detail };
+    case "unreachable":
+      return { label: "BROKEN", tone: "text-destructive", detail: s.detail };
+    case "probing":
+      return { label: "PROBING", tone: "text-muted-foreground", detail: "handshake in flight" };
+    default:
+      return { label: "IDLE", tone: "text-muted-foreground", detail: "awaiting first tick" };
+  }
+}
+
+function OverrideRow({
+  id,
+  ov,
+  onClear,
+}: {
+  id: string;
+  ov: NodeOverride;
+  onClear: () => void;
+}) {
+  const n = NODES.find((x) => x.id === id);
+  const status = useProbeStatus(id);
+  const line = probeLine(status);
+  return (
+    <li className="flex flex-wrap items-start justify-between gap-2 border border-border bg-background/60 p-3">
+      <div className="min-w-0 flex-1">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="font-mono text-xs text-foreground">{n?.name ?? id}</span>
+          <span className={`text-[0.6rem] uppercase tracking-[0.18em] ${line.tone}`}>
+            {line.label}
+          </span>
+        </div>
+        <div className="break-all font-mono text-[0.65rem] text-muted-foreground">{ov.url}</div>
+        <div className="break-all font-mono text-[0.65rem] text-foreground/70">
+          pub {ov.edPubHex.slice(0, 12)}…{ov.edPubHex.slice(-8)}
+        </div>
+        <div className="mt-1 font-mono text-[0.6rem] text-muted-foreground">
+          last probe · {line.detail}
+        </div>
+      </div>
+      <button
+        onClick={onClear}
+        className="text-[0.6rem] uppercase tracking-[0.18em] text-muted-foreground hover:text-destructive"
+      >
+        clear
+      </button>
+    </li>
+  );
+}
