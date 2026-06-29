@@ -2,6 +2,7 @@ import "./lib/error-capture";
 
 import { consumeLastCapturedError } from "./lib/error-capture";
 import { renderErrorPage } from "./lib/error-page";
+import { signedStatusServerSource } from "./lib/signed-status-server-source";
 
 type ServerEntry = {
   fetch: (request: Request, env: unknown, ctx: unknown) => Promise<Response> | Response;
@@ -40,6 +41,21 @@ async function normalizeCatastrophicSsrResponse(response: Response): Promise<Res
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
     try {
+      const url = new URL(request.url);
+      if (
+        request.method === "GET" &&
+        (url.pathname === "/signed-status-server.py" ||
+          url.pathname === "/api/public/signed-status-server.py")
+      ) {
+        return new Response(signedStatusServerSource, {
+          status: 200,
+          headers: {
+            "content-type": "text/x-python; charset=utf-8",
+            "cache-control": "public, max-age=300",
+          },
+        });
+      }
+
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
       return await normalizeCatastrophicSsrResponse(response);
