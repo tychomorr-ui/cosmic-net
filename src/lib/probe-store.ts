@@ -82,6 +82,11 @@ async function runOne(id: string) {
   const status =
     node.probe.kind === "cors-json"
       ? await probeCorsJson(node.probe.url, node.probe.okField)
+      : node.probe.kind === "signed-status"
+      ? await (await import("./probe-signed")).probeSignedStatus(
+          node.probe.url,
+          node.probe.edPubHex ?? "",
+        )
       : await probeOpaqueHead(node.probe.url);
   store.set(id, status);
   emit();

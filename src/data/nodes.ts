@@ -11,9 +11,10 @@ export type SovereignNode = {
   facts: string[];
   truth: string;
   probe?: {
-    kind: "cors-json" | "no-cors-head";
+    kind: "cors-json" | "no-cors-head" | "signed-status";
     url: string;
     okField?: string; // dot-path in JSON, defaults to "ok"
+    edPubHex?: string; // expected ed25519 pubkey for signed-status probes
   };
 };
 
