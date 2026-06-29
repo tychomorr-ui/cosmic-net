@@ -63,7 +63,7 @@ export const DOCTRINE_AUDIT: AuditRow[] = [
     status: "aspirational",
   },
   {
-    surface: "valkyrie.xinus.one probe",
+    surface: "valkyrie.nexinus.net probe",
     claim: "Reachable as a declared gateway.",
     evidence: "Network log: HEAD currently fails (TypeError: Failed to fetch). Surface as UNREACHABLE.",
     status: "declared",

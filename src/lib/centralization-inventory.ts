@@ -54,7 +54,7 @@ export const CENTRALIZATION_INVENTORY: Centralized[] = [
   },
   {
     id: "valkyrie",
-    host: "valkyrie.xinus.one",
+    host: "valkyrie.nexinus.net",
     purpose: "Operator-run gateway probe target.",
     category: "probe",
     removable: "operator-choice",
