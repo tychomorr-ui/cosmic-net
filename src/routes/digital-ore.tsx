@@ -160,7 +160,7 @@ function DigitalOrePage() {
           <Tile k="total ore (DOU)" v={totalDou.toFixed(2)} />
           <Tile k="entries" v={String(ledger.length)} />
           <Tile k="motherlode" v={String(motherlode)} />
-          <Tile k="dividend pool" v={`${dividend} DOU`} />
+          <Tile k="avg yield" v={`${avgYield} DOU`} />
         </div>
       </section>
 
