@@ -76,7 +76,7 @@ describe("probeSignedStatus · ARCHANGEL/v0 reference envelope", () => {
     mockFetch(buildEnvelope({ ts }));
     const r = await probeSignedStatus("https://x/status", PUB);
     expect(r.state).toBe("measured");
-    expect(r.detail).toMatch(/signed · cid matched/);
+    expect("detail" in r && r.detail).toMatch(/signed · cid matched/);
   });
 
   it("is case-insensitive on pub hex", async () => {
@@ -89,14 +89,14 @@ describe("probeSignedStatus · ARCHANGEL/v0 reference envelope", () => {
     mockFetch(buildEnvelope({ pub: "a".repeat(64) }));
     const r = await probeSignedStatus("https://x/status", PUB);
     expect(r.state).toBe("reachable");
-    expect(r.detail).toMatch(/pub mismatch/);
+    expect("detail" in r && r.detail).toMatch(/pub mismatch/);
   });
 
   it("rejects when payload_cid does not match recomputed sha256", async () => {
     mockFetch(buildEnvelope({ payload_cid: "0".repeat(64) }));
     const r = await probeSignedStatus("https://x/status", PUB);
     expect(r.state).toBe("reachable");
-    expect(r.detail).toMatch(/payload_cid drift/);
+    expect("detail" in r && r.detail).toMatch(/payload_cid drift/);
   });
 
   it("rejects when payload is mutated after signing (cid drift)", async () => {
@@ -106,7 +106,7 @@ describe("probeSignedStatus · ARCHANGEL/v0 reference envelope", () => {
     mockFetch(env);
     const r = await probeSignedStatus("https://x/status", PUB);
     expect(r.state).toBe("reachable");
-    expect(r.detail).toMatch(/payload_cid drift/);
+    expect("detail" in r && r.detail).toMatch(/payload_cid drift/);
   });
 
   it("rejects when signature is corrupted but well-formed hex", async () => {
@@ -115,14 +115,14 @@ describe("probeSignedStatus · ARCHANGEL/v0 reference envelope", () => {
     mockFetch(env);
     const r = await probeSignedStatus("https://x/status", PUB);
     expect(r.state).toBe("reachable");
-    expect(r.detail).toMatch(/signature invalid/);
+    expect("detail" in r && r.detail).toMatch(/signature invalid/);
   });
 
   it("rejects when signature is malformed (non-hex)", async () => {
     mockFetch(buildEnvelope({ sig: "not-hex" }));
     const r = await probeSignedStatus("https://x/status", PUB);
     expect(r.state).toBe("reachable");
-    expect(r.detail).toMatch(/signature invalid/);
+    expect("detail" in r && r.detail).toMatch(/signature invalid/);
   });
 
   it("rejects when signature was made by a different key", async () => {
@@ -135,7 +135,7 @@ describe("probeSignedStatus · ARCHANGEL/v0 reference envelope", () => {
     const r = await probeSignedStatus("https://x/status", PUB);
     // pub still matches expected, but sig was made by otherSeed → invalid.
     expect(r.state).toBe("reachable");
-    expect(r.detail).toMatch(/signature invalid/);
+    expect("detail" in r && r.detail).toMatch(/signature invalid/);
   });
 
   it("flags stale payloads even when signature is valid", async () => {
@@ -143,14 +143,14 @@ describe("probeSignedStatus · ARCHANGEL/v0 reference envelope", () => {
     mockFetch(buildEnvelope({ ts }));
     const r = await probeSignedStatus("https://x/status", PUB);
     expect(r.state).toBe("reachable");
-    expect(r.detail).toMatch(/stale/);
+    expect("detail" in r && r.detail).toMatch(/stale/);
   });
 
   it("returns unreachable on non-2xx", async () => {
     mockFetch({}, { ok: false, status: 502 });
     const r = await probeSignedStatus("https://x/status", PUB);
     expect(r.state).toBe("unreachable");
-    expect(r.detail).toMatch(/HTTP 502/);
+    expect("detail" in r && r.detail).toMatch(/HTTP 502/);
   });
 
   it("returns unreachable on fetch error", async () => {
@@ -162,7 +162,7 @@ describe("probeSignedStatus · ARCHANGEL/v0 reference envelope", () => {
     );
     const r = await probeSignedStatus("https://x/status", PUB);
     expect(r.state).toBe("unreachable");
-    expect(r.detail).toMatch(/dns fail/);
+    expect("detail" in r && r.detail).toMatch(/dns fail/);
   });
 
   it("does not accept an opaque 200 JSON without envelope fields", async () => {
@@ -170,6 +170,6 @@ describe("probeSignedStatus · ARCHANGEL/v0 reference envelope", () => {
     const r = await probeSignedStatus("https://x/status", PUB);
     expect(r.state).toBe("reachable");
     // Falls through to daemon-shape parse, which rejects on missing sig_ed25519.
-    expect(r.detail).toMatch(/sig_ed25519|malformed/);
+    expect("detail" in r && r.detail).toMatch(/sig_ed25519|malformed/);
   });
 });
