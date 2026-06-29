@@ -5,6 +5,7 @@
 // Runs in node — no window. Provides a tiny in-memory localStorage shim so
 // kvSet/kvGet work during import-roundtrip tests.
 
+import "fake-indexeddb/auto";
 import { describe, expect, it, beforeEach } from "vitest";
 import * as dagJson from "@ipld/dag-json";
 
