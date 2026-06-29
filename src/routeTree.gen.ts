@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as VerifyRouteImport } from './routes/verify'
 import { Route as TruthPointRouteImport } from './routes/truth-point'
 import { Route as TruthCoinRouteImport } from './routes/truth-coin'
 import { Route as SudoCoinRouteImport } from './routes/sudo-coin'
@@ -29,6 +30,11 @@ import { Route as FleetRouteImport } from './routes/fleet'
 import { Route as DigitalOreRouteImport } from './routes/digital-ore'
 import { Route as IndexRouteImport } from './routes/index'
 
+const VerifyRoute = VerifyRouteImport.update({
+  id: '/verify',
+  path: '/verify',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TruthPointRoute = TruthPointRouteImport.update({
   id: '/truth-point',
   path: '/truth-point',
@@ -145,6 +151,7 @@ export interface FileRoutesByFullPath {
   '/sudo-coin': typeof SudoCoinRoute
   '/truth-coin': typeof TruthCoinRoute
   '/truth-point': typeof TruthPointRoute
+  '/verify': typeof VerifyRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -166,6 +173,7 @@ export interface FileRoutesByTo {
   '/sudo-coin': typeof SudoCoinRoute
   '/truth-coin': typeof TruthCoinRoute
   '/truth-point': typeof TruthPointRoute
+  '/verify': typeof VerifyRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -188,6 +196,7 @@ export interface FileRoutesById {
   '/sudo-coin': typeof SudoCoinRoute
   '/truth-coin': typeof TruthCoinRoute
   '/truth-point': typeof TruthPointRoute
+  '/verify': typeof VerifyRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -211,6 +220,7 @@ export interface FileRouteTypes {
     | '/sudo-coin'
     | '/truth-coin'
     | '/truth-point'
+    | '/verify'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -232,6 +242,7 @@ export interface FileRouteTypes {
     | '/sudo-coin'
     | '/truth-coin'
     | '/truth-point'
+    | '/verify'
   id:
     | '__root__'
     | '/'
@@ -253,6 +264,7 @@ export interface FileRouteTypes {
     | '/sudo-coin'
     | '/truth-coin'
     | '/truth-point'
+    | '/verify'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -275,10 +287,18 @@ export interface RootRouteChildren {
   SudoCoinRoute: typeof SudoCoinRoute
   TruthCoinRoute: typeof TruthCoinRoute
   TruthPointRoute: typeof TruthPointRoute
+  VerifyRoute: typeof VerifyRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/verify': {
+      id: '/verify'
+      path: '/verify'
+      fullPath: '/verify'
+      preLoaderRoute: typeof VerifyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/truth-point': {
       id: '/truth-point'
       path: '/truth-point'
@@ -435,17 +455,8 @@ const rootRouteChildren: RootRouteChildren = {
   SudoCoinRoute: SudoCoinRoute,
   TruthCoinRoute: TruthCoinRoute,
   TruthPointRoute: TruthPointRoute,
+  VerifyRoute: VerifyRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
