@@ -13,6 +13,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { ConsoleShell } from "@/components/shell/ConsoleShell";
 import { ProbeRunner } from "@/components/shell/ProbeRunner";
+import { Toaster } from "@/components/ui/sonner";
 import { initPostHog, capturePageview } from "@/lib/posthog";
 import { kvHydrate } from "@/lib/sovereign-store";
 
