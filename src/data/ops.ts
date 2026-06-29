@@ -16,7 +16,7 @@ export const OPS_LOG: OpsEntry[] = opsRaw as OpsEntry[];
 export const DECLARED_GATEWAYS = [
   { host: "tesseract.manus.space", url: "https://tesseract.manus.space" },
   { host: "nexinus.net", url: "https://nexinus.net" },
-  { host: "valkyrie-nexinus.net", url: "https://valkyrie-nexinus.net" },
+  { host: "valkyrie.nexinus.net", url: "https://valkyrie.nexinus.net" },
   { host: "xinus.one", url: "https://xinus.one" },
   { host: "monarch.xinus.one", url: "https://monarch.xinus.one/health" },
 ] as const;
