@@ -366,5 +366,29 @@
     "command": "system.init",
     "result": "Metrics on STANDBY. Awaiting secure Hetzner API/socket handshake.",
     "sessionId": "cda30832-4dae-89e4-bd8032f6"
+  },
+  {
+    "ts": "2026-06-18T16:42:15.970Z",
+    "level": "CMD",
+    "subsystem": "TRUTH-COIN",
+    "command": "Sam.truth-coin-provenance",
+    "result": "TRUTH COIN PROVENANCE RECEIPT — 2026-06-18T16:42:15.970Z\n\n1. Sovereign Universal Digital Ore · Origin Receipt\n   Canonical term: Sovereign Universal Digital Ore\n   Received: 2026-06-18\n   Status: VERIFIED-PROVENANCE\n   Hashes:\n     - d9b45f924a82850005079c667e786b6e4a3205ddb8bb56b973a5f975757ec7ca\n     - 1b5e90e14bc69a31a886b69087088daed60e6b8edd64fd7fca6e758352fb3876\n   Truth: VERIFIED: OpenTimestamps proof file sovereign-universal-digital-ore-origin.txt.ots is 619 B and matches sovereign-unive",
+    "sessionId": "67ee1531-94cf-c436-58e5d551"
+  },
+  {
+    "ts": "2026-06-18T16:41:22.177Z",
+    "level": "CMD",
+    "subsystem": "APEX",
+    "command": "apex.transcend truth-coin-manifesto-001.txt.ots 479 B\nStamped SHA256 hash: 4edab582bd0eb5a72ad5",
+    "result": "REST · POSITIVE HANDSHAKE · Run sam.truth-coin-provenance, export the receipt, then draft the Truth Coin provenance manifest before any payment/client action.",
+    "sessionId": "67ee1531-94cf-c436-58e5d551"
+  },
+  {
+    "ts": "2026-06-18T16:40:46.815Z",
+    "level": "STANDBY",
+    "subsystem": "OMNI-SAM",
+    "command": "system.init",
+    "result": "Metrics on STANDBY. Awaiting secure Hetzner API/socket handshake.",
+    "sessionId": "67ee1531-94cf-c436-58e5d551"
   }
 ]
