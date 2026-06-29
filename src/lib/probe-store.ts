@@ -1,6 +1,7 @@
 import { useSyncExternalStore } from "react";
 import { NODES } from "@/data/nodes";
 import { probeCorsJson, probeOpaqueHead, type ProbeStatus } from "./probes";
+import { getOverride } from "./node-overrides";
 
 type Store = Map<string, ProbeStatus>;
 
@@ -77,17 +78,20 @@ function detailFor(s: ProbeStatus): string {
 async function runOne(id: string) {
   const node = NODES.find((n) => n.id === id);
   if (!node?.probe) return;
+  // Operator-supplied override (e.g. Valkyrie signed-status pubkey) wins.
+  const ov = getOverride(id);
+  const probe = ov ?? node.probe;
   store.set(id, { state: "probing", at: Date.now() });
   emit();
   const status =
-    node.probe.kind === "cors-json"
-      ? await probeCorsJson(node.probe.url, node.probe.okField)
-      : node.probe.kind === "signed-status"
+    probe.kind === "cors-json"
+      ? await probeCorsJson(probe.url, probe.okField)
+      : probe.kind === "signed-status"
       ? await (await import("./probe-signed")).probeSignedStatus(
-          node.probe.url,
-          node.probe.edPubHex ?? "",
+          probe.url,
+          probe.edPubHex ?? "",
         )
-      : await probeOpaqueHead(node.probe.url);
+      : await probeOpaqueHead(probe.url);
   store.set(id, status);
   emit();
   pushEvent({
