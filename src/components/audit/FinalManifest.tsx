@@ -3,6 +3,7 @@
 // an honest anchor-entry form and a JSON download.
 
 import { useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
 import {
   buildFinalManifest,
   type FinalManifest as ManifestT,
@@ -43,11 +44,11 @@ export function FinalManifest() {
     };
   }, [refresh]);
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErr(null);
     try {
-      recordAnchor({
+      const a = recordAnchor({
         sha256: form.sha.trim(),
         block_height: Number(form.height),
         txid: form.txid.trim() || undefined,
@@ -55,8 +56,17 @@ export function FinalManifest() {
       });
       setForm({ sha: "", height: "", txid: "" });
       setOtsText("");
+      // Recompute and surface the new Golden Truth CID.
+      const r = await buildFinalManifest();
+      setM(r.manifest);
+      setCid(r.cid);
+      toast.success(`Anchor recorded · block #${a.block_height}`, {
+        description: `Manifest CID ${r.cid.slice(0, 14)}… · ${r.manifest.anchored_count}/${r.manifest.receipts_total} anchored`,
+      });
     } catch (e2) {
-      setErr(e2 instanceof Error ? e2.message : "invalid input");
+      const msg = e2 instanceof Error ? e2.message : "invalid input";
+      setErr(msg);
+      toast.error("Could not record anchor", { description: msg });
     }
   };
 

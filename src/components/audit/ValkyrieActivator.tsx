@@ -13,6 +13,8 @@ import {
   subscribeOverrides,
   type NodeOverride,
 } from "@/lib/node-overrides";
+import { useProbeStatus } from "@/lib/probe-store";
+import type { ProbeStatus } from "@/lib/probes";
 
 const PROMOTABLE = NODES.filter((n) => n.probe && n.probe.kind !== "signed-status");
 
@@ -104,31 +106,9 @@ export function ValkyrieActivator() {
       </form>
 
       <ul className="mt-4 space-y-2">
-        {Object.entries(overrides).map(([id, ov]) => {
-          const n = NODES.find((x) => x.id === id);
-          return (
-            <li
-              key={id}
-              className="flex flex-wrap items-center justify-between gap-2 border border-border bg-background/60 p-3"
-            >
-              <div className="min-w-0 flex-1">
-                <div className="font-mono text-xs text-foreground">{n?.name ?? id}</div>
-                <div className="break-all font-mono text-[0.65rem] text-muted-foreground">
-                  {ov.url}
-                </div>
-                <div className="break-all font-mono text-[0.65rem] text-foreground/70">
-                  pub {ov.edPubHex.slice(0, 12)}…{ov.edPubHex.slice(-8)}
-                </div>
-              </div>
-              <button
-                onClick={() => clearOverride(id)}
-                className="text-[0.6rem] uppercase tracking-[0.18em] text-muted-foreground hover:text-destructive"
-              >
-                clear
-              </button>
-            </li>
-          );
-        })}
+        {Object.entries(overrides).map(([id, ov]) => (
+          <OverrideRow key={id} id={id} ov={ov} onClear={() => clearOverride(id)} />
+        ))}
         {Object.keys(overrides).length === 0 && (
           <li className="border border-dashed border-border p-3 text-[0.65rem] text-muted-foreground">
             no overrides recorded · all nodes use repo defaults
@@ -136,5 +116,59 @@ export function ValkyrieActivator() {
         )}
       </ul>
     </section>
+  );
+}
+
+function probeLine(s: ProbeStatus): { label: string; tone: string; detail: string } {
+  switch (s.state) {
+    case "measured":
+      return { label: "LIVE", tone: "text-[color:var(--measured)]", detail: s.detail };
+    case "reachable":
+      return { label: "THEATER", tone: "text-gold", detail: s.detail };
+    case "unreachable":
+      return { label: "BROKEN", tone: "text-destructive", detail: s.detail };
+    case "probing":
+      return { label: "PROBING", tone: "text-muted-foreground", detail: "handshake in flight" };
+    default:
+      return { label: "IDLE", tone: "text-muted-foreground", detail: "awaiting first tick" };
+  }
+}
+
+function OverrideRow({
+  id,
+  ov,
+  onClear,
+}: {
+  id: string;
+  ov: NodeOverride;
+  onClear: () => void;
+}) {
+  const n = NODES.find((x) => x.id === id);
+  const status = useProbeStatus(id);
+  const line = probeLine(status);
+  return (
+    <li className="flex flex-wrap items-start justify-between gap-2 border border-border bg-background/60 p-3">
+      <div className="min-w-0 flex-1">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="font-mono text-xs text-foreground">{n?.name ?? id}</span>
+          <span className={`text-[0.6rem] uppercase tracking-[0.18em] ${line.tone}`}>
+            {line.label}
+          </span>
+        </div>
+        <div className="break-all font-mono text-[0.65rem] text-muted-foreground">{ov.url}</div>
+        <div className="break-all font-mono text-[0.65rem] text-foreground/70">
+          pub {ov.edPubHex.slice(0, 12)}…{ov.edPubHex.slice(-8)}
+        </div>
+        <div className="mt-1 font-mono text-[0.6rem] text-muted-foreground">
+          last probe · {line.detail}
+        </div>
+      </div>
+      <button
+        onClick={onClear}
+        className="text-[0.6rem] uppercase tracking-[0.18em] text-muted-foreground hover:text-destructive"
+      >
+        clear
+      </button>
+    </li>
   );
 }

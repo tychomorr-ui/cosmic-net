@@ -1,6 +1,28 @@
 import { useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
 import { parseProvenance } from "@/lib/provenance";
 import { getAnchor, subscribeAnchors, type Anchor } from "@/lib/anchors";
+
+function CopyShaButton({ sha }: { sha: string }) {
+  const [copied, setCopied] = useState(false);
+  return (
+    <button
+      onClick={async () => {
+        try {
+          await navigator.clipboard.writeText(sha);
+          setCopied(true);
+          toast.success("SHA-256 copied", { description: `${sha.slice(0, 12)}…${sha.slice(-8)}` });
+          setTimeout(() => setCopied(false), 1200);
+        } catch {
+          toast.error("Clipboard unavailable");
+        }
+      }}
+      className="shrink-0 border border-border px-2 py-0.5 text-[0.6rem] uppercase tracking-[0.16em] text-muted-foreground hover:text-gold"
+    >
+      {copied ? "copied" : "copy sha"}
+    </button>
+  );
+}
 
 export function ProvenanceReceipts() {
   const receipts = useMemo(() => parseProvenance(), []);
@@ -65,7 +87,10 @@ export function ProvenanceReceipts() {
                       const a: Anchor | undefined = getAnchor(h);
                       return (
                         <li key={h} className="border border-border bg-background/60 p-2">
-                          <div className="break-all font-mono text-[0.7rem] text-foreground">{h}</div>
+                          <div className="flex flex-wrap items-start justify-between gap-2">
+                            <div className="break-all font-mono text-[0.7rem] text-foreground">{h}</div>
+                            <CopyShaButton sha={h} />
+                          </div>
                           {a ? (
                             <div className="mt-1 font-mono text-[0.6rem] uppercase tracking-[0.16em] text-[color:var(--measured)]">
                               ANCHORED · block #{a.block_height}
