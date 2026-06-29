@@ -32,7 +32,7 @@ function DigitalOrePage() {
   const live = useMemo(() => refine(text, source), [text, source]);
   const totalDou = useMemo(() => ledger.reduce((s, x) => s + x.dou, 0), [ledger]);
   const motherlode = ledger.filter((x) => x.grade === "MOTHERLODE").length;
-  const dividend = +(totalDou * 0.001).toFixed(3);
+  const avgYield = ledger.length ? +(totalDou / ledger.length).toFixed(2) : 0;
 
   const mirrorComputed = mirrorText.trim() ? fnv1a(`${source}::${mirrorText.trim()}`) : "";
   const mirrorValid = mirrorText.trim() && mirrorHash.trim()
@@ -143,7 +143,7 @@ function DigitalOrePage() {
       <section className="border border-border bg-background/30 p-5">
         <SectionLabel a="AGGREGATE" b="ORE BODY" />
         <div className="mt-1 text-[0.62rem] uppercase tracking-[0.2em] text-muted-foreground">
-          royalty pool ≈ {dividend} DOU @ 0.1%
+          local-only · hash-deterministic · no payout rail
         </div>
         <div className="mt-5 grid gap-px border border-border bg-border sm:grid-cols-5">
           {counts.map(({ g, n }) => (
@@ -160,7 +160,7 @@ function DigitalOrePage() {
           <Tile k="total ore (DOU)" v={totalDou.toFixed(2)} />
           <Tile k="entries" v={String(ledger.length)} />
           <Tile k="motherlode" v={String(motherlode)} />
-          <Tile k="dividend pool" v={`${dividend} DOU`} />
+          <Tile k="avg yield" v={`${avgYield} DOU`} />
         </div>
       </section>
 
