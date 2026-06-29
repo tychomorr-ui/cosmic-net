@@ -1,0 +1,9 @@
+# Cosmic Mesh Net — robots policy
+# No telemetry. No tracking. Public doctrine only.
+
+User-agent: *
+Allow: /
+Disallow: /ops
+Disallow: /verify
+
+Sitemap: https://cosmic-mesh-net.lovable.app/sitemap.xml

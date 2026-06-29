@@ -1,0 +1,31 @@
+# Cosmic Mesh Net
+
+> Sovereign, deterministic, Bitcoin-anchored provenance mesh.
+> No telemetry. No PII. No commercial rails. All claims are hash-verifiable.
+
+## Doctrine
+- [Universal Justice Manifesto · Sovereign Runtime Declaration](https://cosmic-mesh-net.lovable.app/) — SHA-256 `8c426dc6…fa45`, anchored Bitcoin block 955889.
+- Universal Justice Addendum v1 — SHA-256 `d9b7816a…6834`, OTS submitted to alice/bob/finney calendars 2026-06-29, pending Bitcoin inclusion.
+
+## Architecture
+- [/ops](https://cosmic-mesh-net.lovable.app/ops) — Final Manifest, Mesh Health, Provenance Receipts, Receipt Wizard.
+- [/verify](https://cosmic-mesh-net.lovable.app/verify) — offline receipt verification (paste OTS).
+- [/digital-ore](https://cosmic-mesh-net.lovable.app/digital-ore) — local-only intellectual-byproduct ledger. Hash-deterministic. No payout rail.
+- [/truth-coin](https://cosmic-mesh-net.lovable.app/truth-coin) — Truth Substrate (TRS) provenance tile.
+- [/pam](https://cosmic-mesh-net.lovable.app/pam) — SOURCE&TRUTH persona spec.
+
+## Mesh nodes
+- Monarch (`monarch.xinus.one/status`) — ARCHANGEL/v0 signed, pubkey `39436f5a…12c4`. LIVE.
+- Valkyrie (`valkyrie.nexinus.net`) — UNSIGNED, awaiting bootstrap.
+- Resonate-Earth (`resonate-earth.live`) — UNSIGNED, awaiting bootstrap.
+
+## Provenance
+- 11/14 SHAs anchored to Bitcoin (blocks 955889, 955894, 955897, 955967, 955974).
+- Golden Truth CID: recomputed deterministically from `terminus-ops.json` via `scripts/build-manifest.mjs`.
+- 3 SHAs PENDING calendar inclusion (`ad6ca928…`, `1b5e90e1…`, `d9b45f92…`).
+
+## Boundaries
+- No third-party analytics or trackers.
+- No PII collection.
+- No payment processing. DOU is a local-only accounting unit, not currency.
+- No legal claim of sovereignty status; doctrine documents are speech, Bitcoin anchors are timestamps.
