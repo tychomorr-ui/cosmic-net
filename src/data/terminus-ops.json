@@ -1,5 +1,13 @@
 [
   {
+    "ts": "2026-06-29T00:00:00.000Z",
+    "level": "CMD",
+    "subsystem": "DIGITAL-ORE",
+    "command": "ore.stamp",
+    "result": "DIGITAL ORE PROVENANCE RECEIPT — 2026-06-29\n\nArtifact: digital-ore-1782708582129.json (2.9 kB)\nStamped SHA256: ad6ca9287e7d8a2114262419006e86d692834e1a4b5c57878ee5d34f27987eaa\nOTS file: digital-ore-1782708582129.json.ots (654 B)\n\nStatus: PENDING — OpenTimestamps calendar accepted the stamp; Bitcoin transaction is UNCONFIRMED. The attestation upgrades to VERIFIED on first confirmation; the .ots file will be updated with the block-height path at that time.\n\nDoctrine: a pending OTS receipt is honest provenance — it proves the hash existed before block N, not that it is on-chain yet. THEATER is forbidden; this entry stays PENDING until the calendar returns a complete proof.",
+    "sessionId": "ore-stamp-1782708582129"
+  },
+  {
     "ts": "2026-06-25T13:40:17.627Z",
     "level": "CMD",
     "subsystem": "OMNI-SAM",
