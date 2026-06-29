@@ -1,5 +1,13 @@
 [
   {
+    "ts": "2026-06-29T17:30:00.000Z",
+    "level": "CMD",
+    "subsystem": "PROVENANCE",
+    "command": "ots.verify",
+    "result": "OTS VERIFY — ots-verify.py\n\nArtifact: ots-verify.py (6.2 kB)\nStamped SHA256: fcff668eca6effffacd2c62dcc6209c34c97595ac3e98e8bbdff5fdfb3df4c66\nOTS file: ots-verify.py.ots (584 B)\n\nSUCCESS!\nBitcoin block 955897 attests existence as of 2026-06-28 PST\n\nStatus: VERIFIED — Bitcoin-anchored. Record this anchor in the Final Manifest (block 955897) to fold it into the Golden Truth CID.",
+    "sessionId": "ots-verify-fcff668e"
+  },
+  {
     "ts": "2026-06-29T00:02:00.000Z",
     "level": "CMD",
     "subsystem": "DOCTRINE",
