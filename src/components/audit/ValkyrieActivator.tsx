@@ -106,31 +106,9 @@ export function ValkyrieActivator() {
       </form>
 
       <ul className="mt-4 space-y-2">
-        {Object.entries(overrides).map(([id, ov]) => {
-          const n = NODES.find((x) => x.id === id);
-          return (
-            <li
-              key={id}
-              className="flex flex-wrap items-center justify-between gap-2 border border-border bg-background/60 p-3"
-            >
-              <div className="min-w-0 flex-1">
-                <div className="font-mono text-xs text-foreground">{n?.name ?? id}</div>
-                <div className="break-all font-mono text-[0.65rem] text-muted-foreground">
-                  {ov.url}
-                </div>
-                <div className="break-all font-mono text-[0.65rem] text-foreground/70">
-                  pub {ov.edPubHex.slice(0, 12)}…{ov.edPubHex.slice(-8)}
-                </div>
-              </div>
-              <button
-                onClick={() => clearOverride(id)}
-                className="text-[0.6rem] uppercase tracking-[0.18em] text-muted-foreground hover:text-destructive"
-              >
-                clear
-              </button>
-            </li>
-          );
-        })}
+        {Object.entries(overrides).map(([id, ov]) => (
+          <OverrideRow key={id} id={id} ov={ov} onClear={() => clearOverride(id)} />
+        ))}
         {Object.keys(overrides).length === 0 && (
           <li className="border border-dashed border-border p-3 text-[0.65rem] text-muted-foreground">
             no overrides recorded · all nodes use repo defaults
