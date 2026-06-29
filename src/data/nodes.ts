@@ -73,17 +73,18 @@ export const NODES: SovereignNode[] = [
     tier: "attested",
     declared: "ATTESTED · health probe in this card",
     facts: [
-      "Exposes a JSON health endpoint at monarch.xinus.one/health.",
-      "Promotes to MEASURED below on a successful CORS probe.",
+      "Exposes an ARCHANGEL/v0 signed status surface at monarch.xinus.one/status.",
+      "Promotes to MEASURED · LIVE on signature verification against the operator pubkey.",
     ],
     truth:
-      "Monarch is the one node a browser can directly verify. If the live probe below returns ok:true, this card flips to MEASURED.",
+      "Monarch is the one node a browser can directly verify. The card couples local CID derivation against the node's signed /status payload, verified with the published ed25519 pubkey.",
     probe: {
-      kind: "cors-json",
-      url: "https://monarch.xinus.one/health",
-      okField: "ok",
+      kind: "signed-status",
+      url: "https://monarch.xinus.one/status",
+      edPubHex: "39436f5ab3af4b2e9db4dc0ea3a9cff9060f0167d8537174e5cc332a722b12c4",
     },
   },
+
   {
     id: "xinus-valkyrie",
     name: "Valkyrie",
