@@ -155,17 +155,37 @@ export function FinalManifest() {
         </div>
       </div>
 
+      <div className="mt-5 border border-dashed border-border p-3">
+        <label className="text-[0.6rem] uppercase tracking-[0.18em] text-muted-foreground">
+          Paste <code className="font-mono">ots verify</code> output (auto-extracts block + txid)
+        </label>
+        <textarea
+          aria-label="ots verify output"
+          value={otsText}
+          onChange={(e) => parseOts(e.target.value)}
+          placeholder={"Success!\nBitcoin block 955889 attests existence as of 2026-06-28 PST"}
+          rows={3}
+          className="mt-1 w-full border border-border bg-background px-2 py-1 font-mono text-[0.7rem] text-foreground"
+        />
+      </div>
+
       <form
         onSubmit={submit}
-        className="mt-5 grid gap-2 border border-dashed border-border p-3 sm:grid-cols-[1fr_140px_1fr_auto]"
+        className="mt-3 grid gap-2 border border-dashed border-border p-3 sm:grid-cols-[1fr_140px_1fr_auto]"
       >
-        <input
+        <select
           aria-label="SHA-256 hash"
-          placeholder="sha256 (64 hex)"
           value={form.sha}
           onChange={(e) => setForm({ ...form, sha: e.target.value })}
           className="border border-border bg-background px-2 py-1 font-mono text-[0.7rem] text-foreground"
-        />
+        >
+          <option value="">— pending sha256 —</option>
+          {pendingShas.map((r) => (
+            <option key={r.sha256} value={r.sha256}>
+              {r.command} · {r.sha256.slice(0, 10)}…{r.sha256.slice(-6)}
+            </option>
+          ))}
+        </select>
         <input
           aria-label="BTC block height"
           placeholder="block height"
