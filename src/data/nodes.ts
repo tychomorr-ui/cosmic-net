@@ -85,21 +85,21 @@ export const NODES: SovereignNode[] = [
   },
   {
     id: "xinus-valkyrie",
-    name: "XINUS-Valkyrie",
-    provider: "xinus.one",
-    region: "Public reachable host",
+    name: "Valkyrie",
+    provider: "nexinus.net",
+    region: "5.78.148.244",
     role: "Registered relay · health pending",
     tier: "attested",
     declared: "ATTESTED · reachability probe in this card",
     facts: [
-      "Registered in the fleet manifest.",
+      "Registered in the fleet manifest as valkyrie.nexinus.net (5.78.148.244).",
       "Does not currently expose a CORS-readable health JSON.",
     ],
     truth:
-      "Valkyrie is probed with an opaque HEAD request. Opaque success means the origin answered; it does not prove application health, only that the host is reachable from the browser's network path.",
+      "Valkyrie is probed with an opaque HEAD request against valkyrie.nexinus.net. Opaque success means the origin answered; it does not prove application health, only that the host is reachable from the browser's network path.",
     probe: {
       kind: "no-cors-head",
-      url: "https://valkyrie.xinus.one/",
+      url: "https://valkyrie.nexinus.net/",
     },
   },
   {
