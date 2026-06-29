@@ -13,6 +13,7 @@ import { Route as VerifyRouteImport } from './routes/verify'
 import { Route as TruthPointRouteImport } from './routes/truth-point'
 import { Route as TruthCoinRouteImport } from './routes/truth-coin'
 import { Route as SudoCoinRouteImport } from './routes/sudo-coin'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SeventhDimensionRouteImport } from './routes/seventh-dimension'
 import { Route as SamCommandRouteImport } from './routes/sam-command'
 import { Route as ReflectiveIntelRouteImport } from './routes/reflective-intel'
@@ -48,6 +49,11 @@ const TruthCoinRoute = TruthCoinRouteImport.update({
 const SudoCoinRoute = SudoCoinRouteImport.update({
   id: '/sudo-coin',
   path: '/sudo-coin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SeventhDimensionRoute = SeventhDimensionRouteImport.update({
@@ -148,6 +154,7 @@ export interface FileRoutesByFullPath {
   '/reflective-intel': typeof ReflectiveIntelRoute
   '/sam-command': typeof SamCommandRoute
   '/seventh-dimension': typeof SeventhDimensionRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sudo-coin': typeof SudoCoinRoute
   '/truth-coin': typeof TruthCoinRoute
   '/truth-point': typeof TruthPointRoute
@@ -170,6 +177,7 @@ export interface FileRoutesByTo {
   '/reflective-intel': typeof ReflectiveIntelRoute
   '/sam-command': typeof SamCommandRoute
   '/seventh-dimension': typeof SeventhDimensionRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sudo-coin': typeof SudoCoinRoute
   '/truth-coin': typeof TruthCoinRoute
   '/truth-point': typeof TruthPointRoute
@@ -193,6 +201,7 @@ export interface FileRoutesById {
   '/reflective-intel': typeof ReflectiveIntelRoute
   '/sam-command': typeof SamCommandRoute
   '/seventh-dimension': typeof SeventhDimensionRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sudo-coin': typeof SudoCoinRoute
   '/truth-coin': typeof TruthCoinRoute
   '/truth-point': typeof TruthPointRoute
@@ -217,6 +226,7 @@ export interface FileRouteTypes {
     | '/reflective-intel'
     | '/sam-command'
     | '/seventh-dimension'
+    | '/sitemap.xml'
     | '/sudo-coin'
     | '/truth-coin'
     | '/truth-point'
@@ -239,6 +249,7 @@ export interface FileRouteTypes {
     | '/reflective-intel'
     | '/sam-command'
     | '/seventh-dimension'
+    | '/sitemap.xml'
     | '/sudo-coin'
     | '/truth-coin'
     | '/truth-point'
@@ -261,6 +272,7 @@ export interface FileRouteTypes {
     | '/reflective-intel'
     | '/sam-command'
     | '/seventh-dimension'
+    | '/sitemap.xml'
     | '/sudo-coin'
     | '/truth-coin'
     | '/truth-point'
@@ -284,6 +296,7 @@ export interface RootRouteChildren {
   ReflectiveIntelRoute: typeof ReflectiveIntelRoute
   SamCommandRoute: typeof SamCommandRoute
   SeventhDimensionRoute: typeof SeventhDimensionRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SudoCoinRoute: typeof SudoCoinRoute
   TruthCoinRoute: typeof TruthCoinRoute
   TruthPointRoute: typeof TruthPointRoute
@@ -318,6 +331,13 @@ declare module '@tanstack/react-router' {
       path: '/sudo-coin'
       fullPath: '/sudo-coin'
       preLoaderRoute: typeof SudoCoinRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/seventh-dimension': {
@@ -452,6 +472,7 @@ const rootRouteChildren: RootRouteChildren = {
   ReflectiveIntelRoute: ReflectiveIntelRoute,
   SamCommandRoute: SamCommandRoute,
   SeventhDimensionRoute: SeventhDimensionRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   SudoCoinRoute: SudoCoinRoute,
   TruthCoinRoute: TruthCoinRoute,
   TruthPointRoute: TruthPointRoute,
