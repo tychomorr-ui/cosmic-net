@@ -109,4 +109,80 @@ describe("ProofDeepLink", () => {
     const { queryByTestId } = render(<ProofDeepLink />);
     expect(queryByTestId("modal")?.dataset.sha).toBe("c".repeat(64));
   });
+
+  // ─── Bidirectional sync ───────────────────────────────────────────────
+
+  it("opens via openProofHash and closes via the modal's onOpenChange", () => {
+    // Render the real component so onOpenChange wiring is exercised end-to-end.
+    // We capture the latest props handed to the mocked modal so we can invoke
+    // onOpenChange(false) the same way Radix would on ESC / overlay click.
+    let lastOnOpenChange: ((open: boolean) => void) | null = null;
+    vi.doMock("@/components/audit/ProofDetailModal", () => ({
+      ProofDetailModal: (props: { open: boolean; onOpenChange: (o: boolean) => void }) => {
+        lastOnOpenChange = props.onOpenChange;
+        return props.open ? <div data-testid="modal" /> : null;
+      },
+    }));
+    vi.resetModules();
+    return import("./ProofDeepLink").then(({ ProofDeepLink: Fresh, openProofHash: openFresh }) => {
+      const { queryByTestId } = render(<Fresh />);
+
+      act(() => openFresh(SHA_A));
+      expect(window.location.hash).toBe(`#proof=${SHA_A}`);
+      expect(queryByTestId("modal")).not.toBeNull();
+
+      // Simulate Radix calling onOpenChange(false) when the user dismisses.
+      act(() => lastOnOpenChange?.(false));
+      expect(window.location.hash).toBe("");
+      expect(queryByTestId("modal")).toBeNull();
+      vi.doUnmock("@/components/audit/ProofDetailModal");
+    });
+  });
+
+  it("manual hash edits open and close the modal", () => {
+    const { queryByTestId } = render(<ProofDeepLink />);
+
+    // User pastes a proof URL into the address bar.
+    act(() => {
+      window.location.hash = `proof=${SHA_A}`;
+    });
+    expect(queryByTestId("modal")?.dataset.sha).toBe(SHA_A);
+
+    // User clears the hash by hand.
+    act(() => {
+      window.location.hash = "";
+    });
+    expect(queryByTestId("modal")).toBeNull();
+  });
+
+  it("browser back/forward toggles the modal in sync with history", async () => {
+    history.replaceState(null, "", "/ops");
+    const { queryByTestId } = render(<ProofDeepLink />);
+    expect(queryByTestId("modal")).toBeNull();
+
+    // Push a proof state, then a clean state — same path, three entries.
+    act(() => openProofHash(SHA_A));
+    expect(queryByTestId("modal")?.dataset.sha).toBe(SHA_A);
+
+    act(() => closeProofHash()); // replaceState — no new entry
+    act(() => openProofHash(SHA_B)); // pushState — new entry
+    expect(queryByTestId("modal")?.dataset.sha).toBe(SHA_B);
+
+    // Back: should land on the cleared state (modal closed).
+    await act(async () => {
+      history.back();
+      await new Promise((r) => setTimeout(r, 10));
+    });
+    expect(window.location.hash).toBe("");
+    expect(queryByTestId("modal")).toBeNull();
+
+    // Forward: should restore the SHA_B proof state (modal reopens).
+    await act(async () => {
+      history.forward();
+      await new Promise((r) => setTimeout(r, 10));
+    });
+    expect(window.location.hash).toBe(`#proof=${SHA_B}`);
+    expect(queryByTestId("modal")?.dataset.sha).toBe(SHA_B);
+  });
 });
+
