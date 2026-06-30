@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-import { parseProvenance, type ProvenanceReceipt } from "@/lib/provenance";
+import { parseProvenance } from "@/lib/provenance";
 import { getAnchor, subscribeAnchors, type Anchor } from "@/lib/anchors";
-import { ProofDetailModal, type ProofContext } from "@/components/audit/ProofDetailModal";
+import { openProofHash } from "@/components/audit/ProofDeepLink";
 
 function CopyShaButton({ sha }: { sha: string }) {
   const [copied, setCopied] = useState(false);
@@ -30,41 +30,14 @@ export function ProvenanceReceipts() {
   const [, force] = useState(0);
   useEffect(() => subscribeAnchors(() => force((n) => n + 1)), []);
 
-  const [openCtx, setOpenCtx] = useState<ProofContext | null>(null);
-
-  const openProof = (sha: string, r: ProvenanceReceipt) => {
-    const docName = r.otsFiles[0]?.replace(/\.ots$/, "") || r.command || sha.slice(0, 12);
-    setOpenCtx({
-      sha256: sha,
-      docName,
-      subsystem: r.subsystem,
-      ts: r.ts,
-      otsFiles: r.otsFiles,
-    });
-  };
-
-  // Deep-link support: #proof=<sha> opens the modal automatically.
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const tryOpenFromHash = () => {
-      const m = window.location.hash.match(/proof=([a-f0-9]{64})/i);
-      if (!m) return;
-      const sha = m[1].toLowerCase();
-      for (const r of receipts) {
-        if (r.hashes.includes(sha)) {
-          openProof(sha, r);
-          return;
-        }
-      }
-    };
-    tryOpenFromHash();
-    window.addEventListener("hashchange", tryOpenFromHash);
-    return () => window.removeEventListener("hashchange", tryOpenFromHash);
-  }, [receipts]);
+  // Modal is owned by the global ProofDeepLink; we just drive the URL hash.
+  const openProof = (sha: string) => openProofHash(sha);
 
   return (
     <>
     <section className="border border-border bg-card/30 p-6">
+
+
 
       <div className="flex items-baseline justify-between">
         <div>
