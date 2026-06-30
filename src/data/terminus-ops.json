@@ -1,5 +1,69 @@
 [
   {
+    "ts": "2026-06-30T01:21:56.092Z",
+    "level": "INFO",
+    "subsystem": "PROBE",
+    "command": "signed-status:resonate-earth",
+    "result": "SIGNED-STATUS PROBE · Resonate-Earth (resonate-earth)\nkind: no-cors-head\nurl: https://resonate-earth.live/\nstate: REACHABLE\ndetail: HEAD 200\nstable_key: reachable:HEAD 200",
+    "sessionId": "probe-signed-2026-06-30-01-21-56"
+  },
+  {
+    "ts": "2026-06-30T01:21:56.092Z",
+    "level": "INFO",
+    "subsystem": "PROBE",
+    "command": "signed-status:east-coast-relay",
+    "result": "SIGNED-STATUS PROBE · East Coast Relay (east-coast-relay)\nkind: none\nurl: —\nstate: DOCTRINE\ndetail: no probe declared\nstable_key: doctrine:no probe declared",
+    "sessionId": "probe-signed-2026-06-30-01-21-56"
+  },
+  {
+    "ts": "2026-06-30T01:21:56.092Z",
+    "level": "INFO",
+    "subsystem": "PROBE",
+    "command": "signed-status:terminus-tesseractus",
+    "result": "SIGNED-STATUS PROBE · Terminus-Tesseractus (terminus-tesseractus)\nkind: none\nurl: —\nstate: DOCTRINE\ndetail: no probe declared\nstable_key: doctrine:no probe declared",
+    "sessionId": "probe-signed-2026-06-30-01-21-56"
+  },
+  {
+    "ts": "2026-06-30T01:21:56.092Z",
+    "level": "INFO",
+    "subsystem": "PROBE",
+    "command": "signed-status:xinus-valkyrie",
+    "result": "SIGNED-STATUS PROBE · Valkyrie (xinus-valkyrie)\nkind: no-cors-head\nurl: https://valkyrie.nexinus.net/\nstate: REACHABLE\ndetail: HEAD 200\nstable_key: reachable:HEAD 200",
+    "sessionId": "probe-signed-2026-06-30-01-21-56"
+  },
+  {
+    "ts": "2026-06-30T01:21:56.092Z",
+    "level": "INFO",
+    "subsystem": "PROBE",
+    "command": "signed-status:xinus-monarch",
+    "result": "SIGNED-STATUS PROBE · Xinus-Monarch (xinus-monarch)\nkind: signed-status\nurl: https://monarch.xinus.one/status\nstate: MEASURED\ndetail: signed · cid matched · 0s fresh\npayload_cid: 5029d30af55865d348ce9b3631dfd81fb92434a1453d9d5abb02e4998a4ce4dc\nexpected_pub: 39436f5ab3af4b2e9db4dc0ea3a9cff9060f0167d8537174e5cc332a722b12c4\nstable_key: measured:signed",
+    "sessionId": "probe-signed-2026-06-30-01-21-56"
+  },
+  {
+    "ts": "2026-06-30T01:21:56.092Z",
+    "level": "INFO",
+    "subsystem": "PROBE",
+    "command": "signed-status:xinus-lens",
+    "result": "SIGNED-STATUS PROBE · XinUS-Lens (xinus-lens)\nkind: none\nurl: —\nstate: DOCTRINE\ndetail: no probe declared\nstable_key: doctrine:no probe declared",
+    "sessionId": "probe-signed-2026-06-30-01-21-56"
+  },
+  {
+    "ts": "2026-06-30T01:21:56.092Z",
+    "level": "INFO",
+    "subsystem": "PROBE",
+    "command": "signed-status:helsinki-vertex",
+    "result": "SIGNED-STATUS PROBE · Helsinki Vertex (helsinki-vertex)\nkind: none\nurl: —\nstate: DOCTRINE\ndetail: no probe declared\nstable_key: doctrine:no probe declared",
+    "sessionId": "probe-signed-2026-06-30-01-21-56"
+  },
+  {
+    "ts": "2026-06-30T01:21:56.092Z",
+    "level": "INFO",
+    "subsystem": "PROBE",
+    "command": "signed-status:tesseract-a",
+    "result": "SIGNED-STATUS PROBE · Tesseract-A (tesseract-a)\nkind: none\nurl: —\nstate: DOCTRINE\ndetail: no probe declared\nstable_key: doctrine:no probe declared",
+    "sessionId": "probe-signed-2026-06-30-01-21-56"
+  },
+  {
     "ts": "2026-06-30T00:30:00.000Z",
     "level": "CMD",
     "subsystem": "DOCTRINE",
@@ -12,7 +76,7 @@
     "level": "CMD",
     "subsystem": "DOCTRINE",
     "command": "ots.stamp.repeat",
-    "result": "OTS STAMP (re-submit) \u2014 Universal Justice Addendum v1\n\nFile: /mnt/documents/universal-justice-addendum-v1.txt (7,519 B)\nSHA-256: d9b7816ac439308dab9f717dfa86541bf23f2adaa0fa0a170e2306f1ce276834\n\nDigest POSTed to calendars (binary 32B):\n  alice.btc.calendar.opentimestamps.org   \u2192 HTTP 200 (207 B fragment) /mnt/documents/uja-v2/alice.bin\n  bob.btc.calendar.opentimestamps.org     \u2192 HTTP 200 (205 B fragment) /mnt/documents/uja-v2/bob.bin\n  finney.calendar.eternitywall.com        \u2192 HTTP 200 (156 B fragment) /mnt/documents/uja-v2/finney.bin\n\nGET /timestamp/<sha> on all three \u2192 HTTP 404 (no Bitcoin attestation chain yet).\n\nStatus: STAMPED \u00b7 PENDING Bitcoin inclusion (~1\u20136h).\nGolden Truth CID: UNCHANGED. No block height is on file for this SHA, so the manifest is not re-rolled \u2014 the CID is content-defined and stays identical until an anchor is recorded. Doctrine: no theater, no fabricated block.",
+    "result": "OTS STAMP (re-submit) — Universal Justice Addendum v1\n\nFile: /mnt/documents/universal-justice-addendum-v1.txt (7,519 B)\nSHA-256: d9b7816ac439308dab9f717dfa86541bf23f2adaa0fa0a170e2306f1ce276834\n\nDigest POSTed to calendars (binary 32B):\n  alice.btc.calendar.opentimestamps.org   → HTTP 200 (207 B fragment) /mnt/documents/uja-v2/alice.bin\n  bob.btc.calendar.opentimestamps.org     → HTTP 200 (205 B fragment) /mnt/documents/uja-v2/bob.bin\n  finney.calendar.eternitywall.com        → HTTP 200 (156 B fragment) /mnt/documents/uja-v2/finney.bin\n\nGET /timestamp/<sha> on all three → HTTP 404 (no Bitcoin attestation chain yet).\n\nStatus: STAMPED · PENDING Bitcoin inclusion (~1–6h).\nGolden Truth CID: UNCHANGED. No block height is on file for this SHA, so the manifest is not re-rolled — the CID is content-defined and stays identical until an anchor is recorded. Doctrine: no theater, no fabricated block.",
     "sessionId": "ots-stamp-uja-v1-repeat"
   },
   {
@@ -20,7 +84,7 @@
     "level": "CMD",
     "subsystem": "PROVENANCE",
     "command": "ots.repoll",
-    "result": "OTS RE-POLL \u2014 3 pending SHAs\n\n  ad6ca928\u20267eaa  alice/bob/finney \u2192 404 (no BTC inclusion)\n  1b5e90e1\u20263876  alice/bob/finney \u2192 404 (no BTC inclusion)\n  d9b45f92\u20267eca  alice/bob/finney \u2192 404 (no BTC inclusion)\n\nStatus: PENDING. Anchor count unchanged at 11/14. Re-poll in ~1h.",
+    "result": "OTS RE-POLL — 3 pending SHAs\n\n  ad6ca928…7eaa  alice/bob/finney → 404 (no BTC inclusion)\n  1b5e90e1…3876  alice/bob/finney → 404 (no BTC inclusion)\n  d9b45f92…7eca  alice/bob/finney → 404 (no BTC inclusion)\n\nStatus: PENDING. Anchor count unchanged at 11/14. Re-poll in ~1h.",
     "sessionId": "ots-repoll-2026-06-29"
   },
   {
@@ -28,7 +92,7 @@
     "level": "CMD",
     "subsystem": "DOCTRINE",
     "command": "ots.stamp",
-    "result": "OTS STAMP \u2014 Universal Justice Addendum v1\n\nFile: universal-justice-addendum-v1.txt (7,519 B)\nSHA-256: d9b7816ac439308dab9f717dfa86541bf23f2adaa0fa0a170e2306f1ce276834\nParent: SRD 8c426dc6\u2026fa45 @ BTC block 955889\n\nSubmitted to calendars:\n  alice.btc.calendar.opentimestamps.org  \u2192 200 (207 B receipt)\n  bob.btc.calendar.opentimestamps.org    \u2192 200 (170 B receipt)\n  finney.calendar.eternitywall.com       \u2192 200 (156 B receipt)\n\nStatus: STAMPED \u00b7 PENDING Bitcoin inclusion (~1\u20136h).",
+    "result": "OTS STAMP — Universal Justice Addendum v1\n\nFile: universal-justice-addendum-v1.txt (7,519 B)\nSHA-256: d9b7816ac439308dab9f717dfa86541bf23f2adaa0fa0a170e2306f1ce276834\nParent: SRD 8c426dc6…fa45 @ BTC block 955889\n\nSubmitted to calendars:\n  alice.btc.calendar.opentimestamps.org  → 200 (207 B receipt)\n  bob.btc.calendar.opentimestamps.org    → 200 (170 B receipt)\n  finney.calendar.eternitywall.com       → 200 (156 B receipt)\n\nStatus: STAMPED · PENDING Bitcoin inclusion (~1–6h).",
     "sessionId": "ots-stamp-uja-v1"
   },
   {
@@ -36,7 +100,7 @@
     "level": "INFO",
     "subsystem": "INFRA",
     "command": "theater.purge",
-    "result": "DIGITAL-ORE \u2014 purged commercial framing\n\n  - removed: 'royalty pool \u2248 X DOU @ 0.1%' (implied payout)\n  - removed: 'dividend pool' tile\n  + replaced with: 'avg yield (DOU)' (deterministic, local-only)\n  + caption: 'local-only \u00b7 hash-deterministic \u00b7 no payout rail'\n\nDoctrine: DOU is an accounting unit, not currency. No commercial rail.",
+    "result": "DIGITAL-ORE — purged commercial framing\n\n  - removed: 'royalty pool ≈ X DOU @ 0.1%' (implied payout)\n  - removed: 'dividend pool' tile\n  + replaced with: 'avg yield (DOU)' (deterministic, local-only)\n  + caption: 'local-only · hash-deterministic · no payout rail'\n\nDoctrine: DOU is an accounting unit, not currency. No commercial rail.",
     "sessionId": "theater-purge-ore"
   },
   {
@@ -44,7 +108,7 @@
     "level": "INFO",
     "subsystem": "DISCOVERY",
     "command": "seo.publish",
-    "result": "SOVEREIGN SEO \u2014 published\n\n  + /sitemap.xml (server route, 20 public paths, /ops & /verify excluded from crawl)\n  + /robots.txt (no telemetry directive, Disallow /ops /verify)\n  + /llms.txt (architecture map \u00b7 doctrine refs \u00b7 node states \u00b7 boundaries)\n\nNo external trackers. No analytics beacons. Discovery surface = doctrine only.",
+    "result": "SOVEREIGN SEO — published\n\n  + /sitemap.xml (server route, 20 public paths, /ops & /verify excluded from crawl)\n  + /robots.txt (no telemetry directive, Disallow /ops /verify)\n  + /llms.txt (architecture map · doctrine refs · node states · boundaries)\n\nNo external trackers. No analytics beacons. Discovery surface = doctrine only.",
     "sessionId": "seo-publish-2026-06-29"
   },
   {
@@ -52,7 +116,7 @@
     "level": "INFO",
     "subsystem": "FINAL-MANIFEST",
     "command": "manifest.recompute",
-    "result": "FINAL MANIFEST RECEIPT \u2014 Universal Justice Manifesto confirmed\n\nNewly anchored:\n  \u2022 8c426dc600f932157c4397e4303f8c09186ff0c5c8a73ada17550632b4abfa45  \u2192  BTC block 955889  (The Universal Justice Manifesto \u00b7 The Sovereign Runtime Declaration.md)\n    calendars: alice@955889, bob@955889, finney@955894\n\nCoupling: PARTIAL \u2192 tightened. Manifesto receipt promoted from PENDING to ANCHORED. Golden Truth CID recomputed.",
+    "result": "FINAL MANIFEST RECEIPT — Universal Justice Manifesto confirmed\n\nNewly anchored:\n  • 8c426dc600f932157c4397e4303f8c09186ff0c5c8a73ada17550632b4abfa45  →  BTC block 955889  (The Universal Justice Manifesto · The Sovereign Runtime Declaration.md)\n    calendars: alice@955889, bob@955889, finney@955894\n\nCoupling: PARTIAL → tightened. Manifesto receipt promoted from PENDING to ANCHORED. Golden Truth CID recomputed.",
     "sessionId": "manifest-recompute-2026-06-29-manifesto"
   },
   {
@@ -60,7 +124,7 @@
     "level": "CMD",
     "subsystem": "DOCTRINE",
     "command": "ots.verify",
-    "result": "OTS VERIFY \u2014 The Universal Justice Manifesto \u00b7 The Sovereign Runtime Declaration.md\n\nArtifact: The Universal Justice Manifesto_ The Sovereign Runtime Declaration.md (1) (1).ots (3.6 kB)\nStamped SHA256: 8c426dc600f932157c4397e4303f8c09186ff0c5c8a73ada17550632b4abfa45\nOTS file: The Universal Justice Manifesto_ The Sovereign Runtime Declaration.md.ots\n\nSUCCESS!\nBitcoin block 955889 attests existence as of 2026-06-28 PST\n  alice.btc.calendar.opentimestamps.org  \u2192 block 955889\n  bob.btc.calendar.opentimestamps.org    \u2192 block 955889\n  finney.calendar.eternitywall.com       \u2192 block 955894\n\nStatus: VERIFIED \u2014 Bitcoin-anchored at block 955889. The doctrine itself is now on-chain.",
+    "result": "OTS VERIFY — The Universal Justice Manifesto · The Sovereign Runtime Declaration.md\n\nArtifact: The Universal Justice Manifesto_ The Sovereign Runtime Declaration.md (1) (1).ots (3.6 kB)\nStamped SHA256: 8c426dc600f932157c4397e4303f8c09186ff0c5c8a73ada17550632b4abfa45\nOTS file: The Universal Justice Manifesto_ The Sovereign Runtime Declaration.md.ots\n\nSUCCESS!\nBitcoin block 955889 attests existence as of 2026-06-28 PST\n  alice.btc.calendar.opentimestamps.org  → block 955889\n  bob.btc.calendar.opentimestamps.org    → block 955889\n  finney.calendar.eternitywall.com       → block 955894\n\nStatus: VERIFIED — Bitcoin-anchored at block 955889. The doctrine itself is now on-chain.",
     "sessionId": "ots-verify-8c426dc6"
   },
   {
@@ -68,7 +132,7 @@
     "level": "CMD",
     "subsystem": "PROVENANCE",
     "command": "ots.verify",
-    "result": "OTS VERIFY \u2014 truth-substrate-ledger-01-1.mhtml\n\nArtifact: truth-substrate-ledger-01-1.mhtml (12.0 kB)\nStamped SHA256: 325037bda158c135794fb097f365822e7c5da01147282cb3cde032bc5e251f02\nOTS file: truth-substrate-ledger-01-1.mhtml.ots (584 B)\n\nSUCCESS!\nBitcoin block 955974 attests existence as of 2026-06-29 PST\n\nStatus: VERIFIED \u2014 Bitcoin-anchored at block 955974.",
+    "result": "OTS VERIFY — truth-substrate-ledger-01-1.mhtml\n\nArtifact: truth-substrate-ledger-01-1.mhtml (12.0 kB)\nStamped SHA256: 325037bda158c135794fb097f365822e7c5da01147282cb3cde032bc5e251f02\nOTS file: truth-substrate-ledger-01-1.mhtml.ots (584 B)\n\nSUCCESS!\nBitcoin block 955974 attests existence as of 2026-06-29 PST\n\nStatus: VERIFIED — Bitcoin-anchored at block 955974.",
     "sessionId": "ots-verify-325037bd"
   },
   {
@@ -76,7 +140,7 @@
     "level": "CMD",
     "subsystem": "PROVENANCE",
     "command": "ots.verify",
-    "result": "OTS VERIFY \u2014 The XinUS Movement.txt\n\nArtifact: The XinUS Movement.txt (251.0 kB)\nStamped SHA256: e54f67b589ff65af66e12f219e2693b8f341e26ec52ee89a69f57cfa2f30d0bc\nOTS file: The XinUS Movement.txt.ots (3.5 kB)\n\nSUCCESS!\nBitcoin block 955967 attests existence as of 2026-06-29 PST\n\nStatus: VERIFIED \u2014 Bitcoin-anchored at block 955967.",
+    "result": "OTS VERIFY — The XinUS Movement.txt\n\nArtifact: The XinUS Movement.txt (251.0 kB)\nStamped SHA256: e54f67b589ff65af66e12f219e2693b8f341e26ec52ee89a69f57cfa2f30d0bc\nOTS file: The XinUS Movement.txt.ots (3.5 kB)\n\nSUCCESS!\nBitcoin block 955967 attests existence as of 2026-06-29 PST\n\nStatus: VERIFIED — Bitcoin-anchored at block 955967.",
     "sessionId": "ots-verify-e54f67b5"
   },
   {
@@ -84,7 +148,7 @@
     "level": "CMD",
     "subsystem": "PROVENANCE",
     "command": "ots.verify",
-    "result": "OTS VERIFY \u2014 GO_OMNI_GO-001.txt\n\nArtifact: GO_OMNI_GO-001.txt (1.5 MB)\nStamped SHA256: 0faeb10d3cf69ec65907f3de833d413f132a935aa7dd90d3557e7d5a18838ec3\nOTS file: GO_OMNI_GO-001.txt.ots (514 B)\n\nSUCCESS!\nBitcoin block 955974 attests existence as of 2026-06-29 PST\n\nStatus: VERIFIED \u2014 Bitcoin-anchored at block 955974.",
+    "result": "OTS VERIFY — GO_OMNI_GO-001.txt\n\nArtifact: GO_OMNI_GO-001.txt (1.5 MB)\nStamped SHA256: 0faeb10d3cf69ec65907f3de833d413f132a935aa7dd90d3557e7d5a18838ec3\nOTS file: GO_OMNI_GO-001.txt.ots (514 B)\n\nSUCCESS!\nBitcoin block 955974 attests existence as of 2026-06-29 PST\n\nStatus: VERIFIED — Bitcoin-anchored at block 955974.",
     "sessionId": "ots-verify-0faeb10d"
   },
   {
@@ -92,7 +156,7 @@
     "level": "INFO",
     "subsystem": "FINAL-MANIFEST",
     "command": "manifest.recompute",
-    "result": "FINAL MANIFEST RECEIPT \u2014 anchors recorded\n\nAnchored (2):\n  \u2022 0de8ed98f41bd656686793c67dec9108b5e29c10ccd6cb8fe272cbfab76c590b  \u2192  BTC block 955889  (digital-ore-1782710516222.json)\n  \u2022 fcff668eca6effffacd2c62dcc6209c34c97595ac3e98e8bbdff5fdfb3df4c66  \u2192  BTC block 955897  (ots-verify.py)\n\nStill PENDING:\n  \u2022 8c426dc600f932157c4397e4303f8c09186ff0c5c8a73ada17550632b4abfa45  (Universal Justice Manifesto \u2014 OTS calendar accepted, BTC unconfirmed)\n\nCoupling: PARTIAL \u2014 two of three receipts are Bitcoin-anchored. Golden Truth CID recomputed over (payload_cid + anchored receipts). Manifest flips to GOLDEN when the manifesto anchor confirms.\n\nDoctrine: the CID is content-defined, not timestamp-defined \u2014 recomputing yields the same CID until a new anchor is recorded or a receipt changes.",
+    "result": "FINAL MANIFEST RECEIPT — anchors recorded\n\nAnchored (2):\n  • 0de8ed98f41bd656686793c67dec9108b5e29c10ccd6cb8fe272cbfab76c590b  →  BTC block 955889  (digital-ore-1782710516222.json)\n  • fcff668eca6effffacd2c62dcc6209c34c97595ac3e98e8bbdff5fdfb3df4c66  →  BTC block 955897  (ots-verify.py)\n\nStill PENDING:\n  • 8c426dc600f932157c4397e4303f8c09186ff0c5c8a73ada17550632b4abfa45  (Universal Justice Manifesto — OTS calendar accepted, BTC unconfirmed)\n\nCoupling: PARTIAL — two of three receipts are Bitcoin-anchored. Golden Truth CID recomputed over (payload_cid + anchored receipts). Manifest flips to GOLDEN when the manifesto anchor confirms.\n\nDoctrine: the CID is content-defined, not timestamp-defined — recomputing yields the same CID until a new anchor is recorded or a receipt changes.",
     "sessionId": "manifest-recompute-2026-06-29"
   },
   {
@@ -100,7 +164,7 @@
     "level": "CMD",
     "subsystem": "PROVENANCE",
     "command": "ots.verify",
-    "result": "OTS VERIFY \u2014 ots-verify.py\n\nArtifact: ots-verify.py (6.2 kB)\nStamped SHA256: fcff668eca6effffacd2c62dcc6209c34c97595ac3e98e8bbdff5fdfb3df4c66\nOTS file: ots-verify.py.ots (584 B)\n\nSUCCESS!\nBitcoin block 955897 attests existence as of 2026-06-28 PST\n\nStatus: VERIFIED \u2014 Bitcoin-anchored. Record this anchor in the Final Manifest (block 955897) to fold it into the Golden Truth CID.",
+    "result": "OTS VERIFY — ots-verify.py\n\nArtifact: ots-verify.py (6.2 kB)\nStamped SHA256: fcff668eca6effffacd2c62dcc6209c34c97595ac3e98e8bbdff5fdfb3df4c66\nOTS file: ots-verify.py.ots (584 B)\n\nSUCCESS!\nBitcoin block 955897 attests existence as of 2026-06-28 PST\n\nStatus: VERIFIED — Bitcoin-anchored. Record this anchor in the Final Manifest (block 955897) to fold it into the Golden Truth CID.",
     "sessionId": "ots-verify-fcff668e"
   },
   {
@@ -108,7 +172,7 @@
     "level": "CMD",
     "subsystem": "DOCTRINE",
     "command": "manifesto.stamp",
-    "result": "UNIVERSAL JUSTICE MANIFESTO \u2014 PROVENANCE RECEIPT 2026-06-29\n\nArtifact: The Universal Justice Manifesto_ The Sovereign Runtime Declaration.md (5.1 kB)\nStamped SHA256: 8c426dc600f932157c4397e4303f8c09186ff0c5c8a73ada17550632b4abfa45\nOTS file: The Universal Justice Manifesto_ The Sovereign Runtime Declaration.md.ots (619 B)\n\nStatus: PENDING \u2014 OpenTimestamps calendar accepted the stamp; Bitcoin transaction is UNCONFIRMED. Upgrades to VERIFIED on first confirmation when the .ots file is updated with the block-height path.\n\nDoctrine: the Sovereign Runtime Declaration is now hash-anchored. The bytes that produced 8c42\u2026fa45 are the only bytes the receipt covers \u2014 any edit invalidates the proof.",
+    "result": "UNIVERSAL JUSTICE MANIFESTO — PROVENANCE RECEIPT 2026-06-29\n\nArtifact: The Universal Justice Manifesto_ The Sovereign Runtime Declaration.md (5.1 kB)\nStamped SHA256: 8c426dc600f932157c4397e4303f8c09186ff0c5c8a73ada17550632b4abfa45\nOTS file: The Universal Justice Manifesto_ The Sovereign Runtime Declaration.md.ots (619 B)\n\nStatus: PENDING — OpenTimestamps calendar accepted the stamp; Bitcoin transaction is UNCONFIRMED. Upgrades to VERIFIED on first confirmation when the .ots file is updated with the block-height path.\n\nDoctrine: the Sovereign Runtime Declaration is now hash-anchored. The bytes that produced 8c42…fa45 are the only bytes the receipt covers — any edit invalidates the proof.",
     "sessionId": "manifesto-stamp-1782710516222"
   },
   {
@@ -116,7 +180,7 @@
     "level": "CMD",
     "subsystem": "DIGITAL-ORE",
     "command": "ore.stamp",
-    "result": "DIGITAL ORE PROVENANCE RECEIPT \u2014 2026-06-29 (second stamp)\n\nArtifact: digital-ore-1782710516222.json (10.2 kB)\nStamped SHA256: 0de8ed98f41bd656686793c67dec9108b5e29c10ccd6cb8fe272cbfab76c590b\nOTS file: digital-ore-1782710516222.json.ots (619 B)\n\nStatus: VERIFIED \u2014 Bitcoin block 955889 attests existence as of 2026-06-28 PST. Record this anchor in the Final Manifest (block 955889) to fold it into the Golden Truth CID.\n\nDoctrine: extends the 06-29 ore-stamp chain. The hash 0de8\u2026c590b is now Bitcoin-anchored; any edit to the source bytes invalidates the proof.",
+    "result": "DIGITAL ORE PROVENANCE RECEIPT — 2026-06-29 (second stamp)\n\nArtifact: digital-ore-1782710516222.json (10.2 kB)\nStamped SHA256: 0de8ed98f41bd656686793c67dec9108b5e29c10ccd6cb8fe272cbfab76c590b\nOTS file: digital-ore-1782710516222.json.ots (619 B)\n\nStatus: VERIFIED — Bitcoin block 955889 attests existence as of 2026-06-28 PST. Record this anchor in the Final Manifest (block 955889) to fold it into the Golden Truth CID.\n\nDoctrine: extends the 06-29 ore-stamp chain. The hash 0de8…c590b is now Bitcoin-anchored; any edit to the source bytes invalidates the proof.",
     "sessionId": "ore-stamp-1782710516222"
   },
   {
@@ -124,7 +188,7 @@
     "level": "CMD",
     "subsystem": "DIGITAL-ORE",
     "command": "ore.stamp",
-    "result": "DIGITAL ORE PROVENANCE RECEIPT \u2014 2026-06-29\n\nArtifact: digital-ore-1782708582129.json (2.9 kB)\nStamped SHA256: ad6ca9287e7d8a2114262419006e86d692834e1a4b5c57878ee5d34f27987eaa\nOTS file: digital-ore-1782708582129.json.ots (654 B)\n\nStatus: PENDING \u2014 OpenTimestamps calendar accepted the stamp; Bitcoin transaction is UNCONFIRMED. The attestation upgrades to VERIFIED on first confirmation; the .ots file will be updated with the block-height path at that time.\n\nDoctrine: a pending OTS receipt is honest provenance \u2014 it proves the hash existed before block N, not that it is on-chain yet. THEATER is forbidden; this entry stays PENDING until the calendar returns a complete proof.",
+    "result": "DIGITAL ORE PROVENANCE RECEIPT — 2026-06-29\n\nArtifact: digital-ore-1782708582129.json (2.9 kB)\nStamped SHA256: ad6ca9287e7d8a2114262419006e86d692834e1a4b5c57878ee5d34f27987eaa\nOTS file: digital-ore-1782708582129.json.ots (654 B)\n\nStatus: PENDING — OpenTimestamps calendar accepted the stamp; Bitcoin transaction is UNCONFIRMED. The attestation upgrades to VERIFIED on first confirmation; the .ots file will be updated with the block-height path at that time.\n\nDoctrine: a pending OTS receipt is honest provenance — it proves the hash existed before block N, not that it is on-chain yet. THEATER is forbidden; this entry stays PENDING until the calendar returns a complete proof.",
     "sessionId": "ore-stamp-1782708582129"
   },
   {
@@ -132,7 +196,7 @@
     "level": "CMD",
     "subsystem": "OMNI-SAM",
     "command": "sam.receipt",
-    "result": "SOVEREIGN ACTIVATION RECEIPT \u2014 2026-06-25T13:40:17.627Z\n\n1. Receipt Type: Sovereign Activation\n2. Truth Mode: PRODUCTION-REAL ONLY\n3. Gateway Law: highest-priority reachable gateway wins\n4. Declared Domains: tesseract.manus.space \u00b7 nexinus.net \u00b7 valkyrie-nexinus.net \u00b7 xinus.one\n5. Artifact Rule: uploads/imports are reference tools, not fabricated telemetry\n6. Next Objective: bind one verified artifact to one live gateway signal\n\nActivation chain state: gateway proof + Sovereign_Intelligence_Arch",
+    "result": "SOVEREIGN ACTIVATION RECEIPT — 2026-06-25T13:40:17.627Z\n\n1. Receipt Type: Sovereign Activation\n2. Truth Mode: PRODUCTION-REAL ONLY\n3. Gateway Law: highest-priority reachable gateway wins\n4. Declared Domains: tesseract.manus.space · nexinus.net · valkyrie-nexinus.net · xinus.one\n5. Artifact Rule: uploads/imports are reference tools, not fabricated telemetry\n6. Next Objective: bind one verified artifact to one live gateway signal\n\nActivation chain state: gateway proof + Sovereign_Intelligence_Arch",
     "sessionId": "6b40cbc9-1357-c584-d88e25f7"
   },
   {
@@ -140,7 +204,7 @@
     "level": "INFO",
     "subsystem": "OMNI-SAM",
     "command": "sam.status",
-    "result": "OMNI-SAM AXIS STATUS \u2014 2026-06-25T13:40:02.490Z\n\nTruth mode: PRODUCTION-REAL ONLY\nTelemetry source: browser liveness probes against declared domains\nRouting law: highest-priority reachable gateway wins\n\nDeclared live domains:\n  1. https://tesseract.manus.space\n  2. https://nexinus.net\n  3. https://valkyrie-nexinus.net\n  4. https://xinus.one\n\nPlanetary geometry: the Hetzner/Manus/Namecheap topology is represented only by the actual reachable nodes. Any unverified node, tunnel, or metric remains S",
+    "result": "OMNI-SAM AXIS STATUS — 2026-06-25T13:40:02.490Z\n\nTruth mode: PRODUCTION-REAL ONLY\nTelemetry source: browser liveness probes against declared domains\nRouting law: highest-priority reachable gateway wins\n\nDeclared live domains:\n  1. https://tesseract.manus.space\n  2. https://nexinus.net\n  3. https://valkyrie-nexinus.net\n  4. https://xinus.one\n\nPlanetary geometry: the Hetzner/Manus/Namecheap topology is represented only by the actual reachable nodes. Any unverified node, tunnel, or metric remains S",
     "sessionId": "6b40cbc9-1357-c584-d88e25f7"
   },
   {
@@ -148,7 +212,7 @@
     "level": "INFO",
     "subsystem": "OMNI-SAM",
     "command": "sam.status",
-    "result": "OMNI-SAM AXIS STATUS \u2014 2026-06-25T12:54:12.692Z\n\nTruth mode: PRODUCTION-REAL ONLY\nTelemetry source: browser liveness probes against declared domains\nRouting law: highest-priority reachable gateway wins\n\nDeclared live domains:\n  1. https://tesseract.manus.space\n  2. https://nexinus.net\n  3. https://valkyrie-nexinus.net\n  4. https://xinus.one\n\nPlanetary geometry: the Hetzner/Manus/Namecheap topology",
+    "result": "OMNI-SAM AXIS STATUS — 2026-06-25T12:54:12.692Z\n\nTruth mode: PRODUCTION-REAL ONLY\nTelemetry source: browser liveness probes against declared domains\nRouting law: highest-priority reachable gateway wins\n\nDeclared live domains:\n  1. https://tesseract.manus.space\n  2. https://nexinus.net\n  3. https://valkyrie-nexinus.net\n  4. https://xinus.one\n\nPlanetary geometry: the Hetzner/Manus/Namecheap topology",
     "sessionId": "6b40cbc9-1357-c584-d88e25f7"
   },
   {
@@ -156,7 +220,7 @@
     "level": "CMD",
     "subsystem": "NEBULA",
     "command": "sam.server-setup",
-    "result": "NEBULA HEALTH ENDPOINT ACTIVATION \u2014 2026-06-23T22:46:23.110Z\n\nObjective: turn registered headservers into measured live nodes.\n\nTruth rule: no node becomes LIVE because it exists in Hetzner. It becomes LIVE when a real endpoint/API/socket responds.\n\nVerified Monarch health endpoint:\n- Node: Xinus-Monarch\n- Sovereign endpoint: https://monarch.xinus.one/health  \u2190 LIVE\n- DNS: Namecheap A record monar",
+    "result": "NEBULA HEALTH ENDPOINT ACTIVATION — 2026-06-23T22:46:23.110Z\n\nObjective: turn registered headservers into measured live nodes.\n\nTruth rule: no node becomes LIVE because it exists in Hetzner. It becomes LIVE when a real endpoint/API/socket responds.\n\nVerified Monarch health endpoint:\n- Node: Xinus-Monarch\n- Sovereign endpoint: https://monarch.xinus.one/health  ← LIVE\n- DNS: Namecheap A record monar",
     "sessionId": "e1366f9c-bc61-89b5-637e9008"
   },
   {
@@ -164,7 +228,7 @@
     "level": "CMD",
     "subsystem": "NEBULA",
     "command": "sam.headservers",
-    "result": "HEADSERVER REGISTRY RECEIPT \u2014 2026-06-23T21:42:34.599Z\n\n1. Tesseract-A\n   Alias: TestRack\n   Provider: Hetzner\n   Server ID: #129345837\n   Plan: CPX62\n   Region: Hetzner Falkenstein (FSN) \u00b7 confirmed 2026-06-18\n   IPv4: 167.235.228.31\n   IPv6: 2a01:4f8:c014:482::/64\n   Role: Light mirror / headserver / geometric triangle vertex \u00b7 Falkenstein anchor\n   Facts: 16 vCPU \u00b7 32 GB RAM \u00b7 640 GB local disk",
+    "result": "HEADSERVER REGISTRY RECEIPT — 2026-06-23T21:42:34.599Z\n\n1. Tesseract-A\n   Alias: TestRack\n   Provider: Hetzner\n   Server ID: #129345837\n   Plan: CPX62\n   Region: Hetzner Falkenstein (FSN) · confirmed 2026-06-18\n   IPv4: 167.235.228.31\n   IPv6: 2a01:4f8:c014:482::/64\n   Role: Light mirror / headserver / geometric triangle vertex · Falkenstein anchor\n   Facts: 16 vCPU · 32 GB RAM · 640 GB local disk",
     "sessionId": "caba7e15-a1c5-0fad-f99defb8"
   },
   {
@@ -172,7 +236,7 @@
     "level": "CMD",
     "subsystem": "OMNI-SAM",
     "command": "sam.gateway-test / https://xinus.one /",
-    "result": "GATEWAY TEST \u2014 2026-06-23T21:36:15.843Z\n\nTarget: https://monarch.xinus.one/health/ https://xinus.one /\nGateway: xinus-monarch\nResult: REQUEST SENT / OPAQUE RESPONSE ACCEPTED\nLatency: 339ms\nTruth mode: browser fetch completed without network rejection.\n\nReceipt: one reversible test request passed through the active gateway.",
+    "result": "GATEWAY TEST — 2026-06-23T21:36:15.843Z\n\nTarget: https://monarch.xinus.one/health/ https://xinus.one /\nGateway: xinus-monarch\nResult: REQUEST SENT / OPAQUE RESPONSE ACCEPTED\nLatency: 339ms\nTruth mode: browser fetch completed without network rejection.\n\nReceipt: one reversible test request passed through the active gateway.",
     "sessionId": "caba7e15-a1c5-0fad-f99defb8"
   },
   {
@@ -180,7 +244,7 @@
     "level": "CMD",
     "subsystem": "OMNI-SAM",
     "command": "sam.gateway-test /",
-    "result": "GATEWAY TEST \u2014 2026-06-23T21:35:26.321Z\n\nTarget: https://monarch.xinus.one/health/\nGateway: xinus-monarch\nResult: REQUEST SENT / OPAQUE RESPONSE ACCEPTED\nLatency: 617ms\nTruth mode: browser fetch completed without network rejection.\n\nReceipt: one reversible test request passed through the active gateway.",
+    "result": "GATEWAY TEST — 2026-06-23T21:35:26.321Z\n\nTarget: https://monarch.xinus.one/health/\nGateway: xinus-monarch\nResult: REQUEST SENT / OPAQUE RESPONSE ACCEPTED\nLatency: 617ms\nTruth mode: browser fetch completed without network rejection.\n\nReceipt: one reversible test request passed through the active gateway.",
     "sessionId": "caba7e15-a1c5-0fad-f99defb8"
   },
   {
@@ -188,7 +252,7 @@
     "level": "CMD",
     "subsystem": "INTELLIGENCE",
     "command": "sam.reflect KetherGate",
-    "result": "sam.reflect \u2014 input: \"KetherGate\"\n\nPERCEPT: recorded locally; no external model or hidden dataset invoked.\nASSERTICCALIBRATE: recorded locally; no external model or hidden dataset invoked.\nPROBABILITY: recorded locally; no external model or hidden dataset invoked.\nOVERWATCH: recorded locally; no external model or hidden dataset invoked.\nDIRECTRA: recorded locally; no external model or hidden datas",
+    "result": "sam.reflect — input: \"KetherGate\"\n\nPERCEPT: recorded locally; no external model or hidden dataset invoked.\nASSERTICCALIBRATE: recorded locally; no external model or hidden dataset invoked.\nPROBABILITY: recorded locally; no external model or hidden dataset invoked.\nOVERWATCH: recorded locally; no external model or hidden dataset invoked.\nDIRECTRA: recorded locally; no external model or hidden datas",
     "sessionId": "caba7e15-a1c5-0fad-f99defb8"
   },
   {
@@ -196,7 +260,7 @@
     "level": "CMD",
     "subsystem": "NEBULA",
     "command": "sam.mesh-verify",
-    "result": "NEBULA MESH VERIFICATION + HEALTH PUBLISH \u2014 2026-06-23T21:34:27.895Z\n\nObjective: prove the WireGuard exit node is actually carrying traffic, then expose a measurable /wg-health endpoint so the mesh node flips from ATTESTED to MEASURED in Truth Point. No node goes green on faith \u2014 only on a served receipt.\n\nTruth boundary: the browser cannot read WireGuard counters or SSH the server. This generates",
+    "result": "NEBULA MESH VERIFICATION + HEALTH PUBLISH — 2026-06-23T21:34:27.895Z\n\nObjective: prove the WireGuard exit node is actually carrying traffic, then expose a measurable /wg-health endpoint so the mesh node flips from ATTESTED to MEASURED in Truth Point. No node goes green on faith — only on a served receipt.\n\nTruth boundary: the browser cannot read WireGuard counters or SSH the server. This generates",
     "sessionId": "caba7e15-a1c5-0fad-f99defb8"
   },
   {
@@ -204,7 +268,7 @@
     "level": "WARN",
     "subsystem": "OMNI-SAM",
     "command": "sam.probe",
-    "result": "sam.probe \u2014 2026-06-23T21:33:58.765Z\n\nSTANDBY\nUnknown or unbound command: \"sam.probe\".\n\nNo result has been fabricated. Bind a real service endpoint/API credential, then re-run the command.",
+    "result": "sam.probe — 2026-06-23T21:33:58.765Z\n\nSTANDBY\nUnknown or unbound command: \"sam.probe\".\n\nNo result has been fabricated. Bind a real service endpoint/API credential, then re-run the command.",
     "sessionId": "caba7e15-a1c5-0fad-f99defb8"
   },
   {
@@ -212,15 +276,15 @@
     "level": "WARN",
     "subsystem": "OMNI-SAM",
     "command": "sam.ststus",
-    "result": "sam.ststus \u2014 2026-06-23T21:33:52.115Z\n\nSTANDBY\nUnknown or unbound command: \"sam.ststus\".\n\nNo result has been fabricated. Bind a real service endpoint/API credential, then re-run the command.",
+    "result": "sam.ststus — 2026-06-23T21:33:52.115Z\n\nSTANDBY\nUnknown or unbound command: \"sam.ststus\".\n\nNo result has been fabricated. Bind a real service endpoint/API credential, then re-run the command.",
     "sessionId": "caba7e15-a1c5-0fad-f99defb8"
   },
   {
     "ts": "2026-06-23T21:33:15.728Z",
     "level": "CMD",
     "subsystem": "APEX",
-    "command": "apex.transcend Good \u2014 I have everything I need. Let me review the code before writing the instr",
-    "result": "REST \u00b7 POSITIVE HANDSHAKE \u00b7 Open Truth Point or run sam.headservers, confirm the server appears once, then bind a real /health endpoint when available.",
+    "command": "apex.transcend Good — I have everything I need. Let me review the code before writing the instr",
+    "result": "REST · POSITIVE HANDSHAKE · Open Truth Point or run sam.headservers, confirm the server appears once, then bind a real /health endpoint when available.",
     "sessionId": "caba7e15-a1c5-0fad-f99defb8"
   },
   {
@@ -228,7 +292,7 @@
     "level": "WARN",
     "subsystem": "OMNI-SAM",
     "command": "sam.forge-valkyrie.nexinus.net/health",
-    "result": "sam.forge-valkyrie.nexinus.net/health \u2014 2026-06-21T12:43:07.286Z\n\nSTANDBY\nUnknown or unbound command: \"sam.forge-valkyrie.nexinus.net/health\".\n\nNo result has been fabricated. Bind a real service endpoint/API credential, then re-run the command.",
+    "result": "sam.forge-valkyrie.nexinus.net/health — 2026-06-21T12:43:07.286Z\n\nSTANDBY\nUnknown or unbound command: \"sam.forge-valkyrie.nexinus.net/health\".\n\nNo result has been fabricated. Bind a real service endpoint/API credential, then re-run the command.",
     "sessionId": "7d5397bc-b193-55de-121565a4"
   },
   {
@@ -236,7 +300,7 @@
     "level": "CMD",
     "subsystem": "SOVEREIGN-FORGE",
     "command": "sam.forge contract",
-    "result": "sam.forge \u2014 2026-06-21T12:41:59.089Z\n\nSTANDBY\nRequested target: \"contract\". This portal has no verified live backend binding for that operation in the current browser runtime.\n\nNo result has been fabricated. Bind a real service endpoint/API credential, then re-run the command.",
+    "result": "sam.forge — 2026-06-21T12:41:59.089Z\n\nSTANDBY\nRequested target: \"contract\". This portal has no verified live backend binding for that operation in the current browser runtime.\n\nNo result has been fabricated. Bind a real service endpoint/API credential, then re-run the command.",
     "sessionId": "7d5397bc-b193-55de-121565a4"
   },
   {
@@ -244,7 +308,7 @@
     "level": "CMD",
     "subsystem": "SOVEREIGN-FORGE",
     "command": "sam.deploy contract local",
-    "result": "sam.deploy \u2014 2026-06-21T12:41:55.582Z\n\nSTANDBY\nRequested target: \"contract local\". This portal has no verified live backend binding for that operation in the current browser runtime.\n\nNo result has been fabricated. Bind a real service endpoint/API credential, then re-run the command.",
+    "result": "sam.deploy — 2026-06-21T12:41:55.582Z\n\nSTANDBY\nRequested target: \"contract local\". This portal has no verified live backend binding for that operation in the current browser runtime.\n\nNo result has been fabricated. Bind a real service endpoint/API credential, then re-run the command.",
     "sessionId": "7d5397bc-b193-55de-121565a4"
   },
   {
@@ -252,7 +316,7 @@
     "level": "CMD",
     "subsystem": "SOVEREIGN-FORGE",
     "command": "sam.deploy api local",
-    "result": "sam.deploy \u2014 2026-06-21T12:41:49.318Z\n\nSTANDBY\nRequested target: \"api local\". This portal has no verified live backend binding for that operation in the current browser runtime.\n\nNo result has been fabricated. Bind a real service endpoint/API credential, then re-run the command.",
+    "result": "sam.deploy — 2026-06-21T12:41:49.318Z\n\nSTANDBY\nRequested target: \"api local\". This portal has no verified live backend binding for that operation in the current browser runtime.\n\nNo result has been fabricated. Bind a real service endpoint/API credential, then re-run the command.",
     "sessionId": "7d5397bc-b193-55de-121565a4"
   },
   {
@@ -260,7 +324,7 @@
     "level": "CMD",
     "subsystem": "SOVEREIGN-FORGE",
     "command": "sam.forge api",
-    "result": "sam.forge \u2014 2026-06-21T12:41:47.118Z\n\nSTANDBY\nRequested target: \"api\". This portal has no verified live backend binding for that operation in the current browser runtime.\n\nNo result has been fabricated. Bind a real service endpoint/API credential, then re-run the command.",
+    "result": "sam.forge — 2026-06-21T12:41:47.118Z\n\nSTANDBY\nRequested target: \"api\". This portal has no verified live backend binding for that operation in the current browser runtime.\n\nNo result has been fabricated. Bind a real service endpoint/API credential, then re-run the command.",
     "sessionId": "7d5397bc-b193-55de-121565a4"
   },
   {
@@ -268,7 +332,7 @@
     "level": "CMD",
     "subsystem": "SOVEREIGN-FORGE",
     "command": "sam.deploy api Helsinki-01",
-    "result": "sam.deploy \u2014 2026-06-21T12:41:30.497Z\n\nSTANDBY\nRequested target: \"api Helsinki-01\". This portal has no verified live backend binding for that operation in the current browser runtime.\n\nNo result has been fabricated. Bind a real service endpoint/API credential, then re-run the command.",
+    "result": "sam.deploy — 2026-06-21T12:41:30.497Z\n\nSTANDBY\nRequested target: \"api Helsinki-01\". This portal has no verified live backend binding for that operation in the current browser runtime.\n\nNo result has been fabricated. Bind a real service endpoint/API credential, then re-run the command.",
     "sessionId": "7d5397bc-b193-55de-121565a4"
   },
   {
@@ -276,7 +340,7 @@
     "level": "CMD",
     "subsystem": "SOVEREIGN-FORGE",
     "command": "sam.deploy daemon Falkenstein-01",
-    "result": "sam.deploy \u2014 2026-06-21T12:40:41.290Z\n\nSTANDBY\nRequested target: \"daemon Falkenstein-01\". This portal has no verified live backend binding for that operation in the current browser runtime.\n\nNo result has been fabricated. Bind a real service endpoint/API credential, then re-run the command.",
+    "result": "sam.deploy — 2026-06-21T12:40:41.290Z\n\nSTANDBY\nRequested target: \"daemon Falkenstein-01\". This portal has no verified live backend binding for that operation in the current browser runtime.\n\nNo result has been fabricated. Bind a real service endpoint/API credential, then re-run the command.",
     "sessionId": "7d5397bc-b193-55de-121565a4"
   },
   {
@@ -284,7 +348,7 @@
     "level": "CMD",
     "subsystem": "SOVEREIGN-FORGE",
     "command": "sam.deploy api Falkenstein-01",
-    "result": "sam.deploy \u2014 2026-06-21T12:40:32.974Z\n\nSTANDBY\nRequested target: \"api Falkenstein-01\". This portal has no verified live backend binding for that operation in the current browser runtime.\n\nNo result has been fabricated. Bind a real service endpoint/API credential, then re-run the command.",
+    "result": "sam.deploy — 2026-06-21T12:40:32.974Z\n\nSTANDBY\nRequested target: \"api Falkenstein-01\". This portal has no verified live backend binding for that operation in the current browser runtime.\n\nNo result has been fabricated. Bind a real service endpoint/API credential, then re-run the command.",
     "sessionId": "7d5397bc-b193-55de-121565a4"
   },
   {
@@ -292,7 +356,7 @@
     "level": "CMD",
     "subsystem": "SOVEREIGN-FORGE",
     "command": "sam.forge api",
-    "result": "sam.forge \u2014 2026-06-21T12:40:29.695Z\n\nSTANDBY\nRequested target: \"api\". This portal has no verified live backend binding for that operation in the current browser runtime.\n\nNo result has been fabricated. Bind a real service endpoint/API credential, then re-run the command.",
+    "result": "sam.forge — 2026-06-21T12:40:29.695Z\n\nSTANDBY\nRequested target: \"api\". This portal has no verified live backend binding for that operation in the current browser runtime.\n\nNo result has been fabricated. Bind a real service endpoint/API credential, then re-run the command.",
     "sessionId": "7d5397bc-b193-55de-121565a4"
   },
   {
@@ -300,7 +364,7 @@
     "level": "CMD",
     "subsystem": "NEBULA",
     "command": "Sam.headservers",
-    "result": "HEADSERVER REGISTRY RECEIPT \u2014 2026-06-21T12:35:25.448Z\n\n1. Tesseract-A\n   Alias: TestRack\n   Provider: Hetzner\n   Server ID: #129345837\n   Plan: CPX62\n   Region: Hetzner Falkenstein (FSN) \u00b7 confirmed 2026-06-18\n   IPv4: 167.235.228.31\n   IPv6: 2a01:4f8:c014:482::/64\n   Role: Light mirror / headserver / geometric triangle vertex \u00b7 Falkenstein anchor\n   Facts: 16 vCPU \u00b7 32 GB RAM \u00b7 640 GB local disk \u00b7 0/20 TB traffic out \u00b7 41.26 usage \u00b7 59.49/mo \u00b7 Hetzner Falkenstein (FSN) datacenter confirmed by ",
+    "result": "HEADSERVER REGISTRY RECEIPT — 2026-06-21T12:35:25.448Z\n\n1. Tesseract-A\n   Alias: TestRack\n   Provider: Hetzner\n   Server ID: #129345837\n   Plan: CPX62\n   Region: Hetzner Falkenstein (FSN) · confirmed 2026-06-18\n   IPv4: 167.235.228.31\n   IPv6: 2a01:4f8:c014:482::/64\n   Role: Light mirror / headserver / geometric triangle vertex · Falkenstein anchor\n   Facts: 16 vCPU · 32 GB RAM · 640 GB local disk · 0/20 TB traffic out · 41.26 usage · 59.49/mo · Hetzner Falkenstein (FSN) datacenter confirmed by ",
     "sessionId": "f7c7ebfb-b99c-c16c-69b46c9b"
   },
   {
@@ -308,7 +372,7 @@
     "level": "CMD",
     "subsystem": "APEX",
     "command": "apex.transcend {\n  \"exportedAt\": \"2026-06-21T12:31:54.769Z\",\n  \"activeGateway\": {\n    \"id\": \"te",
-    "result": "REST \u00b7 POSITIVE HANDSHAKE \u00b7 Open Truth Point or run sam.headservers, confirm the server appears once, then bind a real /health endpoint when available.",
+    "result": "REST · POSITIVE HANDSHAKE · Open Truth Point or run sam.headservers, confirm the server appears once, then bind a real /health endpoint when available.",
     "sessionId": "f7c7ebfb-b99c-c16c-69b46c9b"
   },
   {
@@ -316,7 +380,7 @@
     "level": "CMD",
     "subsystem": "TRAVEL-GUARDIAN",
     "command": "travel.megaract-bootstrap 39.03393, -122.91563 -> San Francisco, CA",
-    "result": "MEGARACT BOOTSTRAP ROUTE MEASURED \u00b7 39.03393, -122.91563 \u2192 San Francisco, CA \u00b7 ETA 160m \u00b7 118.6mi \u00b7 provider MEGARACT-BOOTSTRAP \u00b7 OSM/Nominatim + OSRM \u00b7 receipt megaract-bootstrap-mqnrlizn",
+    "result": "MEGARACT BOOTSTRAP ROUTE MEASURED · 39.03393, -122.91563 → San Francisco, CA · ETA 160m · 118.6mi · provider MEGARACT-BOOTSTRAP · OSM/Nominatim + OSRM · receipt megaract-bootstrap-mqnrlizn",
     "sessionId": "f7c7ebfb-b99c-c16c-69b46c9b"
   },
   {
@@ -332,7 +396,7 @@
     "level": "CMD",
     "subsystem": "TRAVEL-GUARDIAN",
     "command": "travel.gps-lock",
-    "result": "GPS LOCK \u00b7 39.03393, -122.91563 \u00b7 accuracy 29m",
+    "result": "GPS LOCK · 39.03393, -122.91563 · accuracy 29m",
     "sessionId": "f7c7ebfb-b99c-c16c-69b46c9b"
   },
   {
@@ -347,8 +411,8 @@
     "ts": "2026-06-21T12:29:00.215Z",
     "level": "CMD",
     "subsystem": "APEX",
-    "command": "apex.transcend MEGARACT BOOTSTRAP ROUTE MEASURED \u00b7 Lakeport, CA \u2192 San Francisco, CA \u00b7 ETA 162m ",
-    "result": "REST \u00b7 POSITIVE HANDSHAKE \u00b7 Open Travel Guardian and verify the MEGARACT canon card is present above Geospatial Binding.",
+    "command": "apex.transcend MEGARACT BOOTSTRAP ROUTE MEASURED · Lakeport, CA → San Francisco, CA · ETA 162m ",
+    "result": "REST · POSITIVE HANDSHAKE · Open Travel Guardian and verify the MEGARACT canon card is present above Geospatial Binding.",
     "sessionId": "f7c7ebfb-b99c-c16c-69b46c9b"
   },
   {
@@ -356,15 +420,15 @@
     "level": "CMD",
     "subsystem": "APEX",
     "command": "apex.transcend echo \"Target: Terminus-Tesseractus (Helsinki Vertex)\"\nnebula-wireguard-bootstrap",
-    "result": "REST \u00b7 POSITIVE HANDSHAKE \u00b7 Name the objective in one sentence, verify one live signal, and record the receipt before taking the next step.",
+    "result": "REST · POSITIVE HANDSHAKE · Name the objective in one sentence, verify one live signal, and record the receipt before taking the next step.",
     "sessionId": "b68d5a0e-d3c1-25da-730cafd9"
   },
   {
     "ts": "2026-06-20T20:48:23.782Z",
     "level": "CMD",
     "subsystem": "APEX",
-    "command": "apex.transcend GATEWAY TEST \u2014 2026-06-20T18:48:39.644Z\n\nTarget: https://monarch.xinus.one/healt",
-    "result": "REST \u00b7 POSITIVE HANDSHAKE \u00b7 Run sam.bind-artifact Sovereign_Intelligence_Architecture__Advanced_App_Concepts.md, then record the artifact binding receipt.",
+    "command": "apex.transcend GATEWAY TEST — 2026-06-20T18:48:39.644Z\n\nTarget: https://monarch.xinus.one/healt",
+    "result": "REST · POSITIVE HANDSHAKE · Run sam.bind-artifact Sovereign_Intelligence_Architecture__Advanced_App_Concepts.md, then record the artifact binding receipt.",
     "sessionId": "91d2cacc-11ab-5df9-e22cdd30"
   },
   {
@@ -372,7 +436,7 @@
     "level": "CMD",
     "subsystem": "SOVEREIGN-FORGE",
     "command": "sam.deploy api staging",
-    "result": "sam.deploy \u2014 2026-06-20T19:12:29.759Z\n\nSTANDBY\nRequested target: \"api staging\". This portal has no verified live backend binding for that operation in the current browser runtime.\n\nNo result has been fabricated. Bind a real service endpoint/API credential, then re-run the command.",
+    "result": "sam.deploy — 2026-06-20T19:12:29.759Z\n\nSTANDBY\nRequested target: \"api staging\". This portal has no verified live backend binding for that operation in the current browser runtime.\n\nNo result has been fabricated. Bind a real service endpoint/API credential, then re-run the command.",
     "sessionId": "cda30832-4dae-89e4-bd8032f6"
   },
   {
@@ -380,7 +444,7 @@
     "level": "CMD",
     "subsystem": "SOVEREIGN-FORGE",
     "command": "sam.forge api",
-    "result": "sam.forge \u2014 2026-06-20T19:12:23.872Z\n\nSTANDBY\nRequested target: \"api\". This portal has no verified live backend binding for that operation in the current browser runtime.\n\nNo result has been fabricated. Bind a real service endpoint/API credential, then re-run the command.",
+    "result": "sam.forge — 2026-06-20T19:12:23.872Z\n\nSTANDBY\nRequested target: \"api\". This portal has no verified live backend binding for that operation in the current browser runtime.\n\nNo result has been fabricated. Bind a real service endpoint/API credential, then re-run the command.",
     "sessionId": "cda30832-4dae-89e4-bd8032f6"
   },
   {
@@ -388,7 +452,7 @@
     "level": "CMD",
     "subsystem": "SOVEREIGN-FORGE",
     "command": "sam.deploy api local",
-    "result": "sam.deploy \u2014 2026-06-20T19:11:57.334Z\n\nSTANDBY\nRequested target: \"api local\". This portal has no verified live backend binding for that operation in the current browser runtime.\n\nNo result has been fabricated. Bind a real service endpoint/API credential, then re-run the command.",
+    "result": "sam.deploy — 2026-06-20T19:11:57.334Z\n\nSTANDBY\nRequested target: \"api local\". This portal has no verified live backend binding for that operation in the current browser runtime.\n\nNo result has been fabricated. Bind a real service endpoint/API credential, then re-run the command.",
     "sessionId": "cda30832-4dae-89e4-bd8032f6"
   },
   {
@@ -396,7 +460,7 @@
     "level": "CMD",
     "subsystem": "SOVEREIGN-FORGE",
     "command": "sam.forge api",
-    "result": "sam.forge \u2014 2026-06-20T19:11:49.146Z\n\nSTANDBY\nRequested target: \"api\". This portal has no verified live backend binding for that operation in the current browser runtime.\n\nNo result has been fabricated. Bind a real service endpoint/API credential, then re-run the command.",
+    "result": "sam.forge — 2026-06-20T19:11:49.146Z\n\nSTANDBY\nRequested target: \"api\". This portal has no verified live backend binding for that operation in the current browser runtime.\n\nNo result has been fabricated. Bind a real service endpoint/API credential, then re-run the command.",
     "sessionId": "cda30832-4dae-89e4-bd8032f6"
   },
   {
@@ -404,7 +468,7 @@
     "level": "CMD",
     "subsystem": "SOVEREIGN-FORGE",
     "command": "sam.forge cli",
-    "result": "sam.forge \u2014 2026-06-20T19:11:37.127Z\n\nSTANDBY\nRequested target: \"cli\". This portal has no verified live backend binding for that operation in the current browser runtime.\n\nNo result has been fabricated. Bind a real service endpoint/API credential, then re-run the command.",
+    "result": "sam.forge — 2026-06-20T19:11:37.127Z\n\nSTANDBY\nRequested target: \"cli\". This portal has no verified live backend binding for that operation in the current browser runtime.\n\nNo result has been fabricated. Bind a real service endpoint/API credential, then re-run the command.",
     "sessionId": "cda30832-4dae-89e4-bd8032f6"
   },
   {
@@ -412,7 +476,7 @@
     "level": "CMD",
     "subsystem": "SOVEREIGN-FORGE",
     "command": "sam.forge daemon",
-    "result": "sam.forge \u2014 2026-06-20T19:11:12.370Z\n\nSTANDBY\nRequested target: \"daemon\". This portal has no verified live backend binding for that operation in the current browser runtime.\n\nNo result has been fabricated. Bind a real service endpoint/API credential, then re-run the command.",
+    "result": "sam.forge — 2026-06-20T19:11:12.370Z\n\nSTANDBY\nRequested target: \"daemon\". This portal has no verified live backend binding for that operation in the current browser runtime.\n\nNo result has been fabricated. Bind a real service endpoint/API credential, then re-run the command.",
     "sessionId": "cda30832-4dae-89e4-bd8032f6"
   },
   {
@@ -420,7 +484,7 @@
     "level": "CMD",
     "subsystem": "SOVEREIGN-FORGE",
     "command": "sam.deploy daemon Falkenstein-01",
-    "result": "sam.deploy \u2014 2026-06-20T19:11:07.964Z\n\nSTANDBY\nRequested target: \"daemon Falkenstein-01\". This portal has no verified live backend binding for that operation in the current browser runtime.\n\nNo result has been fabricated. Bind a real service endpoint/API credential, then re-run the command.",
+    "result": "sam.deploy — 2026-06-20T19:11:07.964Z\n\nSTANDBY\nRequested target: \"daemon Falkenstein-01\". This portal has no verified live backend binding for that operation in the current browser runtime.\n\nNo result has been fabricated. Bind a real service endpoint/API credential, then re-run the command.",
     "sessionId": "cda30832-4dae-89e4-bd8032f6"
   },
   {
@@ -428,7 +492,7 @@
     "level": "CMD",
     "subsystem": "SOVEREIGN-FORGE",
     "command": "sam.forge api",
-    "result": "sam.forge \u2014 2026-06-20T19:10:54.950Z\n\nSTANDBY\nRequested target: \"api\". This portal has no verified live backend binding for that operation in the current browser runtime.\n\nNo result has been fabricated. Bind a real service endpoint/API credential, then re-run the command.",
+    "result": "sam.forge — 2026-06-20T19:10:54.950Z\n\nSTANDBY\nRequested target: \"api\". This portal has no verified live backend binding for that operation in the current browser runtime.\n\nNo result has been fabricated. Bind a real service endpoint/API credential, then re-run the command.",
     "sessionId": "cda30832-4dae-89e4-bd8032f6"
   },
   {
@@ -436,7 +500,7 @@
     "level": "CMD",
     "subsystem": "NEBULA",
     "command": "Sam.testrack",
-    "result": "HEADSERVER REGISTRY RECEIPT \u2014 2026-06-20T19:08:08.288Z\n\n1. Tesseract-A\n   Alias: TestRack\n   Provider: Hetzner\n   Server ID: #129345837\n   Plan: CPX62\n   Region: Hetzner Falkenstein (FSN) \u00b7 confirmed 2026-06-18\n   IPv4: 167.235.228.31\n   IPv6: 2a01:4f8:c014:482::/64\n   Role: Light mirror / headserver / geometric triangle vertex \u00b7 Falkenstein anchor\n   Facts: 16 vCPU \u00b7 32 GB RAM \u00b7 640 GB local disk \u00b7 0/20 TB traffic out \u00b7 41.26 usage \u00b7 59.49/mo \u00b7 Hetzner Falkenstein (FSN) datacenter confirmed by ",
+    "result": "HEADSERVER REGISTRY RECEIPT — 2026-06-20T19:08:08.288Z\n\n1. Tesseract-A\n   Alias: TestRack\n   Provider: Hetzner\n   Server ID: #129345837\n   Plan: CPX62\n   Region: Hetzner Falkenstein (FSN) · confirmed 2026-06-18\n   IPv4: 167.235.228.31\n   IPv6: 2a01:4f8:c014:482::/64\n   Role: Light mirror / headserver / geometric triangle vertex · Falkenstein anchor\n   Facts: 16 vCPU · 32 GB RAM · 640 GB local disk · 0/20 TB traffic out · 41.26 usage · 59.49/mo · Hetzner Falkenstein (FSN) datacenter confirmed by ",
     "sessionId": "cda30832-4dae-89e4-bd8032f6"
   },
   {
@@ -444,7 +508,7 @@
     "level": "WARN",
     "subsystem": "OMNI-SAM",
     "command": "Sam.bind-health /",
-    "result": "sam.bind-health \u2014 2026-06-20T19:07:51.573Z\n\nSTANDBY\nUnknown or unbound command: \"sam.bind-health\".\n\nNo result has been fabricated. Bind a real service endpoint/API credential, then re-run the command.",
+    "result": "sam.bind-health — 2026-06-20T19:07:51.573Z\n\nSTANDBY\nUnknown or unbound command: \"sam.bind-health\".\n\nNo result has been fabricated. Bind a real service endpoint/API credential, then re-run the command.",
     "sessionId": "cda30832-4dae-89e4-bd8032f6"
   },
   {
@@ -452,7 +516,7 @@
     "level": "CMD",
     "subsystem": "NEBULA",
     "command": "Sam.headservers",
-    "result": "HEADSERVER REGISTRY RECEIPT \u2014 2026-06-20T19:03:13.927Z\n\n1. Tesseract-A\n   Alias: TestRack\n   Provider: Hetzner\n   Server ID: #129345837\n   Plan: CPX62\n   Region: Hetzner Falkenstein (FSN) \u00b7 confirmed 2026-06-18\n   IPv4: 167.235.228.31\n   IPv6: 2a01:4f8:c014:482::/64\n   Role: Light mirror / headserver / geometric triangle vertex \u00b7 Falkenstein anchor\n   Facts: 16 vCPU \u00b7 32 GB RAM \u00b7 640 GB local disk \u00b7 0/20 TB traffic out \u00b7 41.26 usage \u00b7 59.49/mo \u00b7 Hetzner Falkenstein (FSN) datacenter confirmed by ",
+    "result": "HEADSERVER REGISTRY RECEIPT — 2026-06-20T19:03:13.927Z\n\n1. Tesseract-A\n   Alias: TestRack\n   Provider: Hetzner\n   Server ID: #129345837\n   Plan: CPX62\n   Region: Hetzner Falkenstein (FSN) · confirmed 2026-06-18\n   IPv4: 167.235.228.31\n   IPv6: 2a01:4f8:c014:482::/64\n   Role: Light mirror / headserver / geometric triangle vertex · Falkenstein anchor\n   Facts: 16 vCPU · 32 GB RAM · 640 GB local disk · 0/20 TB traffic out · 41.26 usage · 59.49/mo · Hetzner Falkenstein (FSN) datacenter confirmed by ",
     "sessionId": "cda30832-4dae-89e4-bd8032f6"
   },
   {
@@ -460,7 +524,7 @@
     "level": "CMD",
     "subsystem": "OMNI-SAM",
     "command": "Sam.bind-artifact",
-    "result": "ARTIFACT BINDING RECEIPT \u2014 2026-06-20T19:01:49.989Z\n\nArtifact: /src/imports/Sovereign_Intelligence_Architecture__Advanced_App_Concepts.md\nGateway Signal: highest-priority reachable gateway from live telemetry context\nBinding Law: reference artifact + live gateway signal + ops log receipt\nTruth Mode: PRODUCTION-REAL ONLY\n\nStatus: RECORDED LOCALLY \u00b7 CANONICAL FIRST SOVEREIGN ACTIVATION ARTIFACT\n\nIntegration: this receipt is no longer a temporary state. It satisfies the artifact-binding step when p",
+    "result": "ARTIFACT BINDING RECEIPT — 2026-06-20T19:01:49.989Z\n\nArtifact: /src/imports/Sovereign_Intelligence_Architecture__Advanced_App_Concepts.md\nGateway Signal: highest-priority reachable gateway from live telemetry context\nBinding Law: reference artifact + live gateway signal + ops log receipt\nTruth Mode: PRODUCTION-REAL ONLY\n\nStatus: RECORDED LOCALLY · CANONICAL FIRST SOVEREIGN ACTIVATION ARTIFACT\n\nIntegration: this receipt is no longer a temporary state. It satisfies the artifact-binding step when p",
     "sessionId": "cda30832-4dae-89e4-bd8032f6"
   },
   {
@@ -468,7 +532,7 @@
     "level": "CMD",
     "subsystem": "OMNI-SAM",
     "command": "sam.gateway-test /",
-    "result": "GATEWAY TEST \u2014 2026-06-20T19:01:15.579Z\n\nTarget: https://tesseract.manus.space/\nGateway: tesseract-manus\nResult: REQUEST SENT / OPAQUE RESPONSE ACCEPTED\nLatency: 880ms\nTruth mode: browser fetch completed without network rejection.\n\nReceipt: one reversible test request passed through the active gateway.",
+    "result": "GATEWAY TEST — 2026-06-20T19:01:15.579Z\n\nTarget: https://tesseract.manus.space/\nGateway: tesseract-manus\nResult: REQUEST SENT / OPAQUE RESPONSE ACCEPTED\nLatency: 880ms\nTruth mode: browser fetch completed without network rejection.\n\nReceipt: one reversible test request passed through the active gateway.",
     "sessionId": "cda30832-4dae-89e4-bd8032f6"
   },
   {
@@ -476,7 +540,7 @@
     "level": "WARN",
     "subsystem": "OMNI-SAM",
     "command": "Sam.gateway-test",
-    "result": "GATEWAY TEST \u2014 2026-06-20T19:00:51.994Z\n\nSTANDBY\nNo active gateway is proven in this runtime. No request was sent.",
+    "result": "GATEWAY TEST — 2026-06-20T19:00:51.994Z\n\nSTANDBY\nNo active gateway is proven in this runtime. No request was sent.",
     "sessionId": "cda30832-4dae-89e4-bd8032f6"
   },
   {
@@ -484,7 +548,7 @@
     "level": "INFO",
     "subsystem": "OMNI-SAM",
     "command": "sam.status",
-    "result": "OMNI-SAM AXIS STATUS \u2014 2026-06-20T18:56:46.199Z\n\nTruth mode: PRODUCTION-REAL ONLY\nTelemetry source: browser liveness probes against declared domains\nRouting law: highest-priority reachable gateway wins\n\nDeclared live domains:\n  1. https://tesseract.manus.space\n  2. https://nexinus.net\n  3. https://valkyrie-nexinus.net\n  4. https://xinus.one\n\nPlanetary geometry: the Hetzner/Manus/Namecheap topology",
+    "result": "OMNI-SAM AXIS STATUS — 2026-06-20T18:56:46.199Z\n\nTruth mode: PRODUCTION-REAL ONLY\nTelemetry source: browser liveness probes against declared domains\nRouting law: highest-priority reachable gateway wins\n\nDeclared live domains:\n  1. https://tesseract.manus.space\n  2. https://nexinus.net\n  3. https://valkyrie-nexinus.net\n  4. https://xinus.one\n\nPlanetary geometry: the Hetzner/Manus/Namecheap topology",
     "sessionId": "cda30832-4dae-89e4-bd8032f6"
   },
   {
@@ -500,7 +564,7 @@
     "level": "CMD",
     "subsystem": "TRUTH-COIN",
     "command": "Sam.truth-coin-provenance",
-    "result": "TRUTH COIN PROVENANCE RECEIPT \u2014 2026-06-18T16:42:15.970Z\n\n1. Sovereign Universal Digital Ore \u00b7 Origin Receipt\n   Canonical term: Sovereign Universal Digital Ore\n   Received: 2026-06-18\n   Status: VERIFIED-PROVENANCE\n   Hashes:\n     - d9b45f924a82850005079c667e786b6e4a3205ddb8bb56b973a5f975757ec7ca\n     - 1b5e90e14bc69a31a886b69087088daed60e6b8edd64fd7fca6e758352fb3876\n   Truth: VERIFIED: OpenTimestamps proof file sovereign-universal-digital-ore-origin.txt.ots is 619 B and matches sovereign-unive",
+    "result": "TRUTH COIN PROVENANCE RECEIPT — 2026-06-18T16:42:15.970Z\n\n1. Sovereign Universal Digital Ore · Origin Receipt\n   Canonical term: Sovereign Universal Digital Ore\n   Received: 2026-06-18\n   Status: VERIFIED-PROVENANCE\n   Hashes:\n     - d9b45f924a82850005079c667e786b6e4a3205ddb8bb56b973a5f975757ec7ca\n     - 1b5e90e14bc69a31a886b69087088daed60e6b8edd64fd7fca6e758352fb3876\n   Truth: VERIFIED: OpenTimestamps proof file sovereign-universal-digital-ore-origin.txt.ots is 619 B and matches sovereign-unive",
     "sessionId": "67ee1531-94cf-c436-58e5d551"
   },
   {
@@ -508,7 +572,7 @@
     "level": "CMD",
     "subsystem": "APEX",
     "command": "apex.transcend truth-coin-manifesto-001.txt.ots 479 B\nStamped SHA256 hash: 4edab582bd0eb5a72ad5",
-    "result": "REST \u00b7 POSITIVE HANDSHAKE \u00b7 Run sam.truth-coin-provenance, export the receipt, then draft the Truth Coin provenance manifest before any payment/client action.",
+    "result": "REST · POSITIVE HANDSHAKE · Run sam.truth-coin-provenance, export the receipt, then draft the Truth Coin provenance manifest before any payment/client action.",
     "sessionId": "67ee1531-94cf-c436-58e5d551"
   },
   {
