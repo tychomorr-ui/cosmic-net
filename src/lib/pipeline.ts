@@ -16,9 +16,6 @@
 import { parseProvenance, type ProvenanceReceipt } from "@/lib/provenance";
 import { getAnchor, type Anchor } from "@/lib/anchors";
 import { buildFinalManifest, type FinalManifest } from "@/lib/final-manifest";
-import { useProbeStatus } from "@/lib/probe-store";
-import { NODES } from "@/data/nodes";
-import { getOverride } from "@/lib/node-overrides";
 
 export type PipelineStage = "stamped" | "anchored" | "verified" | "broken";
 
