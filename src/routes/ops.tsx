@@ -170,6 +170,7 @@ function OpsPage() {
 
       <section className="mt-10 space-y-4">
         <InvalidProofFallback />
+        <BladeReadinessRegistry />
         <PipelineFlow />
         <ReceiptWizard />
         <FinalManifest />
