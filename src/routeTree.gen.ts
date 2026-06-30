@@ -13,6 +13,7 @@ import { Route as VerifyRouteImport } from './routes/verify'
 import { Route as TruthPointRouteImport } from './routes/truth-point'
 import { Route as TruthCoinRouteImport } from './routes/truth-coin'
 import { Route as SudoCoinRouteImport } from './routes/sudo-coin'
+import { Route as StatusRouteImport } from './routes/status'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SeventhDimensionRouteImport } from './routes/seventh-dimension'
 import { Route as SamCommandRouteImport } from './routes/sam-command'
@@ -49,6 +50,11 @@ const TruthCoinRoute = TruthCoinRouteImport.update({
 const SudoCoinRoute = SudoCoinRouteImport.update({
   id: '/sudo-coin',
   path: '/sudo-coin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StatusRoute = StatusRouteImport.update({
+  id: '/status',
+  path: '/status',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -155,6 +161,7 @@ export interface FileRoutesByFullPath {
   '/sam-command': typeof SamCommandRoute
   '/seventh-dimension': typeof SeventhDimensionRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/status': typeof StatusRoute
   '/sudo-coin': typeof SudoCoinRoute
   '/truth-coin': typeof TruthCoinRoute
   '/truth-point': typeof TruthPointRoute
@@ -178,6 +185,7 @@ export interface FileRoutesByTo {
   '/sam-command': typeof SamCommandRoute
   '/seventh-dimension': typeof SeventhDimensionRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/status': typeof StatusRoute
   '/sudo-coin': typeof SudoCoinRoute
   '/truth-coin': typeof TruthCoinRoute
   '/truth-point': typeof TruthPointRoute
@@ -202,6 +210,7 @@ export interface FileRoutesById {
   '/sam-command': typeof SamCommandRoute
   '/seventh-dimension': typeof SeventhDimensionRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/status': typeof StatusRoute
   '/sudo-coin': typeof SudoCoinRoute
   '/truth-coin': typeof TruthCoinRoute
   '/truth-point': typeof TruthPointRoute
@@ -227,6 +236,7 @@ export interface FileRouteTypes {
     | '/sam-command'
     | '/seventh-dimension'
     | '/sitemap.xml'
+    | '/status'
     | '/sudo-coin'
     | '/truth-coin'
     | '/truth-point'
@@ -250,6 +260,7 @@ export interface FileRouteTypes {
     | '/sam-command'
     | '/seventh-dimension'
     | '/sitemap.xml'
+    | '/status'
     | '/sudo-coin'
     | '/truth-coin'
     | '/truth-point'
@@ -273,6 +284,7 @@ export interface FileRouteTypes {
     | '/sam-command'
     | '/seventh-dimension'
     | '/sitemap.xml'
+    | '/status'
     | '/sudo-coin'
     | '/truth-coin'
     | '/truth-point'
@@ -297,6 +309,7 @@ export interface RootRouteChildren {
   SamCommandRoute: typeof SamCommandRoute
   SeventhDimensionRoute: typeof SeventhDimensionRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  StatusRoute: typeof StatusRoute
   SudoCoinRoute: typeof SudoCoinRoute
   TruthCoinRoute: typeof TruthCoinRoute
   TruthPointRoute: typeof TruthPointRoute
@@ -331,6 +344,13 @@ declare module '@tanstack/react-router' {
       path: '/sudo-coin'
       fullPath: '/sudo-coin'
       preLoaderRoute: typeof SudoCoinRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/status': {
+      id: '/status'
+      path: '/status'
+      fullPath: '/status'
+      preLoaderRoute: typeof StatusRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sitemap.xml': {
@@ -473,6 +493,7 @@ const rootRouteChildren: RootRouteChildren = {
   SamCommandRoute: SamCommandRoute,
   SeventhDimensionRoute: SeventhDimensionRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  StatusRoute: StatusRoute,
   SudoCoinRoute: SudoCoinRoute,
   TruthCoinRoute: TruthCoinRoute,
   TruthPointRoute: TruthPointRoute,
