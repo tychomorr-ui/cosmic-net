@@ -16,6 +16,17 @@ import {
 import { LANE_GLOSS, LANE_ORDER, detectDrift, mirror } from "@/lib/pam";
 import { pistifusReadout, type FaithScore } from "@/lib/pistifus";
 import { DoctrineAudit } from "@/components/audit/DoctrineAudit";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/pam")({
   head: () => ({
