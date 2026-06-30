@@ -75,7 +75,14 @@ export function recordInvalidProof(raw: string, now: number = Date.now()): Inval
     }
   }
   if (typeof window !== "undefined") {
-    window.dispatchEvent(new CustomEvent("nexinus:invalid-proof", { detail: { reason } }));
+    // The preview is bounded to 24 chars + ellipsis so listeners can render
+    // a hint without ever holding the full malformed value.
+    const preview = raw.length > 24 ? `${raw.slice(0, 24)}…` : raw;
+    window.dispatchEvent(
+      new CustomEvent("nexinus:invalid-proof", {
+        detail: { reason, len: raw.length, preview, ts: now },
+      }),
+    );
   }
   return m;
 }

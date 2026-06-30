@@ -15,6 +15,7 @@ import { ValkyrieActivator } from "@/components/audit/ValkyrieActivator";
 import { ReceiptWizard } from "@/components/audit/ReceiptWizard";
 import { PipelineFlow } from "@/components/audit/PipelineFlow";
 import { InvalidProofMetricsPanel } from "@/components/audit/InvalidProofMetricsPanel";
+import { InvalidProofFallback } from "@/components/audit/InvalidProofFallback";
 
 export const Route = createFileRoute("/ops")({
   head: () => ({
