@@ -1,5 +1,13 @@
 [
   {
+    "ts": "2026-06-30T00:01:00.000Z",
+    "level": "CMD",
+    "subsystem": "DOCTRINE",
+    "command": "ots.stamp.repeat",
+    "result": "OTS STAMP (re-submit) \u2014 Universal Justice Addendum v1\n\nFile: /mnt/documents/universal-justice-addendum-v1.txt (7,519 B)\nSHA-256: d9b7816ac439308dab9f717dfa86541bf23f2adaa0fa0a170e2306f1ce276834\n\nDigest POSTed to calendars (binary 32B):\n  alice.btc.calendar.opentimestamps.org   \u2192 HTTP 200 (207 B fragment) /mnt/documents/uja-v2/alice.bin\n  bob.btc.calendar.opentimestamps.org     \u2192 HTTP 200 (205 B fragment) /mnt/documents/uja-v2/bob.bin\n  finney.calendar.eternitywall.com        \u2192 HTTP 200 (156 B fragment) /mnt/documents/uja-v2/finney.bin\n\nGET /timestamp/<sha> on all three \u2192 HTTP 404 (no Bitcoin attestation chain yet).\n\nStatus: STAMPED \u00b7 PENDING Bitcoin inclusion (~1\u20136h).\nGolden Truth CID: UNCHANGED. No block height is on file for this SHA, so the manifest is not re-rolled \u2014 the CID is content-defined and stays identical until an anchor is recorded. Doctrine: no theater, no fabricated block.",
+    "sessionId": "ots-stamp-uja-v1-repeat"
+  },
+  {
     "ts": "2026-06-29T23:45:00.000Z",
     "level": "CMD",
     "subsystem": "PROVENANCE",
