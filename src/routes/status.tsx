@@ -13,6 +13,7 @@ import {
   buildFinalManifest,
   type FinalManifest as ManifestT,
 } from "@/lib/final-manifest";
+import { PipelineFlow } from "@/components/audit/PipelineFlow";
 
 export const Route = createFileRoute("/status")({
   head: () => ({
@@ -148,6 +149,10 @@ function StatusPage() {
           Golden Truth CID
         </h2>
         <GoldenTile cid={cid} m={manifest} refreshedAt={refreshedAt} />
+      </section>
+
+      <section className="mt-8">
+        <PipelineFlow />
       </section>
     </main>
   );
