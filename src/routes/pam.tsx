@@ -146,10 +146,17 @@ function PamConsole() {
           next_move: "Re-verify chain badge reads `chain ok`.",
           drift: `auto-heal: chain break @ ${r.repairedFrom} re-anchored to recomputed predecessor`,
         });
+        toast.success("chain repaired", {
+          description: `re-stamped ${r.rewritten} link(s) from #${r.repairedFrom} · head ${r.headCid?.slice(0, 16)}…`,
+        });
+      } else {
+        toast("chain already ok", { description: "no break detected; nothing rewritten." });
       }
       await refresh();
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e));
+      const msg = e instanceof Error ? e.message : String(e);
+      setError(msg);
+      toast.error("repair refused", { description: msg });
     }
   }
 
