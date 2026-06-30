@@ -9,6 +9,10 @@ import {
   type FinalManifest as ManifestT,
 } from "@/lib/final-manifest";
 import { recordAnchor, removeAnchor, subscribeAnchors } from "@/lib/anchors";
+import {
+  buildProvenanceBundle,
+  downloadProvenanceBundle,
+} from "@/lib/provenance-bundle";
 
 export function FinalManifest() {
   const [cid, setCid] = useState("…");
@@ -98,6 +102,19 @@ export function FinalManifest() {
     a.download = "final-manifest.json";
     a.click();
     URL.revokeObjectURL(url);
+  };
+
+  const exportBundle = async () => {
+    try {
+      const { bundle, json } = await buildProvenanceBundle();
+      downloadProvenanceBundle(bundle, json);
+      toast.success("Provenance bundle exported", {
+        description: `${bundle.artifact_count} verified · ${bundle.anchored_count}/${bundle.receipt_count} anchored · sha256 ${bundle.bundle_sha256.slice(0, 12)}…`,
+      });
+    } catch (e2) {
+      const msg = e2 instanceof Error ? e2.message : "export failed";
+      toast.error("Bundle export failed", { description: msg });
+    }
   };
 
   const tone =
@@ -269,13 +286,22 @@ export function FinalManifest() {
         <span className="text-[0.6rem] uppercase tracking-[0.18em] text-muted-foreground">
           Coupling green when every receipt is anchored AND payload_cid is stable.
         </span>
-        <button
-          onClick={download}
-          disabled={!m}
-          className="border border-border px-3 py-1 text-[0.6rem] uppercase tracking-[0.18em] text-foreground hover:text-gold disabled:opacity-50"
-        >
-          download final-manifest.json
-        </button>
+        <div className="flex flex-wrap gap-2">
+          <button
+            onClick={download}
+            disabled={!m}
+            className="border border-border px-3 py-1 text-[0.6rem] uppercase tracking-[0.18em] text-foreground hover:text-gold disabled:opacity-50"
+          >
+            download final-manifest.json
+          </button>
+          <button
+            onClick={() => void exportBundle()}
+            disabled={!m}
+            className="border border-gold px-3 py-1 text-[0.6rem] uppercase tracking-[0.18em] text-gold hover:bg-gold/10 disabled:opacity-50"
+          >
+            export provenance bundle
+          </button>
+        </div>
       </div>
     </section>
   );
