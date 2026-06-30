@@ -186,5 +186,86 @@ describe("ProofDeepLink", () => {
     expect(window.location.hash).toBe(`#proof=${SHA_B}`);
     expect(queryByTestId("modal")?.dataset.sha).toBe(SHA_B);
   });
+
+  // ─── Invalid #proof= coverage matrix ──────────────────────────────────
+  //
+  // For every malformed input we assert the same contract:
+  //   - the modal stays closed
+  //   - the bad hash is stripped from the URL
+  //   - exactly one toast.error fires with title "Invalid proof link"
+  //   - the toast description previews the offending raw value (truncated
+  //     to 24 chars + ellipsis when longer)
+  describe("invalid #proof= values", () => {
+    const expectToastFor = (raw: string) => {
+      expect(toastError).toHaveBeenCalledTimes(1);
+      const [title, opts] = toastError.mock.calls[0] as [
+        string,
+        { description?: string } | undefined,
+      ];
+      expect(title).toBe("Invalid proof link");
+      const preview = raw.length > 24 ? `${raw.slice(0, 24)}…` : raw;
+      expect(opts?.description).toContain(`"${preview}"`);
+      expect(opts?.description).toContain("not a 64-char SHA-256");
+    };
+
+    it.each([
+      ["short hex (63 chars)", "a".repeat(63)],
+      ["long hex (65 chars)", "a".repeat(65)],
+      ["64 chars with non-hex characters", "g".repeat(64)],
+      ["64 chars with punctuation", `${"a".repeat(63)}!`],
+      ["arbitrary slug", "not-a-sha"],
+      ["uppercase-but-too-short", "ABCDEF"],
+    ])("rejects %s", (_label, raw) => {
+      history.replaceState(null, "", `/#proof=${raw}`);
+      const { queryByTestId } = render(<ProofDeepLink />);
+
+      expect(queryByTestId("modal")).toBeNull();
+      expect(window.location.hash).toBe("");
+      expectToastFor(raw);
+    });
+
+    it("treats `#proof=` with an empty value as a no-op (modal stays closed)", () => {
+      // Empty value is malformed but indistinguishable from "user cleared it";
+      // the router should not open the modal and should not spam a toast.
+      history.replaceState(null, "", "/#proof=");
+      const { queryByTestId } = render(<ProofDeepLink />);
+      expect(queryByTestId("modal")).toBeNull();
+    });
+
+    it("does not open the modal when #proof= key is absent entirely", () => {
+      history.replaceState(null, "", "/#something-else=42");
+      const { queryByTestId } = render(<ProofDeepLink />);
+      expect(queryByTestId("modal")).toBeNull();
+      // No invalid value was present, so no toast should fire.
+      expect(toastError).not.toHaveBeenCalled();
+      // Unrelated hash is preserved (only #proof= is managed).
+      expect(window.location.hash).toBe("#something-else=42");
+    });
+
+    it("does not re-fire the toast for the same invalid value across hashchange events", () => {
+      const { queryByTestId } = render(<ProofDeepLink />);
+
+      act(() => setPath("/#proof=not-a-sha"));
+      expect(queryByTestId("modal")).toBeNull();
+      expect(toastError).toHaveBeenCalledTimes(1);
+
+      // Re-emitting the same bad hash should not spam the user.
+      act(() => setPath("/#proof=not-a-sha"));
+      expect(toastError).toHaveBeenCalledTimes(1);
+    });
+
+    it("recovers cleanly when a valid hash follows an invalid one", () => {
+      history.replaceState(null, "", "/#proof=bogus");
+      const { queryByTestId } = render(<ProofDeepLink />);
+      expect(queryByTestId("modal")).toBeNull();
+      expect(toastError).toHaveBeenCalledTimes(1);
+
+      act(() => setPath(`/#proof=${SHA_A}`));
+      expect(queryByTestId("modal")?.dataset.sha).toBe(SHA_A);
+      // No additional error toast on the valid follow-up.
+      expect(toastError).toHaveBeenCalledTimes(1);
+    });
+  });
 });
+
 
