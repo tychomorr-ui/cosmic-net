@@ -458,10 +458,12 @@ function ChainBadge({
   chain,
   count,
   headCid,
+  onRepair,
 }: {
   chain: { ok: boolean; breakAt?: number } | null;
   count: number;
   headCid: string | null;
+  onRepair: () => void | Promise<void>;
 }) {
   const ok = chain?.ok ?? true;
   return (
@@ -482,6 +484,16 @@ function ChainBadge({
         <span className="text-muted-foreground">
           head <span className="text-foreground">{headCid.slice(0, 16)}…</span>
         </span>
+      )}
+      {!ok && (
+        <button
+          type="button"
+          onClick={() => void onRepair()}
+          className="rounded border border-destructive/60 px-2 py-0.5 uppercase tracking-[0.18em] text-destructive transition hover:bg-destructive/10"
+          title="Re-stamp prev_cid + self-cid forward from the break. Bodies untouched. Heal is logged as a Warrior envelope."
+        >
+          fix chain break
+        </button>
       )}
     </div>
   );
