@@ -484,6 +484,8 @@ function ChainBadge({
   onRepair: () => void | Promise<void>;
 }) {
   const ok = chain?.ok ?? true;
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [running, setRunning] = useState(false);
   return (
     <div className="flex flex-wrap items-center gap-3 font-mono text-[0.7rem]">
       <span
@@ -504,14 +506,56 @@ function ChainBadge({
         </span>
       )}
       {!ok && (
-        <button
-          type="button"
-          onClick={() => void onRepair()}
-          className="rounded border border-destructive/60 px-2 py-0.5 uppercase tracking-[0.18em] text-destructive transition hover:bg-destructive/10"
-          title="Re-stamp prev_cid + self-cid forward from the break. Bodies untouched. Heal is logged as a Warrior envelope."
-        >
-          fix chain break
-        </button>
+        <>
+          <button
+            type="button"
+            onClick={() => setConfirmOpen(true)}
+            className="rounded border border-destructive/60 px-2 py-0.5 uppercase tracking-[0.18em] text-destructive transition hover:bg-destructive/10"
+            title="Re-stamp prev_cid + self-cid forward from the break. Bodies untouched. Heal is logged as a Warrior envelope."
+          >
+            fix chain break
+          </button>
+          <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Repair chain from break @ {chain?.breakAt}?</AlertDialogTitle>
+                <AlertDialogDescription asChild>
+                  <div className="space-y-2 text-xs">
+                    <p>
+                      This re-stamps <span className="font-mono text-foreground">prev_cid</span> and
+                      the self-CID forward from index{" "}
+                      <span className="font-mono text-foreground">{chain?.breakAt}</span>. Envelope
+                      bodies are not mutated and no envelope is deleted — the append-only invariant
+                      holds.
+                    </p>
+                    <p>
+                      The repair itself is appended as a <span className="text-gold">Warrior</span>{" "}
+                      envelope so the heal lives in-ledger. This action cannot be silently undone.
+                    </p>
+                  </div>
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel disabled={running}>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  disabled={running}
+                  onClick={async (e) => {
+                    e.preventDefault();
+                    setRunning(true);
+                    try {
+                      await onRepair();
+                      setConfirmOpen(false);
+                    } finally {
+                      setRunning(false);
+                    }
+                  }}
+                >
+                  {running ? "repairing…" : "Confirm repair"}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </>
       )}
     </div>
   );
