@@ -118,6 +118,7 @@ function PamConsole() {
       await refresh();
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
+    }
   }
 
   async function onRepair() {
@@ -139,7 +140,6 @@ function PamConsole() {
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
     }
-  }
   }
 
   async function onDeclare() {
