@@ -10,6 +10,7 @@ import {
   declareTruth,
   head as ledgerHead,
   loadEnvelopes,
+  repairChain,
   verifyChain,
 } from "@/data/truth-ledger";
 import { LANE_GLOSS, LANE_ORDER, detectDrift, mirror } from "@/lib/pam";
@@ -120,6 +121,27 @@ function PamConsole() {
     }
   }
 
+  async function onRepair() {
+    setError(null);
+    try {
+      const r = await repairChain();
+      if (r.repairedFrom >= 0) {
+        await appendEnvelope({
+          lane: "Warrior",
+          request: `chain repair · re-stamped ${r.rewritten} link(s) from index ${r.repairedFrom}`,
+          reflection:
+            "Append-only invariant preserved: only prev_cid + self-cid recomputed; no body mutated, no envelope deleted.",
+          truths: ["unledgered"],
+          next_move: "Re-verify chain badge reads `chain ok`.",
+          drift: `auto-heal: chain break @ ${r.repairedFrom} re-anchored to recomputed predecessor`,
+        });
+      }
+      await refresh();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e));
+    }
+  }
+
   async function onDeclare() {
     if (!newTruth.trim()) return;
     declareTruth(newTruth.trim(), supersedes || undefined);
@@ -145,7 +167,7 @@ function PamConsole() {
           move. Sovereignty &gt; adaptation. Truths supersede — nothing is
           silently overwritten.
         </p>
-        <ChainBadge chain={chain} count={envelopes.length} headCid={headEnv?.cid ?? null} />
+        <ChainBadge chain={chain} count={envelopes.length} headCid={headEnv?.cid ?? null} onRepair={onRepair} />
       </header>
 
       <section className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
@@ -436,10 +458,12 @@ function ChainBadge({
   chain,
   count,
   headCid,
+  onRepair,
 }: {
   chain: { ok: boolean; breakAt?: number } | null;
   count: number;
   headCid: string | null;
+  onRepair: () => void | Promise<void>;
 }) {
   const ok = chain?.ok ?? true;
   return (
@@ -460,6 +484,16 @@ function ChainBadge({
         <span className="text-muted-foreground">
           head <span className="text-foreground">{headCid.slice(0, 16)}…</span>
         </span>
+      )}
+      {!ok && (
+        <button
+          type="button"
+          onClick={() => void onRepair()}
+          className="rounded border border-destructive/60 px-2 py-0.5 uppercase tracking-[0.18em] text-destructive transition hover:bg-destructive/10"
+          title="Re-stamp prev_cid + self-cid forward from the break. Bodies untouched. Heal is logged as a Warrior envelope."
+        >
+          fix chain break
+        </button>
       )}
     </div>
   );
