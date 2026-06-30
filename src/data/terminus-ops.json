@@ -1,131 +1,123 @@
 [
   {
-    "ts": "2026-06-30T01:21:16.252Z",
+    "ts": "2026-06-30T01:21:38.920Z",
     "level": "INFO",
     "subsystem": "PROBE",
     "command": "signed-status:resonate-earth",
     "result": "SIGNED-STATUS PROBE · Resonate-Earth (resonate-earth)\nkind: no-cors-head\nurl: https://resonate-earth.live/\nstate: REACHABLE\ndetail: HEAD 200\nstable_key: reachable:HEAD 200",
-    "sessionId": "probe-signed-2026-06-30-01-21-16"
+    "sessionId": "probe-signed-2026-06-30-01-21-38"
   },
   {
-    "ts": "2026-06-30T01:21:16.252Z",
+    "ts": "2026-06-30T01:21:38.920Z",
     "level": "INFO",
     "subsystem": "PROBE",
     "command": "signed-status:east-coast-relay",
     "result": "SIGNED-STATUS PROBE · East Coast Relay (east-coast-relay)\nkind: none\nurl: —\nstate: DOCTRINE\ndetail: no probe declared\nstable_key: doctrine:no probe declared",
-    "sessionId": "probe-signed-2026-06-30-01-21-16"
+    "sessionId": "probe-signed-2026-06-30-01-21-38"
   },
   {
-    "ts": "2026-06-30T01:21:16.252Z",
+    "ts": "2026-06-30T01:21:38.920Z",
     "level": "INFO",
     "subsystem": "PROBE",
     "command": "signed-status:terminus-tesseractus",
     "result": "SIGNED-STATUS PROBE · Terminus-Tesseractus (terminus-tesseractus)\nkind: none\nurl: —\nstate: DOCTRINE\ndetail: no probe declared\nstable_key: doctrine:no probe declared",
-    "sessionId": "probe-signed-2026-06-30-01-21-16"
+    "sessionId": "probe-signed-2026-06-30-01-21-38"
   },
   {
-    "ts": "2026-06-30T01:21:16.252Z",
+    "ts": "2026-06-30T01:21:38.920Z",
     "level": "INFO",
     "subsystem": "PROBE",
     "command": "signed-status:xinus-valkyrie",
     "result": "SIGNED-STATUS PROBE · Valkyrie (xinus-valkyrie)\nkind: no-cors-head\nurl: https://valkyrie.nexinus.net/\nstate: REACHABLE\ndetail: HEAD 200\nstable_key: reachable:HEAD 200",
-    "sessionId": "probe-signed-2026-06-30-01-21-16"
+    "sessionId": "probe-signed-2026-06-30-01-21-38"
   },
   {
-    "ts": "2026-06-30T01:21:16.252Z",
-    "level": "INFO",
-    "subsystem": "PROBE",
-    "command": "signed-status:xinus-monarch",
-    "result": "SIGNED-STATUS PROBE · Xinus-Monarch (xinus-monarch)\nkind: signed-status\nurl: https://monarch.xinus.one/status\nstate: MEASURED\ndetail: signed · cid matched · 0s fresh\npayload_cid: 8488bb125dce3125dcb303c3db174936b82512cbd676cbddd2e9fbbd83252797\nexpected_pub: 39436f5ab3af4b2e9db4dc0ea3a9cff9060f0167d8537174e5cc332a722b12c4\nstable_key: measured:8488bb125dce3125dcb303c3db174936b82512cbd676cbddd2e9fbbd83252797",
-    "sessionId": "probe-signed-2026-06-30-01-21-16"
-  },
-  {
-    "ts": "2026-06-30T01:21:16.252Z",
+    "ts": "2026-06-30T01:21:38.920Z",
     "level": "INFO",
     "subsystem": "PROBE",
     "command": "signed-status:xinus-lens",
     "result": "SIGNED-STATUS PROBE · XinUS-Lens (xinus-lens)\nkind: none\nurl: —\nstate: DOCTRINE\ndetail: no probe declared\nstable_key: doctrine:no probe declared",
-    "sessionId": "probe-signed-2026-06-30-01-21-16"
+    "sessionId": "probe-signed-2026-06-30-01-21-38"
   },
   {
-    "ts": "2026-06-30T01:21:16.252Z",
+    "ts": "2026-06-30T01:21:38.920Z",
     "level": "INFO",
     "subsystem": "PROBE",
     "command": "signed-status:helsinki-vertex",
     "result": "SIGNED-STATUS PROBE · Helsinki Vertex (helsinki-vertex)\nkind: none\nurl: —\nstate: DOCTRINE\ndetail: no probe declared\nstable_key: doctrine:no probe declared",
-    "sessionId": "probe-signed-2026-06-30-01-21-16"
+    "sessionId": "probe-signed-2026-06-30-01-21-38"
   },
   {
-    "ts": "2026-06-30T01:21:16.252Z",
+    "ts": "2026-06-30T01:21:38.920Z",
     "level": "INFO",
     "subsystem": "PROBE",
     "command": "signed-status:tesseract-a",
     "result": "SIGNED-STATUS PROBE · Tesseract-A (tesseract-a)\nkind: none\nurl: —\nstate: DOCTRINE\ndetail: no probe declared\nstable_key: doctrine:no probe declared",
-    "sessionId": "probe-signed-2026-06-30-01-21-16"
+    "sessionId": "probe-signed-2026-06-30-01-21-38"
   },
   {
-    "ts": "2026-06-30T01:21:10.678Z",
+    "ts": "2026-06-30T01:21:37.520Z",
     "level": "INFO",
     "subsystem": "PROBE",
     "command": "signed-status:resonate-earth",
     "result": "SIGNED-STATUS PROBE · Resonate-Earth (resonate-earth)\nkind: no-cors-head\nurl: https://resonate-earth.live/\nstate: REACHABLE\ndetail: HEAD 200\nstable_key: reachable:HEAD 200",
-    "sessionId": "probe-signed-2026-06-30-01-21-10"
+    "sessionId": "probe-signed-2026-06-30-01-21-37"
   },
   {
-    "ts": "2026-06-30T01:21:10.678Z",
+    "ts": "2026-06-30T01:21:37.520Z",
     "level": "INFO",
     "subsystem": "PROBE",
     "command": "signed-status:east-coast-relay",
     "result": "SIGNED-STATUS PROBE · East Coast Relay (east-coast-relay)\nkind: none\nurl: —\nstate: DOCTRINE\ndetail: no probe declared\nstable_key: doctrine:no probe declared",
-    "sessionId": "probe-signed-2026-06-30-01-21-10"
+    "sessionId": "probe-signed-2026-06-30-01-21-37"
   },
   {
-    "ts": "2026-06-30T01:21:10.678Z",
+    "ts": "2026-06-30T01:21:37.520Z",
     "level": "INFO",
     "subsystem": "PROBE",
     "command": "signed-status:terminus-tesseractus",
     "result": "SIGNED-STATUS PROBE · Terminus-Tesseractus (terminus-tesseractus)\nkind: none\nurl: —\nstate: DOCTRINE\ndetail: no probe declared\nstable_key: doctrine:no probe declared",
-    "sessionId": "probe-signed-2026-06-30-01-21-10"
+    "sessionId": "probe-signed-2026-06-30-01-21-37"
   },
   {
-    "ts": "2026-06-30T01:21:10.678Z",
+    "ts": "2026-06-30T01:21:37.520Z",
     "level": "INFO",
     "subsystem": "PROBE",
     "command": "signed-status:xinus-valkyrie",
     "result": "SIGNED-STATUS PROBE · Valkyrie (xinus-valkyrie)\nkind: no-cors-head\nurl: https://valkyrie.nexinus.net/\nstate: REACHABLE\ndetail: HEAD 200\nstable_key: reachable:HEAD 200",
-    "sessionId": "probe-signed-2026-06-30-01-21-10"
+    "sessionId": "probe-signed-2026-06-30-01-21-37"
   },
   {
-    "ts": "2026-06-30T01:21:10.678Z",
+    "ts": "2026-06-30T01:21:37.520Z",
     "level": "INFO",
     "subsystem": "PROBE",
     "command": "signed-status:xinus-monarch",
-    "result": "SIGNED-STATUS PROBE · Xinus-Monarch (xinus-monarch)\nkind: signed-status\nurl: https://monarch.xinus.one/status\nstate: MEASURED\ndetail: signed · cid matched · 0s fresh\npayload_cid: 81133141cce3456a83e250c3d43dead436bc8b7ac99d82b662d079c4a73b9550\nexpected_pub: 39436f5ab3af4b2e9db4dc0ea3a9cff9060f0167d8537174e5cc332a722b12c4\nstable_key: measured:81133141cce3456a83e250c3d43dead436bc8b7ac99d82b662d079c4a73b9550",
-    "sessionId": "probe-signed-2026-06-30-01-21-10"
+    "result": "SIGNED-STATUS PROBE · Xinus-Monarch (xinus-monarch)\nkind: signed-status\nurl: https://monarch.xinus.one/status\nstate: MEASURED\ndetail: signed · cid matched · 1s fresh\npayload_cid: 8ba3ce2a3283aff8bfeb2badfef9f8b6ffeeae0a74e9e024294e6caa76aa1763\nexpected_pub: 39436f5ab3af4b2e9db4dc0ea3a9cff9060f0167d8537174e5cc332a722b12c4\nstable_key: measured:signed",
+    "sessionId": "probe-signed-2026-06-30-01-21-37"
   },
   {
-    "ts": "2026-06-30T01:21:10.678Z",
+    "ts": "2026-06-30T01:21:37.520Z",
     "level": "INFO",
     "subsystem": "PROBE",
     "command": "signed-status:xinus-lens",
     "result": "SIGNED-STATUS PROBE · XinUS-Lens (xinus-lens)\nkind: none\nurl: —\nstate: DOCTRINE\ndetail: no probe declared\nstable_key: doctrine:no probe declared",
-    "sessionId": "probe-signed-2026-06-30-01-21-10"
+    "sessionId": "probe-signed-2026-06-30-01-21-37"
   },
   {
-    "ts": "2026-06-30T01:21:10.678Z",
+    "ts": "2026-06-30T01:21:37.520Z",
     "level": "INFO",
     "subsystem": "PROBE",
     "command": "signed-status:helsinki-vertex",
     "result": "SIGNED-STATUS PROBE · Helsinki Vertex (helsinki-vertex)\nkind: none\nurl: —\nstate: DOCTRINE\ndetail: no probe declared\nstable_key: doctrine:no probe declared",
-    "sessionId": "probe-signed-2026-06-30-01-21-10"
+    "sessionId": "probe-signed-2026-06-30-01-21-37"
   },
   {
-    "ts": "2026-06-30T01:21:10.678Z",
+    "ts": "2026-06-30T01:21:37.520Z",
     "level": "INFO",
     "subsystem": "PROBE",
     "command": "signed-status:tesseract-a",
     "result": "SIGNED-STATUS PROBE · Tesseract-A (tesseract-a)\nkind: none\nurl: —\nstate: DOCTRINE\ndetail: no probe declared\nstable_key: doctrine:no probe declared",
-    "sessionId": "probe-signed-2026-06-30-01-21-10"
+    "sessionId": "probe-signed-2026-06-30-01-21-37"
   },
   {
     "ts": "2026-06-30T00:30:00.000Z",
