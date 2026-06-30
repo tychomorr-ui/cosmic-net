@@ -146,7 +146,7 @@ function PamConsole() {
           move. Sovereignty &gt; adaptation. Truths supersede — nothing is
           silently overwritten.
         </p>
-        <ChainBadge chain={chain} count={envelopes.length} headCid={headEnv?.cid ?? null} />
+        <ChainBadge chain={chain} count={envelopes.length} headCid={headEnv?.cid ?? null} onRepair={onRepair} />
       </header>
 
       <section className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
