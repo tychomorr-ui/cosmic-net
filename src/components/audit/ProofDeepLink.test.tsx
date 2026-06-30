@@ -14,9 +14,20 @@ import { act, render, cleanup } from "@testing-library/react";
 import { ProofDeepLink, openProofHash, closeProofHash } from "./ProofDeepLink";
 
 // Stub out the heavy modal — we only care about open/close + ctx.
+const capturedOnOpenChange: { fn: ((open: boolean) => void) | null } = { fn: null };
 vi.mock("@/components/audit/ProofDetailModal", () => ({
-  ProofDetailModal: ({ open, context }: { open: boolean; context: { sha256: string } | null }) =>
-    open ? <div data-testid="modal" data-sha={context?.sha256 ?? ""} /> : null,
+  ProofDetailModal: ({
+    open,
+    context,
+    onOpenChange,
+  }: {
+    open: boolean;
+    context: { sha256: string } | null;
+    onOpenChange: (open: boolean) => void;
+  }) => {
+    capturedOnOpenChange.fn = onOpenChange;
+    return open ? <div data-testid="modal" data-sha={context?.sha256 ?? ""} /> : null;
+  },
 }));
 
 // Provenance lookup is irrelevant to the routing contract — return [].
@@ -113,30 +124,31 @@ describe("ProofDeepLink", () => {
   // ─── Bidirectional sync ───────────────────────────────────────────────
 
   it("opens via openProofHash and closes via the modal's onOpenChange", () => {
-    // Render the real component so onOpenChange wiring is exercised end-to-end.
-    // We capture the latest props handed to the mocked modal so we can invoke
-    // onOpenChange(false) the same way Radix would on ESC / overlay click.
-    let lastOnOpenChange: ((open: boolean) => void) | null = null;
-    vi.doMock("@/components/audit/ProofDetailModal", () => ({
-      ProofDetailModal: (props: { open: boolean; onOpenChange: (o: boolean) => void }) => {
-        lastOnOpenChange = props.onOpenChange;
-        return props.open ? <div data-testid="modal" /> : null;
-      },
-    }));
-    vi.resetModules();
-    return import("./ProofDeepLink").then(({ ProofDeepLink: Fresh, openProofHash: openFresh }) => {
-      const { queryByTestId } = render(<Fresh />);
+    const { queryByTestId } = render(<ProofDeepLink />);
 
-      act(() => openFresh(SHA_A));
-      expect(window.location.hash).toBe(`#proof=${SHA_A}`);
-      expect(queryByTestId("modal")).not.toBeNull();
+    act(() => openProofHash(SHA_A));
+    expect(window.location.hash).toBe(`#proof=${SHA_A}`);
+    expect(queryByTestId("modal")?.dataset.sha).toBe(SHA_A);
 
-      // Simulate Radix calling onOpenChange(false) when the user dismisses.
-      act(() => lastOnOpenChange?.(false));
-      expect(window.location.hash).toBe("");
-      expect(queryByTestId("modal")).toBeNull();
-      vi.doUnmock("@/components/audit/ProofDetailModal");
+    // Simulate Radix calling onOpenChange(false) on ESC / overlay click.
+    act(() => capturedOnOpenChange.fn?.(false));
+    expect(window.location.hash).toBe("");
+    expect(queryByTestId("modal")).toBeNull();
+  });
+
+  it("manual hash edits open and close the modal", () => {
+    const { queryByTestId } = render(<ProofDeepLink />);
+
+    // Assigning location.hash fires hashchange in real browsers and in happy-dom.
+    act(() => {
+      window.location.hash = `proof=${SHA_A}`;
     });
+    expect(queryByTestId("modal")?.dataset.sha).toBe(SHA_A);
+
+    act(() => {
+      window.location.hash = "";
+    });
+    expect(queryByTestId("modal")).toBeNull();
   });
 
   it("manual hash edits open and close the modal", () => {
