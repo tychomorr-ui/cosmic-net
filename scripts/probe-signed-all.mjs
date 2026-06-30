@@ -95,7 +95,7 @@ async function probeSigned(url, expectedPubHex) {
         return { state: "reachable", detail: "payload_cid drift", payload_cid: body.payload_cid };
       }
       const msg = `${body.payload_cid}|${body.ts}`;
-      const ok = await ed.verifyAsync(body.sig, new TextEncoder().encode(msg), body.pub);
+      const ok = ed25519.verify(hexToBytes(body.sig), new TextEncoder().encode(msg), hexToBytes(body.pub));
       if (!ok) return { state: "reachable", detail: "signature invalid", payload_cid: body.payload_cid };
       const ageS = Math.max(0, Math.floor(Date.now() / 1000) - body.ts);
       if (ageS > 180) return { state: "reachable", detail: `signed but stale ${ageS}s`, payload_cid: body.payload_cid };
