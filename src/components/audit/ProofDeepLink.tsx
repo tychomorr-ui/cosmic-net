@@ -78,29 +78,31 @@ export function ProofDeepLink() {
     if (typeof window === "undefined") return;
     const receipts = parseProvenance();
 
-    let lastInvalid = "";
+    // Track invalid raws we've already surfaced this session so back/forward
+    // navigation to an entry containing the same bad #proof= value silently
+    // strips it instead of re-firing the toast.
+    const seenInvalid = new Set<string>();
     const sync = () => {
       const r = readHashSha();
       if (r.kind === "valid") {
-        lastInvalid = "";
         setCtx(buildContext(r.sha, receipts));
         return;
       }
       if (r.kind === "invalid") {
+        // Always strip the bad hash from the current history entry first so
+        // popstate landing here can't leave the malformed value in the URL.
+        history.replaceState(null, "", window.location.pathname + window.location.search);
+        setCtx(null);
         // Local-only counter — records length + reason bucket, never the raw value.
         recordInvalidProof(r.raw);
-        if (r.raw !== lastInvalid) {
-          lastInvalid = r.raw;
+        if (!seenInvalid.has(r.raw)) {
+          seenInvalid.add(r.raw);
           toast.error("Invalid proof link", {
             description: `"${r.raw.slice(0, 24)}${r.raw.length > 24 ? "…" : ""}" is not a 64-char SHA-256.`,
           });
         }
-        setCtx(null);
-        // Strip the bad hash so retries from the same URL re-trigger.
-        history.replaceState(null, "", window.location.pathname + window.location.search);
         return;
       }
-      lastInvalid = "";
       setCtx(null);
     };
 
