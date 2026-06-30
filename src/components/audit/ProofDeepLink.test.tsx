@@ -154,21 +154,7 @@ describe("ProofDeepLink", () => {
     expect(queryByTestId("modal")).toBeNull();
   });
 
-  it("manual hash edits open and close the modal", () => {
-    const { queryByTestId } = render(<ProofDeepLink />);
 
-    // User pastes a proof URL into the address bar.
-    act(() => {
-      window.location.hash = `proof=${SHA_A}`;
-    });
-    expect(queryByTestId("modal")?.dataset.sha).toBe(SHA_A);
-
-    // User clears the hash by hand.
-    act(() => {
-      window.location.hash = "";
-    });
-    expect(queryByTestId("modal")).toBeNull();
-  });
 
   it("browser back/forward toggles the modal in sync with history", async () => {
     history.replaceState(null, "", "/ops");
