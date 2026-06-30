@@ -1,5 +1,13 @@
 [
   {
+    "ts": "2026-06-30T02:10:00.000Z",
+    "level": "INFO",
+    "subsystem": "PROVENANCE",
+    "command": "ots-verify:trc-feasibility-001.txt",
+    "result": "OTS VERIFY · trc-feasibility-001.txt.ots\nsha256: ffd582ed528d2f7cba4fceefbddbe876f5a8d7f2adf6b81b8ff36698e42ad0a1\nBitcoin block 954181 attests existence as of 2026-06-17 PST\nstable_key: anchored:btc:954181",
+    "sessionId": "ots-anchor-2026-06-30"
+  },
+  {
     "ts": "2026-06-30T02:05:00.000Z",
     "level": "INFO",
     "subsystem": "PROVENANCE",
