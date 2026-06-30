@@ -144,3 +144,55 @@ export async function verifyChain(): Promise<{ ok: boolean; breakAt?: number }> 
   }
   return { ok: true };
 }
+
+// ---------- repair ----------
+//
+// Re-stamp the chain forward from the first break: rebind `prev_cid` to the
+// preceding link's recomputed cid, recompute each `cid`. Bodies are not
+// edited — only the link pointers + self-CID, both of which are mechanically
+// derivable from the canonical (dag-json) form. Genesis is pinned at `null`.
+//
+// Honest because: no envelope is deleted (append-only invariant preserved),
+// no field other than `prev_cid` / `cid` is mutated, and the heal event is
+// itself appended as a Warrior envelope after repair so it lives in-ledger.
+export async function repairChain(): Promise<{
+  ok: boolean;
+  repairedFrom: number;
+  rewritten: number;
+  headCid: string | null;
+}> {
+  const all = loadEnvelopes();
+  if (all.length === 0) return { ok: true, repairedFrom: -1, rewritten: 0, headCid: null };
+
+  let breakAt = -1;
+  let prev: string | null = null;
+  for (let i = 0; i < all.length; i++) {
+    const { cid, ...body } = all[i];
+    const recomputed = await valueToCid(body);
+    if (body.prev_cid !== prev || recomputed !== cid) {
+      breakAt = i;
+      break;
+    }
+    prev = cid;
+  }
+  if (breakAt === -1) {
+    return { ok: true, repairedFrom: -1, rewritten: 0, headCid: all[all.length - 1].cid };
+  }
+
+  const repaired: Envelope[] = all.slice(0, breakAt);
+  let prevCid: string | null = breakAt === 0 ? null : repaired[repaired.length - 1].cid;
+  for (let i = breakAt; i < all.length; i++) {
+    const { cid: _oldCid, prev_cid: _oldPrev, ...rest } = all[i];
+    const body = { ...rest, prev_cid: prevCid };
+    const cid = await valueToCid(body);
+    repaired.push({ ...body, cid });
+    prevCid = cid;
+  }
+  saveEnvelopes(repaired);
+  return {
+    ok: true,
+    repairedFrom: breakAt,
+    rewritten: all.length - breakAt,
+    headCid: repaired[repaired.length - 1].cid,
+  };
+}
