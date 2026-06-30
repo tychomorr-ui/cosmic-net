@@ -14,9 +14,20 @@ import { act, render, cleanup } from "@testing-library/react";
 import { ProofDeepLink, openProofHash, closeProofHash } from "./ProofDeepLink";
 
 // Stub out the heavy modal — we only care about open/close + ctx.
+const capturedOnOpenChange: { fn: ((open: boolean) => void) | null } = { fn: null };
 vi.mock("@/components/audit/ProofDetailModal", () => ({
-  ProofDetailModal: ({ open, context }: { open: boolean; context: { sha256: string } | null }) =>
-    open ? <div data-testid="modal" data-sha={context?.sha256 ?? ""} /> : null,
+  ProofDetailModal: ({
+    open,
+    context,
+    onOpenChange,
+  }: {
+    open: boolean;
+    context: { sha256: string } | null;
+    onOpenChange: (open: boolean) => void;
+  }) => {
+    capturedOnOpenChange.fn = onOpenChange;
+    return open ? <div data-testid="modal" data-sha={context?.sha256 ?? ""} /> : null;
+  },
 }));
 
 // Provenance lookup is irrelevant to the routing contract — return [].
@@ -109,4 +120,71 @@ describe("ProofDeepLink", () => {
     const { queryByTestId } = render(<ProofDeepLink />);
     expect(queryByTestId("modal")?.dataset.sha).toBe("c".repeat(64));
   });
+
+  // ─── Bidirectional sync ───────────────────────────────────────────────
+
+  it("opens via openProofHash and closes via the modal's onOpenChange", () => {
+    const { queryByTestId } = render(<ProofDeepLink />);
+
+    act(() => openProofHash(SHA_A));
+    expect(window.location.hash).toBe(`#proof=${SHA_A}`);
+    expect(queryByTestId("modal")?.dataset.sha).toBe(SHA_A);
+
+    // Simulate Radix calling onOpenChange(false) on ESC / overlay click.
+    act(() => capturedOnOpenChange.fn?.(false));
+    expect(window.location.hash).toBe("");
+    expect(queryByTestId("modal")).toBeNull();
+  });
+
+  it("manual hash edits open and close the modal", () => {
+    const { queryByTestId } = render(<ProofDeepLink />);
+
+    // Simulate a user editing the URL bar (paste a deep link).
+    act(() => {
+      history.replaceState(null, "", `/#proof=${SHA_A}`);
+      window.dispatchEvent(new Event("hashchange"));
+    });
+    expect(queryByTestId("modal")?.dataset.sha).toBe(SHA_A);
+
+    // User manually clears the hash.
+    act(() => {
+      history.replaceState(null, "", "/");
+      window.dispatchEvent(new Event("hashchange"));
+    });
+    expect(queryByTestId("modal")).toBeNull();
+  });
+
+
+
+
+  it("browser back/forward toggles the modal in sync with history", async () => {
+    history.replaceState(null, "", "/ops");
+    const { queryByTestId } = render(<ProofDeepLink />);
+    expect(queryByTestId("modal")).toBeNull();
+
+    // Push a proof state, then a clean state — same path, three entries.
+    act(() => openProofHash(SHA_A));
+    expect(queryByTestId("modal")?.dataset.sha).toBe(SHA_A);
+
+    act(() => closeProofHash()); // replaceState — no new entry
+    act(() => openProofHash(SHA_B)); // pushState — new entry
+    expect(queryByTestId("modal")?.dataset.sha).toBe(SHA_B);
+
+    // Back: should land on the cleared state (modal closed).
+    await act(async () => {
+      history.back();
+      await new Promise((r) => setTimeout(r, 10));
+    });
+    expect(window.location.hash).toBe("");
+    expect(queryByTestId("modal")).toBeNull();
+
+    // Forward: should restore the SHA_B proof state (modal reopens).
+    await act(async () => {
+      history.forward();
+      await new Promise((r) => setTimeout(r, 10));
+    });
+    expect(window.location.hash).toBe(`#proof=${SHA_B}`);
+    expect(queryByTestId("modal")?.dataset.sha).toBe(SHA_B);
+  });
 });
+
