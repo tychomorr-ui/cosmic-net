@@ -266,6 +266,93 @@ describe("ProofDeepLink", () => {
       expect(toastError).toHaveBeenCalledTimes(1);
     });
   });
+
+  // ─── Close + reopen contract ──────────────────────────────────────────
+  //
+  // Closing the modal must always clear `#proof=`, and every supported
+  // close path (onOpenChange, closeProofHash, manual hash edit, browser
+  // back) must leave the router in a state where opening a corrected
+  // hash re-triggers the modal cleanly — no stale state, no missed event.
+  describe("close + reopen", () => {
+    it("clears #proof= when the modal closes via onOpenChange", () => {
+      const { queryByTestId } = render(<ProofDeepLink />);
+      act(() => openProofHash(SHA_A));
+      expect(window.location.hash).toBe(`#proof=${SHA_A}`);
+
+      act(() => capturedOnOpenChange.fn?.(false));
+      expect(window.location.hash).toBe("");
+      expect(queryByTestId("modal")).toBeNull();
+    });
+
+    it("reopens with the same SHA after closing via onOpenChange", () => {
+      const { queryByTestId } = render(<ProofDeepLink />);
+      act(() => openProofHash(SHA_A));
+      act(() => capturedOnOpenChange.fn?.(false));
+      expect(queryByTestId("modal")).toBeNull();
+
+      // Re-clicking the same SHA must reopen — no debouncing on identity.
+      act(() => openProofHash(SHA_A));
+      expect(window.location.hash).toBe(`#proof=${SHA_A}`);
+      expect(queryByTestId("modal")?.dataset.sha).toBe(SHA_A);
+    });
+
+    it("opens a corrected hash after an invalid one was rejected", () => {
+      history.replaceState(null, "", "/#proof=not-a-sha");
+      const { queryByTestId } = render(<ProofDeepLink />);
+      expect(queryByTestId("modal")).toBeNull();
+      expect(window.location.hash).toBe("");
+      expect(toastError).toHaveBeenCalledTimes(1);
+
+      // User pastes the corrected link — modal opens, no extra toast.
+      act(() => setPath(`/#proof=${SHA_A}`));
+      expect(queryByTestId("modal")?.dataset.sha).toBe(SHA_A);
+      expect(toastError).toHaveBeenCalledTimes(1);
+    });
+
+    it("browser back from an open modal clears the hash and closes", async () => {
+      history.replaceState(null, "", "/ops");
+      const { queryByTestId } = render(<ProofDeepLink />);
+
+      act(() => openProofHash(SHA_A));
+      expect(queryByTestId("modal")?.dataset.sha).toBe(SHA_A);
+
+      await act(async () => {
+        history.back();
+        await new Promise((r) => setTimeout(r, 10));
+      });
+      expect(window.location.hash).toBe("");
+      expect(queryByTestId("modal")).toBeNull();
+
+      // After back-close, a fresh open still works cleanly.
+      act(() => openProofHash(SHA_B));
+      expect(queryByTestId("modal")?.dataset.sha).toBe(SHA_B);
+    });
+
+    it("manual hash clear closes the modal and a re-set reopens it", () => {
+      const { queryByTestId } = render(<ProofDeepLink />);
+      act(() => openProofHash(SHA_A));
+      expect(queryByTestId("modal")?.dataset.sha).toBe(SHA_A);
+
+      act(() => setPath("/"));
+      expect(queryByTestId("modal")).toBeNull();
+
+      act(() => setPath(`/#proof=${SHA_A}`));
+      expect(queryByTestId("modal")?.dataset.sha).toBe(SHA_A);
+    });
+
+    it("closeProofHash is idempotent when the hash is already empty", () => {
+      const { queryByTestId } = render(<ProofDeepLink />);
+      act(() => closeProofHash());
+      act(() => closeProofHash());
+      expect(window.location.hash).toBe("");
+      expect(queryByTestId("modal")).toBeNull();
+
+      // Router is still healthy — opening afterward works.
+      act(() => openProofHash(SHA_A));
+      expect(queryByTestId("modal")?.dataset.sha).toBe(SHA_A);
+    });
+  });
 });
+
 
 
