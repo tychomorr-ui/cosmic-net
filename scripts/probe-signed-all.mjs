@@ -20,7 +20,14 @@ import { readFile, writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
 import { createHash } from "node:crypto";
-import * as ed from "@noble/ed25519";
+import { ed25519 } from "@noble/curves/ed25519";
+
+function hexToBytes(h) {
+  const s = h.startsWith("0x") ? h.slice(2) : h;
+  const out = new Uint8Array(s.length / 2);
+  for (let i = 0; i < out.length; i++) out[i] = parseInt(s.slice(i * 2, i * 2 + 2), 16);
+  return out;
+}
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, "..");
