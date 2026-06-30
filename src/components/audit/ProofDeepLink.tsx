@@ -10,15 +10,26 @@
 // Mounted once in the root shell so deep links work on every route.
 
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import { parseProvenance, type ProvenanceReceipt } from "@/lib/provenance";
 import { ProofDetailModal, type ProofContext } from "@/components/audit/ProofDetailModal";
 
-const HASH_RE = /proof=([a-f0-9]{64})/i;
+const VALID_RE = /proof=([a-f0-9]{64})(?:&|$)/i;
+const PRESENT_RE = /(?:^|[#&])proof=([^&]*)/i;
 
-function readHashSha(): string | null {
-  if (typeof window === "undefined") return null;
-  const m = window.location.hash.match(HASH_RE);
-  return m ? m[1].toLowerCase() : null;
+type HashRead =
+  | { kind: "none" }
+  | { kind: "valid"; sha: string }
+  | { kind: "invalid"; raw: string };
+
+function readHashSha(): HashRead {
+  if (typeof window === "undefined") return { kind: "none" };
+  const hash = window.location.hash;
+  const valid = hash.match(VALID_RE);
+  if (valid) return { kind: "valid", sha: valid[1].toLowerCase() };
+  const present = hash.match(PRESENT_RE);
+  if (present) return { kind: "invalid", raw: present[1] };
+  return { kind: "none" };
 }
 
 function writeHash(sha: string | null) {
