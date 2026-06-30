@@ -10,6 +10,7 @@ import {
   declareTruth,
   head as ledgerHead,
   loadEnvelopes,
+  repairChain,
   verifyChain,
 } from "@/data/truth-ledger";
 import { LANE_GLOSS, LANE_ORDER, detectDrift, mirror } from "@/lib/pam";
