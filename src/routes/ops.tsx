@@ -14,6 +14,7 @@ import { FinalManifest } from "@/components/audit/FinalManifest";
 import { ValkyrieActivator } from "@/components/audit/ValkyrieActivator";
 import { ReceiptWizard } from "@/components/audit/ReceiptWizard";
 import { PipelineFlow } from "@/components/audit/PipelineFlow";
+import { InvalidProofMetricsPanel } from "@/components/audit/InvalidProofMetricsPanel";
 
 export const Route = createFileRoute("/ops")({
   head: () => ({
@@ -172,6 +173,7 @@ function OpsPage() {
         <MeshHealth />
         <ValkyrieActivator />
         <ProvenanceReceipts />
+        <InvalidProofMetricsPanel />
 
         <ReclaimExport />
         <ExtractionAudit />
