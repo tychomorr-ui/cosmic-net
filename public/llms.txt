@@ -8,7 +8,10 @@
 - Universal Justice Addendum v1 — SHA-256 `d9b7816a…6834`, OTS submitted to alice/bob/finney calendars 2026-06-29, pending Bitcoin inclusion.
 
 ## Architecture
+Post-purge (2026-06-30, ops entry #64): the site is a static, content-verified, timestamped document mesh. Strictly Anchor · Verify · Display. No payment rail, no forge, no investigation module — all non-sovereign standby tiles removed.
+
 - [/ops](https://cosmic-mesh-net.lovable.app/ops) — Final Manifest, Mesh Health, Provenance Receipts, Receipt Wizard.
+- [/status](https://cosmic-mesh-net.lovable.app/status) — real-time node liveness + OTS anchor inclusion + Golden Truth CID state.
 - [/verify](https://cosmic-mesh-net.lovable.app/verify) — offline receipt verification (paste OTS).
 - [/digital-ore](https://cosmic-mesh-net.lovable.app/digital-ore) — local-only intellectual-byproduct ledger. Hash-deterministic. No payout rail.
 - [/truth-coin](https://cosmic-mesh-net.lovable.app/truth-coin) — Truth Substrate (TRS) provenance tile.

@@ -5,9 +5,9 @@ const BASE_URL = "https://cosmic-mesh-net.lovable.app";
 
 const PATHS = [
   "/", "/ops", "/verify", "/digital-ore", "/truth-coin", "/truth-point",
-  "/sudo-coin", "/fleet", "/forge", "/gateway", "/nebula", "/pam",
+  "/sudo-coin", "/fleet", "/gateway", "/nebula", "/pam",
   "/sam-command", "/seventh-dimension", "/reclaim", "/reflective-intel",
-  "/investigation", "/quantotalus", "/proof-fulcrum", "/payment-nexus",
+  "/quantotalus", "/proof-fulcrum", "/status",
 ];
 
 export const Route = createFileRoute("/sitemap.xml")({

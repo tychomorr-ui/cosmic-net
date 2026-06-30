@@ -1,5 +1,13 @@
 [
   {
+    "ts": "2026-06-30T00:30:00.000Z",
+    "level": "CMD",
+    "subsystem": "DOCTRINE",
+    "command": "purge.non_sovereign_dependencies",
+    "result": "PURGE_NON_SOVEREIGN_DEPENDENCIES (entry #64)\n\nRemoved routes: /forge, /payment-nexus, /investigation.\nRemoved blades 02 (Sovereign Forge), 05 (Payment Nexus), 06 (Investigation) from src/data/blades.ts.\nRemoved nav entries from ConsoleShell. Removed paths from sitemap.xml.\nNo financial rail remains. No vendor SAA proxy. No standby tiles tethered to un-bootable infra.\nSystem is now strictly: Anchor, Verify, Display.",
+    "sessionId": "purge-2026-06-30"
+  },
+  {
     "ts": "2026-06-30T00:01:00.000Z",
     "level": "CMD",
     "subsystem": "DOCTRINE",

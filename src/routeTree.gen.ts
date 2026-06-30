@@ -21,13 +21,10 @@ import { Route as ReflectiveIntelRouteImport } from './routes/reflective-intel'
 import { Route as ReclaimRouteImport } from './routes/reclaim'
 import { Route as QuantotalusRouteImport } from './routes/quantotalus'
 import { Route as ProofFulcrumRouteImport } from './routes/proof-fulcrum'
-import { Route as PaymentNexusRouteImport } from './routes/payment-nexus'
 import { Route as PamRouteImport } from './routes/pam'
 import { Route as OpsRouteImport } from './routes/ops'
 import { Route as NebulaRouteImport } from './routes/nebula'
-import { Route as InvestigationRouteImport } from './routes/investigation'
 import { Route as GatewayRouteImport } from './routes/gateway'
-import { Route as ForgeRouteImport } from './routes/forge'
 import { Route as FleetRouteImport } from './routes/fleet'
 import { Route as DigitalOreRouteImport } from './routes/digital-ore'
 import { Route as IndexRouteImport } from './routes/index'
@@ -92,11 +89,6 @@ const ProofFulcrumRoute = ProofFulcrumRouteImport.update({
   path: '/proof-fulcrum',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PaymentNexusRoute = PaymentNexusRouteImport.update({
-  id: '/payment-nexus',
-  path: '/payment-nexus',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const PamRoute = PamRouteImport.update({
   id: '/pam',
   path: '/pam',
@@ -112,19 +104,9 @@ const NebulaRoute = NebulaRouteImport.update({
   path: '/nebula',
   getParentRoute: () => rootRouteImport,
 } as any)
-const InvestigationRoute = InvestigationRouteImport.update({
-  id: '/investigation',
-  path: '/investigation',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const GatewayRoute = GatewayRouteImport.update({
   id: '/gateway',
   path: '/gateway',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ForgeRoute = ForgeRouteImport.update({
-  id: '/forge',
-  path: '/forge',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FleetRoute = FleetRouteImport.update({
@@ -147,13 +129,10 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/digital-ore': typeof DigitalOreRoute
   '/fleet': typeof FleetRoute
-  '/forge': typeof ForgeRoute
   '/gateway': typeof GatewayRoute
-  '/investigation': typeof InvestigationRoute
   '/nebula': typeof NebulaRoute
   '/ops': typeof OpsRoute
   '/pam': typeof PamRoute
-  '/payment-nexus': typeof PaymentNexusRoute
   '/proof-fulcrum': typeof ProofFulcrumRoute
   '/quantotalus': typeof QuantotalusRoute
   '/reclaim': typeof ReclaimRoute
@@ -171,13 +150,10 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/digital-ore': typeof DigitalOreRoute
   '/fleet': typeof FleetRoute
-  '/forge': typeof ForgeRoute
   '/gateway': typeof GatewayRoute
-  '/investigation': typeof InvestigationRoute
   '/nebula': typeof NebulaRoute
   '/ops': typeof OpsRoute
   '/pam': typeof PamRoute
-  '/payment-nexus': typeof PaymentNexusRoute
   '/proof-fulcrum': typeof ProofFulcrumRoute
   '/quantotalus': typeof QuantotalusRoute
   '/reclaim': typeof ReclaimRoute
@@ -196,13 +172,10 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/digital-ore': typeof DigitalOreRoute
   '/fleet': typeof FleetRoute
-  '/forge': typeof ForgeRoute
   '/gateway': typeof GatewayRoute
-  '/investigation': typeof InvestigationRoute
   '/nebula': typeof NebulaRoute
   '/ops': typeof OpsRoute
   '/pam': typeof PamRoute
-  '/payment-nexus': typeof PaymentNexusRoute
   '/proof-fulcrum': typeof ProofFulcrumRoute
   '/quantotalus': typeof QuantotalusRoute
   '/reclaim': typeof ReclaimRoute
@@ -222,13 +195,10 @@ export interface FileRouteTypes {
     | '/'
     | '/digital-ore'
     | '/fleet'
-    | '/forge'
     | '/gateway'
-    | '/investigation'
     | '/nebula'
     | '/ops'
     | '/pam'
-    | '/payment-nexus'
     | '/proof-fulcrum'
     | '/quantotalus'
     | '/reclaim'
@@ -246,13 +216,10 @@ export interface FileRouteTypes {
     | '/'
     | '/digital-ore'
     | '/fleet'
-    | '/forge'
     | '/gateway'
-    | '/investigation'
     | '/nebula'
     | '/ops'
     | '/pam'
-    | '/payment-nexus'
     | '/proof-fulcrum'
     | '/quantotalus'
     | '/reclaim'
@@ -270,13 +237,10 @@ export interface FileRouteTypes {
     | '/'
     | '/digital-ore'
     | '/fleet'
-    | '/forge'
     | '/gateway'
-    | '/investigation'
     | '/nebula'
     | '/ops'
     | '/pam'
-    | '/payment-nexus'
     | '/proof-fulcrum'
     | '/quantotalus'
     | '/reclaim'
@@ -295,13 +259,10 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DigitalOreRoute: typeof DigitalOreRoute
   FleetRoute: typeof FleetRoute
-  ForgeRoute: typeof ForgeRoute
   GatewayRoute: typeof GatewayRoute
-  InvestigationRoute: typeof InvestigationRoute
   NebulaRoute: typeof NebulaRoute
   OpsRoute: typeof OpsRoute
   PamRoute: typeof PamRoute
-  PaymentNexusRoute: typeof PaymentNexusRoute
   ProofFulcrumRoute: typeof ProofFulcrumRoute
   QuantotalusRoute: typeof QuantotalusRoute
   ReclaimRoute: typeof ReclaimRoute
@@ -402,13 +363,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProofFulcrumRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/payment-nexus': {
-      id: '/payment-nexus'
-      path: '/payment-nexus'
-      fullPath: '/payment-nexus'
-      preLoaderRoute: typeof PaymentNexusRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/pam': {
       id: '/pam'
       path: '/pam'
@@ -430,25 +384,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NebulaRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/investigation': {
-      id: '/investigation'
-      path: '/investigation'
-      fullPath: '/investigation'
-      preLoaderRoute: typeof InvestigationRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/gateway': {
       id: '/gateway'
       path: '/gateway'
       fullPath: '/gateway'
       preLoaderRoute: typeof GatewayRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/forge': {
-      id: '/forge'
-      path: '/forge'
-      fullPath: '/forge'
-      preLoaderRoute: typeof ForgeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/fleet': {
@@ -479,13 +419,10 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DigitalOreRoute: DigitalOreRoute,
   FleetRoute: FleetRoute,
-  ForgeRoute: ForgeRoute,
   GatewayRoute: GatewayRoute,
-  InvestigationRoute: InvestigationRoute,
   NebulaRoute: NebulaRoute,
   OpsRoute: OpsRoute,
   PamRoute: PamRoute,
-  PaymentNexusRoute: PaymentNexusRoute,
   ProofFulcrumRoute: ProofFulcrumRoute,
   QuantotalusRoute: QuantotalusRoute,
   ReclaimRoute: ReclaimRoute,
