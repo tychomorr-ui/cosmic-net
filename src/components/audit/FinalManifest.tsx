@@ -286,13 +286,22 @@ export function FinalManifest() {
         <span className="text-[0.6rem] uppercase tracking-[0.18em] text-muted-foreground">
           Coupling green when every receipt is anchored AND payload_cid is stable.
         </span>
-        <button
-          onClick={download}
-          disabled={!m}
-          className="border border-border px-3 py-1 text-[0.6rem] uppercase tracking-[0.18em] text-foreground hover:text-gold disabled:opacity-50"
-        >
-          download final-manifest.json
-        </button>
+        <div className="flex flex-wrap gap-2">
+          <button
+            onClick={download}
+            disabled={!m}
+            className="border border-border px-3 py-1 text-[0.6rem] uppercase tracking-[0.18em] text-foreground hover:text-gold disabled:opacity-50"
+          >
+            download final-manifest.json
+          </button>
+          <button
+            onClick={() => void exportBundle()}
+            disabled={!m}
+            className="border border-gold px-3 py-1 text-[0.6rem] uppercase tracking-[0.18em] text-gold hover:bg-gold/10 disabled:opacity-50"
+          >
+            export provenance bundle
+          </button>
+        </div>
       </div>
     </section>
   );
