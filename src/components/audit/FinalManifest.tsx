@@ -104,6 +104,19 @@ export function FinalManifest() {
     URL.revokeObjectURL(url);
   };
 
+  const exportBundle = async () => {
+    try {
+      const { bundle, json } = await buildProvenanceBundle();
+      downloadProvenanceBundle(bundle, json);
+      toast.success("Provenance bundle exported", {
+        description: `${bundle.artifact_count} verified · ${bundle.anchored_count}/${bundle.receipt_count} anchored · sha256 ${bundle.bundle_sha256.slice(0, 12)}…`,
+      });
+    } catch (e2) {
+      const msg = e2 instanceof Error ? e2.message : "export failed";
+      toast.error("Bundle export failed", { description: msg });
+    }
+  };
+
   const tone =
     m?.coupling === "golden"
       ? "text-[color:var(--measured)] border-[color:var(--measured)]/40"
