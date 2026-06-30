@@ -1,5 +1,13 @@
 [
   {
+    "ts": "2026-06-30T02:05:00.000Z",
+    "level": "INFO",
+    "subsystem": "PROVENANCE",
+    "command": "ots-verify:truth-coin-manifesto-001.txt",
+    "result": "OTS VERIFY · truth-coin-manifesto-001.txt.ots\nsha256: 4edab582bd0eb5a72ad58df4fe677d2af685e254539b9e72c78ebc95f5ef70f7\nBitcoin block 954181 attests existence as of 2026-06-17 PST\nstable_key: anchored:btc:954181",
+    "sessionId": "ots-anchor-2026-06-30"
+  },
+  {
     "ts": "2026-06-30T02:00:00.000Z",
     "level": "INFO",
     "subsystem": "PROVENANCE",
