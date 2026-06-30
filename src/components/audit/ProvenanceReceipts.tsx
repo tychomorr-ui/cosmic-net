@@ -62,8 +62,10 @@ export function ProvenanceReceipts() {
     return () => window.removeEventListener("hashchange", tryOpenFromHash);
   }, [receipts]);
 
-
+  return (
+    <>
     <section className="border border-border bg-card/30 p-6">
+
       <div className="flex items-baseline justify-between">
         <div>
           <div className="text-[0.7rem] uppercase tracking-[0.18em] text-gold">
@@ -122,18 +124,30 @@ export function ProvenanceReceipts() {
                       return (
                         <li key={h} className="border border-border bg-background/60 p-2">
                           <div className="flex flex-wrap items-start justify-between gap-2">
-                            <div className="break-all font-mono text-[0.7rem] text-foreground">{h}</div>
+                            <button
+                              onClick={() => openProof(h, r)}
+                              className="flex-1 break-all text-left font-mono text-[0.7rem] text-foreground transition-colors hover:text-gold"
+                              title="Open proof detail"
+                            >
+                              {h}
+                            </button>
                             <CopyShaButton sha={h} />
                           </div>
                           {a ? (
-                            <div className="mt-1 font-mono text-[0.6rem] uppercase tracking-[0.16em] text-[color:var(--measured)]">
+                            <button
+                              onClick={() => openProof(h, r)}
+                              className="mt-1 font-mono text-[0.6rem] uppercase tracking-[0.16em] text-[color:var(--measured)] hover:underline"
+                            >
                               ANCHORED · block #{a.block_height}
-                              {a.txid ? ` · tx ${a.txid.slice(0, 12)}…` : ""}
-                            </div>
+                              {a.txid ? ` · tx ${a.txid.slice(0, 12)}…` : ""} · view proof
+                            </button>
                           ) : (
-                            <div className="mt-1 font-mono text-[0.6rem] uppercase tracking-[0.16em] text-gold">
-                              PENDING · record anchor in Final Manifest
-                            </div>
+                            <button
+                              onClick={() => openProof(h, r)}
+                              className="mt-1 font-mono text-[0.6rem] uppercase tracking-[0.16em] text-gold hover:underline"
+                            >
+                              PENDING · open proof detail
+                            </button>
                           )}
                         </li>
                       );
@@ -164,5 +178,11 @@ export function ProvenanceReceipts() {
         </ul>
       )}
     </section>
+    <ProofDetailModal
+      open={openCtx !== null}
+      onOpenChange={(o) => !o && setOpenCtx(null)}
+      context={openCtx}
+    />
+    </>
   );
 }
