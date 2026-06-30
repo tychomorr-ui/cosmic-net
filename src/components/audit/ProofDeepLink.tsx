@@ -1,30 +1,54 @@
-// Global #proof=<sha> deep-link handler. Mounted in the root shell so any
-// route — even "/" — opens the Proof Detail modal when the URL hash carries
-// a 64-char SHA-256. Looks up the receipt from the local ops ledger; if no
-// matching receipt is found, opens with a minimal context so the anchor
-// (if recorded) and CIDs still render honestly.
+// Global #proof=<sha> deep-link router.
+//
+// Single source of truth for the Proof Detail modal:
+//   - URL hash `#proof=<sha>` ↔ modal open state.
+//   - `openProofHash(sha)` (called by the UI) pushes the hash; the listener
+//     opens the modal in response.
+//   - Closing the modal clears the hash (and vice versa: removing the hash
+//     from the URL closes the modal).
+//
+// Mounted once in the root shell so deep links work on every route.
 
 import { useEffect, useState } from "react";
 import { parseProvenance, type ProvenanceReceipt } from "@/lib/provenance";
 import { ProofDetailModal, type ProofContext } from "@/components/audit/ProofDetailModal";
 
+const HASH_RE = /proof=([a-f0-9]{64})/i;
+
+function readHashSha(): string | null {
+  if (typeof window === "undefined") return null;
+  const m = window.location.hash.match(HASH_RE);
+  return m ? m[1].toLowerCase() : null;
+}
+
+function writeHash(sha: string | null) {
+  if (typeof window === "undefined") return;
+  const base = window.location.pathname + window.location.search;
+  const next = sha ? `${base}#proof=${sha}` : base;
+  // Use pushState when opening (so back button closes), replaceState when clearing.
+  if (sha) history.pushState(null, "", next);
+  else history.replaceState(null, "", next);
+  // pushState/replaceState don't fire hashchange — notify ourselves.
+  window.dispatchEvent(new Event("nexinus:proofhash"));
+}
+
+/** Open the Proof Detail modal for the given SHA-256 by updating the URL hash. */
+export function openProofHash(sha: string) {
+  writeHash(sha.toLowerCase());
+}
+
+/** Close the modal by clearing the proof hash. */
+export function closeProofHash() {
+  writeHash(null);
+}
+
 function buildContext(sha: string, receipts: ProvenanceReceipt[]): ProofContext {
   const r = receipts.find((x) => x.hashes.includes(sha));
   if (r) {
     const docName = r.otsFiles[0]?.replace(/\.ots$/, "") || r.command || sha.slice(0, 12);
-    return {
-      sha256: sha,
-      docName,
-      subsystem: r.subsystem,
-      ts: r.ts,
-      otsFiles: r.otsFiles,
-    };
+    return { sha256: sha, docName, subsystem: r.subsystem, ts: r.ts, otsFiles: r.otsFiles };
   }
-  return {
-    sha256: sha,
-    docName: `Anchor ${sha.slice(0, 12)}…`,
-    otsFiles: [],
-  };
+  return { sha256: sha, docName: `Anchor ${sha.slice(0, 12)}…`, otsFiles: [] };
 }
 
 export function ProofDeepLink() {
@@ -35,27 +59,24 @@ export function ProofDeepLink() {
     const receipts = parseProvenance();
 
     const sync = () => {
-      const m = window.location.hash.match(/proof=([a-f0-9]{64})/i);
-      if (!m) {
-        setCtx(null);
-        return;
-      }
-      setCtx(buildContext(m[1].toLowerCase(), receipts));
+      const sha = readHashSha();
+      setCtx(sha ? buildContext(sha, receipts) : null);
     };
 
     sync();
     window.addEventListener("hashchange", sync);
-    return () => window.removeEventListener("hashchange", sync);
+    window.addEventListener("popstate", sync);
+    window.addEventListener("nexinus:proofhash", sync);
+    return () => {
+      window.removeEventListener("hashchange", sync);
+      window.removeEventListener("popstate", sync);
+      window.removeEventListener("nexinus:proofhash", sync);
+    };
   }, []);
 
-  const close = (open: boolean) => {
-    if (open) return;
-    setCtx(null);
-    if (typeof window !== "undefined" && window.location.hash.includes("proof=")) {
-      // Clear the hash without scrolling.
-      history.replaceState(null, "", window.location.pathname + window.location.search);
-    }
+  const onOpenChange = (open: boolean) => {
+    if (!open) closeProofHash();
   };
 
-  return <ProofDetailModal open={ctx !== null} onOpenChange={close} context={ctx} />;
+  return <ProofDetailModal open={ctx !== null} onOpenChange={onOpenChange} context={ctx} />;
 }
