@@ -117,20 +117,3 @@ export async function runPipeline(): Promise<PipelineResult> {
 
   return { items, summary };
 }
-
-// Convenience hook surface for components. The pipeline itself is async;
-// callers own the useEffect + state. This helper just exposes the count
-// of nodes currently emitting a valid signature, used by the header tile.
-export function useLiveWitnessCount(): number {
-  let live = 0;
-  for (const n of NODES) {
-    const probe = getOverride(n.id) ?? n.probe;
-    if (!probe || probe.kind !== "signed-status") continue;
-    // useProbeStatus is a hook — must be called unconditionally per node.
-    // We accept the hook-in-loop here because NODES is a static array.
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    const s = useProbeStatus(n.id);
-    if (s.state === "measured") live += 1;
-  }
-  return live;
-}
