@@ -13,6 +13,7 @@ import { ProvenanceReceipts } from "@/components/audit/ProvenanceReceipts";
 import { FinalManifest } from "@/components/audit/FinalManifest";
 import { ValkyrieActivator } from "@/components/audit/ValkyrieActivator";
 import { ReceiptWizard } from "@/components/audit/ReceiptWizard";
+import { PipelineFlow } from "@/components/audit/PipelineFlow";
 
 export const Route = createFileRoute("/ops")({
   head: () => ({
@@ -165,6 +166,7 @@ function OpsPage() {
       </section>
 
       <section className="mt-10 space-y-4">
+        <PipelineFlow />
         <ReceiptWizard />
         <FinalManifest />
         <MeshHealth />
