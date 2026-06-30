@@ -15,8 +15,14 @@ import { parseProvenance, type ProvenanceReceipt } from "@/lib/provenance";
 import { recordInvalidProof } from "@/lib/invalid-proof-metrics";
 import { ProofDetailModal, type ProofContext } from "@/components/audit/ProofDetailModal";
 
-const VALID_RE = /proof=([a-f0-9]{64})(?:&|$)/i;
+// Canonical SHA-256 shape: exactly 64 hexadecimal characters (case-insensitive).
+export const SHA256_RE = /^[a-f0-9]{64}$/i;
 const PRESENT_RE = /(?:^|[#&])proof=([^&]*)/i;
+
+/** True when `value` is a canonical SHA-256 (64 hex chars). */
+export function isValidSha256(value: string): boolean {
+  return SHA256_RE.test(value);
+}
 
 type HashRead =
   | { kind: "none" }
@@ -26,11 +32,13 @@ type HashRead =
 function readHashSha(): HashRead {
   if (typeof window === "undefined") return { kind: "none" };
   const hash = window.location.hash;
-  const valid = hash.match(VALID_RE);
-  if (valid) return { kind: "valid", sha: valid[1].toLowerCase() };
   const present = hash.match(PRESENT_RE);
-  if (present) return { kind: "invalid", raw: present[1] };
-  return { kind: "none" };
+  if (!present) return { kind: "none" };
+  const raw = present[1];
+  // Empty `#proof=` is a silent no-op (not an error).
+  if (raw === "") return { kind: "none" };
+  if (isValidSha256(raw)) return { kind: "valid", sha: raw.toLowerCase() };
+  return { kind: "invalid", raw };
 }
 
 function writeHash(sha: string | null) {
@@ -70,29 +78,31 @@ export function ProofDeepLink() {
     if (typeof window === "undefined") return;
     const receipts = parseProvenance();
 
-    let lastInvalid = "";
+    // Track invalid raws we've already surfaced this session so back/forward
+    // navigation to an entry containing the same bad #proof= value silently
+    // strips it instead of re-firing the toast.
+    const seenInvalid = new Set<string>();
     const sync = () => {
       const r = readHashSha();
       if (r.kind === "valid") {
-        lastInvalid = "";
         setCtx(buildContext(r.sha, receipts));
         return;
       }
       if (r.kind === "invalid") {
+        // Always strip the bad hash from the current history entry first so
+        // popstate landing here can't leave the malformed value in the URL.
+        history.replaceState(null, "", window.location.pathname + window.location.search);
+        setCtx(null);
         // Local-only counter — records length + reason bucket, never the raw value.
         recordInvalidProof(r.raw);
-        if (r.raw !== lastInvalid) {
-          lastInvalid = r.raw;
+        if (!seenInvalid.has(r.raw)) {
+          seenInvalid.add(r.raw);
           toast.error("Invalid proof link", {
             description: `"${r.raw.slice(0, 24)}${r.raw.length > 24 ? "…" : ""}" is not a 64-char SHA-256.`,
           });
         }
-        setCtx(null);
-        // Strip the bad hash so retries from the same URL re-trigger.
-        history.replaceState(null, "", window.location.pathname + window.location.search);
         return;
       }
-      lastInvalid = "";
       setCtx(null);
     };
 
