@@ -29,11 +29,8 @@ type NavItem = {
 
 const NAV: NavItem[] = [
   { name: "Alpha Dashboard",  path: "/",                icon: LayoutGrid,     sigil: "⊕", code: "ALPHA" },
-  { name: "Sovereign Forge",  path: "/forge",           icon: Hammer,         sigil: "⚒", code: "FORGE" },
   { name: "Reflective Intel", path: "/reflective-intel",icon: Eye,            sigil: "◉", code: "MIRROR" },
   { name: "Network NEBULA",   path: "/nebula",          icon: Network,        sigil: "✺", code: "NEBULA" },
-  { name: "Payment Nexus",    path: "/payment-nexus",   icon: Banknote,       sigil: "✦", code: "NEXUS" },
-  { name: "Investigation",    path: "/investigation",   icon: Crosshair,      sigil: "⌖", code: "PROBE" },
   { name: "TERMINUS",         path: "/ops",             icon: TerminalSquare, sigil: "▣", code: "TERMI" },
   { name: "SAM Command",      path: "/sam-command",     icon: Compass,        sigil: "✧", code: "OMNI" },
   { name: "PAM Monarch",      path: "/pam",             icon: Crown,          sigil: "♕", code: "PAM" },
