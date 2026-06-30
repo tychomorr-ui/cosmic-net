@@ -98,7 +98,7 @@ export function ProvenanceReceipts() {
                         <li key={h} className="border border-border bg-background/60 p-2">
                           <div className="flex flex-wrap items-start justify-between gap-2">
                             <button
-                              onClick={() => openProof(h, r)}
+                              onClick={() => openProof(h)}
                               className="flex-1 break-all text-left font-mono text-[0.7rem] text-foreground transition-colors hover:text-gold"
                               title="Open proof detail"
                             >
@@ -108,7 +108,7 @@ export function ProvenanceReceipts() {
                           </div>
                           {a ? (
                             <button
-                              onClick={() => openProof(h, r)}
+                              onClick={() => openProof(h)}
                               className="mt-1 font-mono text-[0.6rem] uppercase tracking-[0.16em] text-[color:var(--measured)] hover:underline"
                             >
                               ANCHORED · block #{a.block_height}
@@ -116,7 +116,7 @@ export function ProvenanceReceipts() {
                             </button>
                           ) : (
                             <button
-                              onClick={() => openProof(h, r)}
+                              onClick={() => openProof(h)}
                               className="mt-1 font-mono text-[0.6rem] uppercase tracking-[0.16em] text-gold hover:underline"
                             >
                               PENDING · open proof detail
@@ -151,11 +151,6 @@ export function ProvenanceReceipts() {
         </ul>
       )}
     </section>
-    <ProofDetailModal
-      open={openCtx !== null}
-      onOpenChange={(o) => !o && setOpenCtx(null)}
-      context={openCtx}
-    />
     </>
   );
 }
