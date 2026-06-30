@@ -139,16 +139,16 @@ describe("ProofDeepLink", () => {
   it("manual hash edits open and close the modal", () => {
     const { queryByTestId } = render(<ProofDeepLink />);
 
-    // Simulate a user editing the address bar. Browsers fire `hashchange`
-    // automatically; happy-dom requires an explicit dispatch.
+    // Simulate a user editing the URL bar (paste a deep link).
     act(() => {
-      window.location.hash = `proof=${SHA_A}`;
+      history.replaceState(null, "", `/#proof=${SHA_A}`);
       window.dispatchEvent(new Event("hashchange"));
     });
     expect(queryByTestId("modal")?.dataset.sha).toBe(SHA_A);
 
+    // User manually clears the hash.
     act(() => {
-      window.location.hash = "";
+      history.replaceState(null, "", "/");
       window.dispatchEvent(new Event("hashchange"));
     });
     expect(queryByTestId("modal")).toBeNull();
