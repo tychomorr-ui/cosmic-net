@@ -135,8 +135,15 @@ function lastProbeFor(ops, nodeId) {
 }
 
 function stableKey(result) {
-  // The fingerprint that determines "is this row the same fact as before".
-  if (result.payload_cid) return `${result.state}:${result.payload_cid}`;
+  // Coarse fingerprint: don't churn on values that rotate every probe
+  // (payload_cid, freshness seconds, signed timestamp). Re-record only
+  // when the qualitative state changes.
+  if (result.state === "measured") return "measured:signed";
+  if (result.state === "reachable") {
+    // Keep HTTP-class detail so 200→500 still records; strip transients.
+    const cls = String(result.detail).replace(/\d+s/g, "").trim();
+    return `reachable:${cls}`;
+  }
   return `${result.state}:${result.detail}`;
 }
 
