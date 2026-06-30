@@ -79,6 +79,8 @@ export function ProofDeepLink() {
         return;
       }
       if (r.kind === "invalid") {
+        // Local-only counter — records length + reason bucket, never the raw value.
+        recordInvalidProof(r.raw);
         if (r.raw !== lastInvalid) {
           lastInvalid = r.raw;
           toast.error("Invalid proof link", {
