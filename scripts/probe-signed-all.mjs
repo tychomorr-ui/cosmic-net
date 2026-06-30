@@ -227,8 +227,8 @@ async function main() {
 // Pull the stable_key line back out of a prior PROBE result, so we don't
 // have to extend the OpsEntry schema with a side-channel field.
 function extractKey(resultText) {
-  const m = String(resultText).match(/^stable_key:\s*(\S+)/m);
-  return m ? m[1] : null;
+  const m = String(resultText).match(/^stable_key:\s*(.+)$/m);
+  return m ? m[1].trim() : null;
 }
 
 main().catch((e) => {
