@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-import { parseProvenance } from "@/lib/provenance";
+import { parseProvenance, type ProvenanceReceipt } from "@/lib/provenance";
 import { getAnchor, subscribeAnchors, type Anchor } from "@/lib/anchors";
+import { ProofDetailModal, type ProofContext } from "@/components/audit/ProofDetailModal";
 
 function CopyShaButton({ sha }: { sha: string }) {
   const [copied, setCopied] = useState(false);
