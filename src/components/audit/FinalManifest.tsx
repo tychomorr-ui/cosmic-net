@@ -9,6 +9,10 @@ import {
   type FinalManifest as ManifestT,
 } from "@/lib/final-manifest";
 import { recordAnchor, removeAnchor, subscribeAnchors } from "@/lib/anchors";
+import {
+  buildProvenanceBundle,
+  downloadProvenanceBundle,
+} from "@/lib/provenance-bundle";
 
 export function FinalManifest() {
   const [cid, setCid] = useState("…");
