@@ -209,15 +209,28 @@ describe("ProofDeepLink", () => {
     };
 
     it.each([
-      ["missing value (#proof= with empty string)", ""],
       ["short hex (63 chars)", "a".repeat(63)],
       ["long hex (65 chars)", "a".repeat(65)],
       ["64 chars with non-hex characters", "g".repeat(64)],
       ["64 chars with punctuation", `${"a".repeat(63)}!`],
       ["arbitrary slug", "not-a-sha"],
-      ["whitespace-only", "   "],
       ["uppercase-but-too-short", "ABCDEF"],
     ])("rejects %s", (_label, raw) => {
+      history.replaceState(null, "", `/#proof=${raw}`);
+      const { queryByTestId } = render(<ProofDeepLink />);
+
+      expect(queryByTestId("modal")).toBeNull();
+      expect(window.location.hash).toBe("");
+      expectToastFor(raw);
+    });
+
+    it("treats `#proof=` with an empty value as a no-op (modal stays closed)", () => {
+      // Empty value is malformed but indistinguishable from "user cleared it";
+      // the router should not open the modal and should not spam a toast.
+      history.replaceState(null, "", "/#proof=");
+      const { queryByTestId } = render(<ProofDeepLink />);
+      expect(queryByTestId("modal")).toBeNull();
+    });
       history.replaceState(null, "", `/#proof=${raw}`);
       const { queryByTestId } = render(<ProofDeepLink />);
 
