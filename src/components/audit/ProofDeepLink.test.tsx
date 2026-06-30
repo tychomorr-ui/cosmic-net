@@ -231,13 +231,6 @@ describe("ProofDeepLink", () => {
       const { queryByTestId } = render(<ProofDeepLink />);
       expect(queryByTestId("modal")).toBeNull();
     });
-      history.replaceState(null, "", `/#proof=${raw}`);
-      const { queryByTestId } = render(<ProofDeepLink />);
-
-      expect(queryByTestId("modal")).toBeNull();
-      expect(window.location.hash).toBe("");
-      expectToastFor(raw);
-    });
 
     it("does not open the modal when #proof= key is absent entirely", () => {
       history.replaceState(null, "", "/#something-else=42");
