@@ -1,13 +1,28 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
 
-const BASE_URL = "https://cosmic-mesh-net.lovable.app";
+const BASE_URL = "https://cosmictruth.lovable.app";
 
+// Mirrors src/routes/*.tsx exactly (post-purge: no /forge, /payment-nexus,
+// /investigation). /ops and /verify are operator surfaces and are excluded
+// here to match the Disallow rules in public/robots.txt.
 const PATHS = [
-  "/", "/ops", "/verify", "/digital-ore", "/truth-coin", "/truth-point",
-  "/sudo-coin", "/fleet", "/gateway", "/nebula", "/pam",
-  "/sam-command", "/seventh-dimension", "/reclaim", "/reflective-intel",
-  "/quantotalus", "/proof-fulcrum", "/status",
+  "/",
+  "/digital-ore",
+  "/fleet",
+  "/gateway",
+  "/nebula",
+  "/pam",
+  "/proof-fulcrum",
+  "/quantotalus",
+  "/reclaim",
+  "/reflective-intel",
+  "/sam-command",
+  "/seventh-dimension",
+  "/status",
+  "/sudo-coin",
+  "/truth-coin",
+  "/truth-point",
 ];
 
 export const Route = createFileRoute("/sitemap.xml")({
