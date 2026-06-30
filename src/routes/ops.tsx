@@ -168,6 +168,7 @@ function OpsPage() {
       </section>
 
       <section className="mt-10 space-y-4">
+        <InvalidProofFallback />
         <PipelineFlow />
         <ReceiptWizard />
         <FinalManifest />
