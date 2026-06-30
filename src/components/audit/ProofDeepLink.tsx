@@ -12,6 +12,7 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { parseProvenance, type ProvenanceReceipt } from "@/lib/provenance";
+import { recordInvalidProof } from "@/lib/invalid-proof-metrics";
 import { ProofDetailModal, type ProofContext } from "@/components/audit/ProofDetailModal";
 
 const VALID_RE = /proof=([a-f0-9]{64})(?:&|$)/i;
