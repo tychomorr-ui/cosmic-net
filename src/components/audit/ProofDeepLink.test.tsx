@@ -139,20 +139,21 @@ describe("ProofDeepLink", () => {
   it("manual hash edits open and close the modal", () => {
     const { queryByTestId } = render(<ProofDeepLink />);
 
-    // Assigning location.hash fires hashchange in real browsers and in happy-dom.
+    // Simulate a user editing the address bar. Browsers fire `hashchange`
+    // automatically; happy-dom requires an explicit dispatch.
     act(() => {
       window.location.hash = `proof=${SHA_A}`;
+      window.dispatchEvent(new Event("hashchange"));
     });
-    const el = queryByTestId("modal");
-    // eslint-disable-next-line no-console
-    console.log("DBG manual:", el?.outerHTML, "hash=", window.location.hash);
-    expect(el?.dataset.sha).toBe(SHA_A);
+    expect(queryByTestId("modal")?.dataset.sha).toBe(SHA_A);
 
     act(() => {
       window.location.hash = "";
+      window.dispatchEvent(new Event("hashchange"));
     });
     expect(queryByTestId("modal")).toBeNull();
   });
+
 
 
 
