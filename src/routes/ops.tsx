@@ -16,6 +16,7 @@ import { ReceiptWizard } from "@/components/audit/ReceiptWizard";
 import { PipelineFlow } from "@/components/audit/PipelineFlow";
 import { InvalidProofMetricsPanel } from "@/components/audit/InvalidProofMetricsPanel";
 import { InvalidProofFallback } from "@/components/audit/InvalidProofFallback";
+import { BladeReadinessRegistry } from "@/components/audit/BladeReadinessRegistry";
 
 export const Route = createFileRoute("/ops")({
   head: () => ({
@@ -169,6 +170,7 @@ function OpsPage() {
 
       <section className="mt-10 space-y-4">
         <InvalidProofFallback />
+        <BladeReadinessRegistry />
         <PipelineFlow />
         <ReceiptWizard />
         <FinalManifest />
