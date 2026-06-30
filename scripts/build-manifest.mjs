@@ -29,6 +29,7 @@ const anchors = {
   "9aa2f93e0f74ff33441e77affd0fdb7004ae0524a86cf6960107a74af203c48b": {anchored_at:1781766000000, block_height:954165, note:"sovereign-activation-chain-001.txt — Bitcoin block 954165, 2026-06-17 PST", source:"ots-verify"},
   "d9b45f924a82850005079c667e786b6e4a3205ddb8bb56b973a5f975757ec7ca": {anchored_at:1781766000000, block_height:954161, note:"sovereign-universal-digital-ore-origin.txt — Bitcoin block 954161, 2026-06-17 PST", source:"ots-verify"},
   "4edab582bd0eb5a72ad58df4fe677d2af685e254539b9e72c78ebc95f5ef70f7": {anchored_at:1781766000000, block_height:954181, note:"truth-coin-manifesto-001.txt — Bitcoin block 954181, 2026-06-17 PST", source:"ots-verify"},
+  "ffd582ed528d2f7cba4fceefbddbe876f5a8d7f2adf6b81b8ff36698e42ad0a1": {anchored_at:1781766000000, block_height:954181, note:"trc-feasibility-001.txt — Bitcoin block 954181, 2026-06-17 PST", source:"ots-verify"},
 };
 for (const [sha,a] of Object.entries(anchors)) a.sha256 = sha;
 
