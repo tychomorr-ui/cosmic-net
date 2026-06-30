@@ -13,6 +13,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { ConsoleShell } from "@/components/shell/ConsoleShell";
 import { ProbeRunner } from "@/components/shell/ProbeRunner";
+import { ProofDeepLink } from "@/components/audit/ProofDeepLink";
 import { Toaster } from "@/components/ui/sonner";
 import { initPostHog, capturePageview } from "@/lib/posthog";
 import { kvHydrate } from "@/lib/sovereign-store";
@@ -166,6 +167,7 @@ function RootComponent() {
         <Outlet />
       </ConsoleShell>
       <ProbeRunner />
+      <ProofDeepLink />
       <Toaster />
     </QueryClientProvider>
   );
