@@ -1,5 +1,21 @@
 [
   {
+    "ts": "2026-06-30T02:00:00.000Z",
+    "level": "INFO",
+    "subsystem": "PROVENANCE",
+    "command": "ots-verify:sovereign-activation-chain-001.txt",
+    "result": "OTS VERIFY · sovereign-activation-chain-001.txt.ots\nsha256: 9aa2f93e0f74ff33441e77affd0fdb7004ae0524a86cf6960107a74af203c48b\nBitcoin block 954165 attests existence as of 2026-06-17 PST\nstable_key: anchored:btc:954165",
+    "sessionId": "ots-anchor-2026-06-30"
+  },
+  {
+    "ts": "2026-06-30T02:00:00.000Z",
+    "level": "INFO",
+    "subsystem": "PROVENANCE",
+    "command": "ots-verify:sovereign-universal-digital-ore-origin.txt",
+    "result": "OTS VERIFY · sovereign-universal-digital-ore-origin.txt.ots\nsha256: d9b45f924a82850005079c667e786b6e4a3205ddb8bb56b973a5f975757ec7ca\nBitcoin block 954161 attests existence as of 2026-06-17 PST\nstable_key: anchored:btc:954161",
+    "sessionId": "ots-anchor-2026-06-30"
+  },
+  {
     "ts": "2026-06-30T01:21:56.092Z",
     "level": "INFO",
     "subsystem": "PROBE",
