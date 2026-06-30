@@ -118,7 +118,28 @@ function PamConsole() {
       await refresh();
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
+  }
+
+  async function onRepair() {
+    setError(null);
+    try {
+      const r = await repairChain();
+      if (r.repairedFrom >= 0) {
+        await appendEnvelope({
+          lane: "Warrior",
+          request: `chain repair · re-stamped ${r.rewritten} link(s) from index ${r.repairedFrom}`,
+          reflection:
+            "Append-only invariant preserved: only prev_cid + self-cid recomputed; no body mutated, no envelope deleted.",
+          truths: ["unledgered"],
+          next_move: "Re-verify chain badge reads `chain ok`.",
+          drift: `auto-heal: chain break @ ${r.repairedFrom} re-anchored to recomputed predecessor`,
+        });
+      }
+      await refresh();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e));
     }
+  }
   }
 
   async function onDeclare() {
