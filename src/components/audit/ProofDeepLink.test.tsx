@@ -143,7 +143,10 @@ describe("ProofDeepLink", () => {
     act(() => {
       window.location.hash = `proof=${SHA_A}`;
     });
-    expect(queryByTestId("modal")?.dataset.sha).toBe(SHA_A);
+    const el = queryByTestId("modal");
+    // eslint-disable-next-line no-console
+    console.log("DBG manual:", el?.outerHTML, "hash=", window.location.hash);
+    expect(el?.dataset.sha).toBe(SHA_A);
 
     act(() => {
       window.location.hash = "";
