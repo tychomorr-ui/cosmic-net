@@ -3,11 +3,8 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import { useTickerEvents } from "@/lib/probe-store";
 import {
   LayoutGrid,
-  Hammer,
   Eye,
   Network,
-  Banknote,
-  Crosshair,
   TerminalSquare,
   Compass,
   Crown,
