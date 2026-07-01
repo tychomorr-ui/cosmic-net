@@ -1,4 +1,4 @@
-import type { SovereignNode } from "@/data/nodes";
+import { probeTarget, type SovereignNode } from "@/data/nodes";
 import { useProbeStatus } from "@/lib/probe-store";
 import { TierBadge } from "./TierBadge";
 
@@ -42,7 +42,7 @@ export function NodeCard({ node }: { node: SovereignNode }) {
             <span className="uppercase tracking-[0.18em] text-muted-foreground">Live probe</span>
             <ProbeBadge state={probe.state} />
           </div>
-          <div className="mt-1 truncate text-muted-foreground">{node.probe.url}</div>
+          <div className="mt-1 truncate text-muted-foreground">{probeTarget(node.probe)}</div>
           {"detail" in probe && (
             <div className="mt-1 text-foreground/70">{probe.detail}</div>
           )}

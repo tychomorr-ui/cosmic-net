@@ -4,7 +4,7 @@
 
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { NODES, type SovereignNode } from "@/data/nodes";
+import { NODES, probeTarget, type SovereignNode } from "@/data/nodes";
 import { useProbeStatus } from "@/lib/probe-store";
 import type { ProbeStatus } from "@/lib/probes";
 import { getOverride, subscribeOverrides } from "@/lib/node-overrides";
@@ -169,7 +169,7 @@ function NodeRow({ node }: { node: SovereignNode }) {
         <span className="text-[0.6rem] uppercase tracking-[0.18em]">{c.label}</span>
       </div>
       <div className="mt-1 font-mono text-[0.65rem] text-muted-foreground break-all">
-        {probe?.url ?? node.region}
+        {(probe && ("url" in probe ? probe.url : `ipfs://${(probe as { cid: string }).cid}`)) ?? node.region}
       </div>
       <div className="mt-1 font-mono text-[0.65rem]">{c.detail}</div>
     </li>

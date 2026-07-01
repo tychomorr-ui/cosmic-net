@@ -31,7 +31,7 @@ export async function probeIpfsSigned(
       const status = verifyEnvelope(body, expectedEdPubHex, at, `ipfs:${new URL(gw).host}`);
       // Any non-idle status from a gateway is authoritative for this attempt.
       if (status.state === "measured" || status.state === "reachable") return status;
-      lastErr = status.detail;
+      lastErr = "detail" in status ? status.detail : "unknown";
     } catch (e) {
       lastErr = e instanceof Error ? e.message : "network error";
     } finally {
