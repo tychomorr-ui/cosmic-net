@@ -57,7 +57,7 @@ export const NODES: SovereignNode[] = [
     probe: {
       kind: "signed-status",
       url: "https://monarch.xinus.one/health",
-      edPubHex: "61f04bde635deac6718e4cd4ef19a0e5e542c197dabaa6c4a4e647e4695aa9ad",
+      edPubHex: "39436f5ab3af4b2e9db4dc0ea3a9cff9060f0167d8537174e5cc332a722b12c4",
     },
   },
   {
