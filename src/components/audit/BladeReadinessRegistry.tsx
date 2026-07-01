@@ -45,6 +45,9 @@ async function runProbe(nodeId: string): Promise<ProbeFacts> {
     s = await probeSignedStatus(p.url, p.edPubHex);
   } else if (p.kind === "cors-json") {
     s = await probeCorsJson(p.url, p.okField);
+  } else if (p.kind === "ipfs-signed-status") {
+    const { probeIpfsSigned } = await import("@/lib/probe-ipfs");
+    s = await probeIpfsSigned(p.cid, p.edPubHex, p.gateways);
   } else {
     s = await probeOpaqueHead(p.url);
   }
