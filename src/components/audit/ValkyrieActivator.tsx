@@ -35,8 +35,9 @@ export function ValkyrieActivator() {
   // Sensible default: when Valkyrie is selected and no URL set, prefill its origin.
   useEffect(() => {
     const n = NODES.find((x) => x.id === nodeId);
-    if (n?.probe?.url && !url) {
-      const u = new URL(n.probe.url);
+    const p = n?.probe;
+    if (p && p.kind !== "ipfs-signed-status" && !url) {
+      const u = new URL(p.url);
       setUrl(`${u.origin}/status`);
     }
   }, [nodeId, url]);
