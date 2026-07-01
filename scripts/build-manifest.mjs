@@ -20,6 +20,7 @@ receipts.sort((a,b)=> a.ts < b.ts ? 1 : -1);
 
 // anchors known from operator records
 const anchors = {
+  "e53a1476254301804e25b5f27787f64dc882dee0bca0b3865ace40b6ead285a9": {anchored_at:1782796200000, block_height:956029, note:"golden-truth.manifest.json — META-ANCHOR, the manifest itself, BTC block 956029, 2026-06-29 PST", source:"ots-verify"},
   "325037bda158c135794fb097f365822e7c5da01147282cb3cde032bc5e251f02": {anchored_at:1782774403019, block_height:955974, note:"truth-substrate-ledger-01-1.mhtml", source:"ots-verify"},
   "e54f67b589ff65af66e12f219e2693b8f341e26ec52ee89a69f57cfa2f30d0bc": {anchored_at:1782774403019, block_height:955967, note:"The XinUS Movement.txt", source:"ots-verify"},
   "0faeb10d3cf69ec65907f3de833d413f132a935aa7dd90d3557e7d5a18838ec3": {anchored_at:1782774403019, block_height:955974, note:"GO_OMNI_GO-001.txt", source:"ots-verify"},

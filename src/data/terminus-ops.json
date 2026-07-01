@@ -1,5 +1,29 @@
 [
   {
+    "ts": "2026-07-01T00:50:00.000Z",
+    "level": "INFO",
+    "subsystem": "PROVENANCE",
+    "command": "ots-verify:golden-truth.manifest.json",
+    "result": "OTS VERIFY · golden-truth.manifest.json.ots\nsha256: e53a1476254301804e25b5f27787f64dc882dee0bca0b3865ace40b6ead285a9\nBitcoin block 956029 attests existence as of 2026-06-29 PST\nnote: META-ANCHOR — the Golden Truth manifest itself is now BTC-anchored\nstable_key: anchored:btc:956029",
+    "sessionId": "ots-anchor-2026-07-01"
+  },
+  {
+    "ts": "2026-07-01T00:49:00.000Z",
+    "level": "INFO",
+    "subsystem": "PROVENANCE",
+    "command": "ots-verify:truth-substrate-ledger-01-1.mhtml",
+    "result": "OTS VERIFY · truth-substrate-ledger-01-1.mhtml.ots\nsha256: 325037bda158c135794fb097f365822e7c5da01147282cb3cde032bc5e251f02\nBitcoin block 955974 attests existence as of 2026-06-29 PST\nstable_key: anchored:btc:955974",
+    "sessionId": "ots-anchor-2026-07-01"
+  },
+  {
+    "ts": "2026-07-01T00:48:00.000Z",
+    "level": "INFO",
+    "subsystem": "PROVENANCE",
+    "command": "ots-verify:GO_OMNI_GO-001.txt",
+    "result": "OTS VERIFY · GO_OMNI_GO-001.txt.ots\nsha256: 0faeb10d3cf69ec65907f3de833d413f132a935aa7dd90d3557e7d5a18838ec3\nBitcoin block 955974 attests existence as of 2026-06-29 PST\nstable_key: anchored:btc:955974",
+    "sessionId": "ots-anchor-2026-07-01"
+  },
+  {
     "ts": "2026-06-30T02:10:00.000Z",
     "level": "INFO",
     "subsystem": "PROVENANCE",
