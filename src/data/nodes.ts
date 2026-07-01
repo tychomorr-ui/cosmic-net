@@ -160,3 +160,10 @@ export const NODES: SovereignNode[] = [
       "Beta IPFS Vertex has no HTTPS surface by design. Its liveness depends entirely on a content-addressed signed envelope; no CID pinned means no probe attempted.",
   },
 ];
+
+/** Human-readable target for a probe (URL or ipfs://CID). */
+export function probeTarget(p: Probe | undefined | null): string {
+  if (!p) return "";
+  if (p.kind === "ipfs-signed-status") return `ipfs://${p.cid}`;
+  return p.url;
+}
