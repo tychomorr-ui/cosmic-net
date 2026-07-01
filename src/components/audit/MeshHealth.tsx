@@ -9,7 +9,7 @@
 // no opaque 200 is allowed to pass for "live".
 
 import { useSyncExternalStore } from "react";
-import { NODES, type SovereignNode } from "@/data/nodes";
+import { NODES, probeTarget, type SovereignNode } from "@/data/nodes";
 import { useProbeStatus } from "@/lib/probe-store";
 import type { ProbeStatus } from "@/lib/probes";
 
@@ -105,7 +105,7 @@ function HealthRow({ node }: { node: SovereignNode }) {
         <span className="text-[0.6rem] uppercase tracking-[0.18em]">{c.label}</span>
       </div>
       <div className="mt-1 font-mono text-[0.65rem] text-muted-foreground">
-        {node.probe?.url ?? node.region}
+        {probeTarget(node.probe) || node.region}
       </div>
       <div className="mt-1 font-mono text-[0.65rem]">{c.detail}</div>
     </li>

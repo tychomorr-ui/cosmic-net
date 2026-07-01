@@ -83,15 +83,35 @@ async function runOne(id: string) {
   const probe = ov ?? node.probe;
   store.set(id, { state: "probing", at: Date.now() });
   emit();
-  const status =
-    probe.kind === "cors-json"
-      ? await probeCorsJson(probe.url, probe.okField)
-      : probe.kind === "signed-status"
-      ? await (await import("./probe-signed")).probeSignedStatus(
-          probe.url,
-          probe.edPubHex ?? "",
-        )
-      : await probeOpaqueHead(probe.url);
+  let status: ProbeStatus;
+  if (probe.kind === "cors-json") {
+    status = await probeCorsJson(probe.url, probe.okField);
+  } else if (probe.kind === "signed-status") {
+    status = await (await import("./probe-signed")).probeSignedStatus(
+      probe.url,
+      probe.edPubHex ?? "",
+    );
+  } else if (probe.kind === "ipfs-signed-status") {
+    const { probeIpfsSigned } = await import("./probe-ipfs");
+    status = await probeIpfsSigned(probe.cid, probe.edPubHex, probe.gateways);
+  } else {
+    status = await probeOpaqueHead(probe.url);
+  }
+  // HTTPS→IPFS fallback: if the primary probe couldn't reach the origin and
+  // the node has an ipfsFallback pinned, resolve the signed envelope via IPFS.
+  if (
+    status.state === "unreachable" &&
+    "ipfsFallback" in probe &&
+    probe.ipfsFallback
+  ) {
+    const { probeIpfsSigned } = await import("./probe-ipfs");
+    const fb = await probeIpfsSigned(
+      probe.ipfsFallback.cid,
+      probe.ipfsFallback.edPubHex,
+      probe.ipfsFallback.gateways,
+    );
+    if (fb.state !== "unreachable") status = fb;
+  }
   store.set(id, status);
   emit();
   pushEvent({

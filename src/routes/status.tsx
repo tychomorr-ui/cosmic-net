@@ -4,7 +4,7 @@
 
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { NODES, type SovereignNode } from "@/data/nodes";
+import { NODES, probeTarget, type SovereignNode } from "@/data/nodes";
 import { useProbeStatus } from "@/lib/probe-store";
 import type { ProbeStatus } from "@/lib/probes";
 import { getOverride, subscribeOverrides } from "@/lib/node-overrides";
@@ -14,6 +14,7 @@ import {
   type FinalManifest as ManifestT,
 } from "@/lib/final-manifest";
 import { PipelineFlow } from "@/components/audit/PipelineFlow";
+import { TriangleCluster } from "@/components/audit/TriangleCluster";
 
 export const Route = createFileRoute("/status")({
   head: () => ({
@@ -122,7 +123,31 @@ function StatusPage() {
 
       <section className="mt-8">
         <h2 className="font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground">
-          Nodes
+          Mesh-of-meshes · two triangular clusters
+        </h2>
+        <p className="mt-2 max-w-2xl text-xs leading-relaxed text-muted-foreground">
+          Solid rings are direct HTTPS ARCHANGEL/v0 probes. Dashed rings are
+          IPFS-gated probes — the signed envelope is resolved through a public
+          IPFS gateway rather than a REST endpoint. HTTPS nodes with an IPFS
+          fallback pinned fall through to IPFS resolution if the origin fails.
+        </p>
+        <div className="mt-3 grid gap-3 md:grid-cols-2">
+          <TriangleCluster
+            clusterId="alpha"
+            title="Cluster Alpha · Xinus-Monarch anchor"
+            nodes={NODES.filter((n) => n.cluster_id === "alpha")}
+          />
+          <TriangleCluster
+            clusterId="beta"
+            title="Cluster Beta · Resonate-Earth anchor"
+            nodes={NODES.filter((n) => n.cluster_id === "beta")}
+          />
+        </div>
+      </section>
+
+      <section className="mt-8">
+        <h2 className="font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground">
+          All nodes (flat)
         </h2>
         <ul className="mt-3 grid gap-2 sm:grid-cols-2">
           {NODES.map((n) => (
@@ -169,7 +194,7 @@ function NodeRow({ node }: { node: SovereignNode }) {
         <span className="text-[0.6rem] uppercase tracking-[0.18em]">{c.label}</span>
       </div>
       <div className="mt-1 font-mono text-[0.65rem] text-muted-foreground break-all">
-        {probe?.url ?? node.region}
+        {(probe && ("url" in probe ? probe.url : `ipfs://${(probe as { cid: string }).cid}`)) ?? node.region}
       </div>
       <div className="mt-1 font-mono text-[0.65rem]">{c.detail}</div>
     </li>

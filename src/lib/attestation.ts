@@ -65,7 +65,8 @@ export async function verifyNodeAttestation(nodeId: string): Promise<Attestation
     return { ok: false, cid: "", reachable: false, drift: `node ${nodeId} not declared`, checkedAt };
   }
   const cid = await valueToCid(declarationSubset(node));
-  const reachable = node.probe ? await reach(node.probe.url) : true;
+  const probeUrl = node.probe && node.probe.kind !== "ipfs-signed-status" ? node.probe.url : null;
+  const reachable = probeUrl ? await reach(probeUrl) : true;
 
   const link = loadChain().find((l) => l.id === nodeId);
   let drift: string | null = null;
