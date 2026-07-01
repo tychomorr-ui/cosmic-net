@@ -94,8 +94,12 @@ export function latestSignedStatusByNode(): Map<string, ProbeFacts> {
   return out;
 }
 
-export function computeRegistry(): BladeReadiness[] {
-  const probes = latestSignedStatusByNode();
+export function computeRegistry(
+  overrides?: Map<string, ProbeFacts>,
+): BladeReadiness[] {
+  const base = latestSignedStatusByNode();
+  const probes = new Map(base);
+  if (overrides) for (const [k, v] of overrides) probes.set(k, v);
   return BLADES.map((blade) => {
     const nodeId = BLADE_NODE_BINDING[blade.n];
     const node = nodeId ? NODES.find((n) => n.id === nodeId) : undefined;
