@@ -77,8 +77,9 @@ export const NODES: SovereignNode[] = [
     truth:
       "Valkyrie is probed with an opaque HEAD request against valkyrie.nexinus.net. Opaque success means the origin answered; it does not prove application health, only that the host is reachable from the browser's network path.",
     probe: {
-      kind: "no-cors-head",
-      url: "https://valkyrie.nexinus.net/",
+      kind: "signed-status",
+      url: "https://valkyrie.nexinus.net/health",
+      edPubHex: "a61910dffc0bf0e052019af2ed1db68c411131455bd03d789d1424189be0e15f",
     },
   },
   {
