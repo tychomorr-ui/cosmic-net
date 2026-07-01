@@ -1,5 +1,19 @@
 export type Tier = "measured" | "attested" | "doctrine";
 
+export type ClusterId = "alpha" | "beta";
+
+export type Probe =
+  | { kind: "cors-json"; url: string; okField?: string; ipfsFallback?: IpfsFallback }
+  | { kind: "no-cors-head"; url: string; ipfsFallback?: IpfsFallback }
+  | { kind: "signed-status"; url: string; edPubHex?: string; ipfsFallback?: IpfsFallback }
+  | { kind: "ipfs-signed-status"; cid: string; edPubHex: string; gateways?: string[] };
+
+export type IpfsFallback = {
+  cid: string;
+  edPubHex: string;
+  gateways?: string[];
+};
+
 export type SovereignNode = {
   id: string;
   name: string;
@@ -10,68 +24,30 @@ export type SovereignNode = {
   declared: string;
   facts: string[];
   truth: string;
-  probe?: {
-    kind: "cors-json" | "no-cors-head" | "signed-status";
-    url: string;
-    okField?: string; // dot-path in JSON, defaults to "ok"
-    edPubHex?: string; // expected ed25519 pubkey for signed-status probes
-  };
+  cluster_id?: ClusterId;
+  cluster_role?: "anchor" | "vertex";
+  probe?: Probe;
 };
 
+// Default public IPFS gateways used when a node's probe/fallback doesn't list its own.
+export const DEFAULT_IPFS_GATEWAYS = [
+  "https://cloudflare-ipfs.com/ipfs/",
+  "https://ipfs.io/ipfs/",
+  "https://dweb.link/ipfs/",
+];
+
 export const NODES: SovereignNode[] = [
-  {
-    id: "tesseract-a",
-    name: "Tesseract-A",
-    provider: "Local sovereign hardware",
-    region: "Operator-held",
-    role: "Anchor terminal · ed25519 signing surface",
-    tier: "attested",
-    declared: "ATTESTED · UNVERIFIED",
-    facts: [
-      "Holds the operator key for fleet liveness stamps.",
-      "Not directly reachable from the public web by design.",
-    ],
-    truth:
-      "Tesseract-A is held in operator custody. Its existence is asserted by signed receipts surfaced elsewhere in the fleet, not by a public endpoint here.",
-  },
-  {
-    id: "helsinki-vertex",
-    name: "Helsinki Vertex",
-    provider: "Doctrine placeholder",
-    region: "Helsinki",
-    role: "Topology vertex · Helsinki · Singapore · Falkenstein triangle",
-    tier: "doctrine",
-    declared: "DOCTRINE · INTENT",
-    facts: [
-      "Listed as a planned vertex of the triadaxial mist-mesh.",
-      "No live endpoint has been claimed.",
-    ],
-    truth:
-      "Helsinki Vertex describes a topology intent, not a running service. Promotion to ATTESTED requires a signed manifest; promotion to MEASURED requires a reachable health surface.",
-  },
-  {
-    id: "xinus-lens",
-    name: "XinUS-Lens",
-    provider: "Sovereign cognition layer",
-    region: "Browser-local",
-    role: "Lens · sovereign reflection surface",
-    tier: "doctrine",
-    declared: "DOCTRINE · INTENT",
-    facts: [
-      "Reads signals from local instrumentation only.",
-      "No remote callbacks, no third-party telemetry.",
-    ],
-    truth:
-      "XinUS-Lens is a client-local reflection module. It cannot be probed externally because it has no network surface by intent.",
-  },
+  // ============ CLUSTER ALPHA ============
   {
     id: "xinus-monarch",
     name: "Xinus-Monarch",
     provider: "xinus.one",
     region: "Public reachable host",
-    role: "Telemetry-gated gateway · health surface",
+    role: "Alpha anchor · HTTPS signed-status gateway",
     tier: "attested",
     declared: "ATTESTED · health probe in this card",
+    cluster_id: "alpha",
+    cluster_role: "anchor",
     facts: [
       "Exposes an ARCHANGEL/v0 signed status surface at monarch.xinus.one/health.",
       "Promotes to MEASURED · LIVE on signature verification against the operator pubkey.",
@@ -84,15 +60,16 @@ export const NODES: SovereignNode[] = [
       edPubHex: "61f04bde635deac6718e4cd4ef19a0e5e542c197dabaa6c4a4e647e4695aa9ad",
     },
   },
-
   {
     id: "xinus-valkyrie",
     name: "Valkyrie",
     provider: "nexinus.net",
     region: "5.78.148.244",
-    role: "Registered relay · health pending",
+    role: "Alpha vertex · registered relay",
     tier: "attested",
     declared: "ATTESTED · reachability probe in this card",
+    cluster_id: "alpha",
+    cluster_role: "vertex",
     facts: [
       "Registered in the fleet manifest as valkyrie.nexinus.net (5.78.148.244).",
       "Does not currently expose a CORS-readable health JSON.",
@@ -105,54 +82,81 @@ export const NODES: SovereignNode[] = [
     },
   },
   {
-    id: "terminus-tesseractus",
-    name: "Terminus-Tesseractus",
-    provider: "Operator console",
-    region: "Browser-local",
-    role: "Witness console shell",
-    tier: "measured",
-    declared: "MEASURED · this render",
-    facts: [
-      "If you are reading this card, the Terminus shell rendered successfully.",
-      "Liveness equals page paint — no remote claim required.",
-    ],
-    truth:
-      "The Terminus console is observable directly: its measurement is the act of rendering this page on your device right now.",
-  },
-  {
-    id: "east-coast-relay",
-    name: "East Coast Relay",
+    id: "helsinki-vertex",
+    name: "Helsinki Vertex",
     provider: "Doctrine placeholder",
-    region: "US-East (planned)",
-    role: "Continental relay vertex",
+    region: "Helsinki",
+    role: "Alpha vertex · IPFS-gated (pending CID)",
     tier: "doctrine",
-    declared: "DOCTRINE · INTENT",
+    declared: "DOCTRINE · awaiting IPFS pin",
+    cluster_id: "alpha",
+    cluster_role: "vertex",
     facts: [
-      "Planned continental relay for the sovereign mist.",
-      "No host, no endpoint, no signed manifest yet.",
+      "Reserved vertex for the Alpha triangle.",
+      "Activates when an operator pins a signed status JSON to IPFS and its CID is written into this manifest.",
     ],
     truth:
-      "East Coast Relay is named in the topology vision. It is not a running service. Do not treat it as reachable.",
+      "Helsinki Vertex describes a topology intent. Promotion to LIVE requires a real IPFS CID resolving to an ARCHANGEL/v0 signed envelope; no probe runs until then.",
   },
+
+  // ============ CLUSTER BETA ============
   {
     id: "resonate-earth",
     name: "Resonate-Earth",
     provider: "resonate-earth.live",
     region: "Public reachable host",
-    role: "Schumann-resonance witness · planetary substrate node",
+    role: "Beta anchor · Schumann-resonance witness",
     tier: "attested",
-    declared: "ATTESTED · sovereign handshake · reachability probe in this card",
+    declared: "ATTESTED · IPFS-gated resolution",
+    cluster_id: "beta",
+    cluster_role: "anchor",
     facts: [
       "Sovereign witness surface for Earth's electromagnetic substrate.",
-      "Reachability probed via opaque HEAD; sovereign handshake recorded in Truth Chain.",
-      "First-class vertex of the substrate layer alongside Truth Substrate (◈).",
+      "Configured to resolve its signed status via IPFS content-addressed payload rather than a REST /health.",
+      "Falls back to opaque HEAD only if IPFS resolution fails.",
       "Bound to the 7D unity CID — any change here re-hashes the unification certificate.",
     ],
     truth:
-      "Resonate-Earth couples the bitcoin substrate (work / pressure / density) to the planetary substrate (resonance / coherence). The sovereign handshake binds its origin into the Truth Chain heptagram; promotion to MEASURED requires a signed /status surface.",
+      "Resonate-Earth couples the bitcoin substrate (work / pressure / density) to the planetary substrate (resonance / coherence). Its signed status envelope is expected to live at a pinned IPFS CID; the browser resolves through public gateways with signature verification against the node pubkey.",
     probe: {
       kind: "no-cors-head",
       url: "https://resonate-earth.live/",
+      // Once operator pins the signed envelope to IPFS, set cid+edPubHex here to promote to LIVE.
+      // ipfsFallback: { cid: "bafy…", edPubHex: "…" },
     },
+  },
+  {
+    id: "tesseract-a",
+    name: "Tesseract-A",
+    provider: "Local sovereign hardware",
+    region: "Operator-held",
+    role: "Beta vertex · ed25519 signing surface",
+    tier: "attested",
+    declared: "ATTESTED · UNVERIFIED",
+    cluster_id: "beta",
+    cluster_role: "vertex",
+    facts: [
+      "Holds the operator key for fleet liveness stamps.",
+      "Not directly reachable from the public web by design; participates via signed receipts.",
+    ],
+    truth:
+      "Tesseract-A is held in operator custody. Its existence is asserted by signed receipts surfaced elsewhere in the fleet, not by a public endpoint here.",
+  },
+  {
+    id: "beta-ipfs-vertex",
+    name: "Beta IPFS Vertex",
+    provider: "IPFS-native",
+    region: "Content-addressed",
+    role: "Beta vertex · IPFS-gated (pending CID)",
+    tier: "doctrine",
+    declared: "DOCTRINE · awaiting IPFS pin",
+    cluster_id: "beta",
+    cluster_role: "vertex",
+    facts: [
+      "Reserved vertex for the Beta triangle.",
+      "Activates once a signed-status JSON is pinned; the browser will resolve it via IPFS gateway.",
+    ],
+    truth:
+      "Beta IPFS Vertex has no HTTPS surface by design. Its liveness depends entirely on a content-addressed signed envelope; no CID pinned means no probe attempted.",
   },
 ];
