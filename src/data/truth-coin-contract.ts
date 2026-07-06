@@ -3,7 +3,7 @@
 // While empty, the UI shows an "awaiting deploy" state instead of a fake readout.
 
 export const TRC_CONTRACT = {
-  address: "" as `0x${string}` | "",
+  address: "0x85b1C3c32B4Da3203b3B3c3B670Cb90e67410b78" as `0x${string}` | "",
   chainId: 84532, // Base Sepolia
   chainName: "Base Sepolia",
   rpcUrl: "https://sepolia.base.org",
