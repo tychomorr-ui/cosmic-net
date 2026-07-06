@@ -4,6 +4,7 @@ import { AwaitingTile } from "@/components/truth-coin/AwaitingTile";
 import { DignityModel } from "@/components/truth-coin/DignityModel";
 import { RealizationPath } from "@/components/truth-coin/RealizationPath";
 import { Manifesto } from "@/components/truth-coin/Manifesto";
+import { ContractReceipt } from "@/components/truth-coin/ContractReceipt";
 import { ALLOCATIONS } from "@/data/truth-coin";
 
 export const Route = createFileRoute("/truth-coin")({
@@ -88,6 +89,7 @@ function TruthCoin() {
       </section>
 
       <RealizationPath />
+      <ContractReceipt />
       <Manifesto />
 
       <section className="border border-dashed border-border bg-card/20 p-8 text-center">
