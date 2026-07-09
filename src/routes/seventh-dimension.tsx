@@ -214,6 +214,22 @@ function SeventhDimensionPage() {
           <Cell k="trs block" v={sample?.block.height.toLocaleString() ?? "—"} />
           <Cell k="chain links" v={String(chainLen)} />
         </div>
+        <div
+          className={`mt-3 border px-3 py-1 text-[0.65rem] uppercase tracking-[0.2em] ${
+            unityMirror === "validated"
+              ? "border-primary/60 text-primary"
+              : unityMirror === "drift"
+                ? "border-destructive/60 text-destructive"
+                : "border-border text-muted-foreground"
+          }`}
+          title={unityRederived ? `re-derived ${unityRederived}` : "awaiting re-derivation"}
+        >
+          {unityMirror === "validated"
+            ? "⌬ TRUTH MIRROR VALIDATED · CID re-derives"
+            : unityMirror === "drift"
+              ? `⚠ TRUTH MIRROR DRIFT · ${unityCid} ≠ ${unityRederived}`
+              : "○ COMPUTING RE-DERIVATION…"}
+        </div>
       </section>
 
       <section className="border border-primary/30 bg-background/40 p-6">
