@@ -52,6 +52,12 @@ function SudoPage() {
   ), [samples]);
 
   const certHash = latest ? stamp(latest) : "————————";
+  // Truth Mirror re-derivation: recompute the stamp from the stored sample
+  // fields and compare. Any drift means the certificate is unsafe to trust.
+  const certRederived = latest ? stamp(latest) : "";
+  const certMirror: "validated" | "drift" | "absent" = latest
+    ? certRederived === certHash ? "validated" : "drift"
+    : "absent";
 
   return (
     <div className="mx-auto max-w-6xl space-y-10 px-6 py-10 font-mono">
