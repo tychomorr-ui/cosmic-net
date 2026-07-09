@@ -37,6 +37,7 @@ function SeventhDimensionPage() {
   const [oreDou, setOreDou] = useState(0);
   const [chainLen, setChainLen] = useState(0);
   const [unityCid, setUnityCid] = useState<string>("");
+  const [unityRederived, setUnityRederived] = useState<string>("");
   const [tick, setTick] = useState(0);
   const [rot, setRot] = useState(0);
 
@@ -71,8 +72,20 @@ function SeventhDimensionPage() {
       chain: { links: chainLen },
       earth: { node: resonateNode?.id ?? null, declared: resonateNode?.declared ?? null },
     };
+    // Truth Mirror: compute the CID twice — once as the primary witness,
+    // once as an independent re-derivation. Any drift between them means
+    // the CID pipeline is non-deterministic in this browser and the
+    // certificate must NOT display VALIDATED.
     void valueToCid(snapshot).then(setUnityCid);
+    void valueToCid(snapshot).then(setUnityRederived);
   }, [oreCount, oreDou, sample, chainLen, resonateNode]);
+
+  const unityMirror: "validated" | "drift" | "computing" =
+    !unityCid || !unityRederived
+      ? "computing"
+      : unityCid === unityRederived
+        ? "validated"
+        : "drift";
 
   // Heptagram vertex projection.
   const r = 140;
@@ -200,6 +213,22 @@ function SeventhDimensionPage() {
           <Cell k="cum DOU" v={oreDou.toFixed(2)} />
           <Cell k="trs block" v={sample?.block.height.toLocaleString() ?? "—"} />
           <Cell k="chain links" v={String(chainLen)} />
+        </div>
+        <div
+          className={`mt-3 border px-3 py-1 text-[0.65rem] uppercase tracking-[0.2em] ${
+            unityMirror === "validated"
+              ? "border-primary/60 text-primary"
+              : unityMirror === "drift"
+                ? "border-destructive/60 text-destructive"
+                : "border-border text-muted-foreground"
+          }`}
+          title={unityRederived ? `re-derived ${unityRederived}` : "awaiting re-derivation"}
+        >
+          {unityMirror === "validated"
+            ? "⌬ TRUTH MIRROR VALIDATED · CID re-derives"
+            : unityMirror === "drift"
+              ? `⚠ TRUTH MIRROR DRIFT · ${unityCid} ≠ ${unityRederived}`
+              : "○ COMPUTING RE-DERIVATION…"}
         </div>
       </section>
 
