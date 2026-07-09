@@ -72,8 +72,20 @@ function SeventhDimensionPage() {
       chain: { links: chainLen },
       earth: { node: resonateNode?.id ?? null, declared: resonateNode?.declared ?? null },
     };
+    // Truth Mirror: compute the CID twice — once as the primary witness,
+    // once as an independent re-derivation. Any drift between them means
+    // the CID pipeline is non-deterministic in this browser and the
+    // certificate must NOT display VALIDATED.
     void valueToCid(snapshot).then(setUnityCid);
+    void valueToCid(snapshot).then(setUnityRederived);
   }, [oreCount, oreDou, sample, chainLen, resonateNode]);
+
+  const unityMirror: "validated" | "drift" | "computing" =
+    !unityCid || !unityRederived
+      ? "computing"
+      : unityCid === unityRederived
+        ? "validated"
+        : "drift";
 
   // Heptagram vertex projection.
   const r = 140;
