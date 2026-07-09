@@ -37,6 +37,7 @@ function SeventhDimensionPage() {
   const [oreDou, setOreDou] = useState(0);
   const [chainLen, setChainLen] = useState(0);
   const [unityCid, setUnityCid] = useState<string>("");
+  const [unityRederived, setUnityRederived] = useState<string>("");
   const [tick, setTick] = useState(0);
   const [rot, setRot] = useState(0);
 
