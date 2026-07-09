@@ -40,6 +40,15 @@ function DigitalOrePage() {
 
   const latest = ledger[0];
 
+  // Truth Mirror re-derivation on the latest claim. The certificate below
+  // must not display "VALIDATED" unless the stored hash regenerates from
+  // the stored (source, fullText) pair right now, in this browser. Any
+  // mismatch is surfaced as DRIFT — never silently smoothed.
+  const latestRederived = latest ? fnv1a(`${latest.source}::${latest.fullText}`) : "";
+  const latestMirror: "validated" | "drift" | "absent" = latest
+    ? latestRederived === latest.hash ? "validated" : "drift"
+    : "absent";
+
   function mint() {
     const t = text.trim();
     if (!t) return;
@@ -241,7 +250,18 @@ function DigitalOrePage() {
               <Row k="DOU" v={latest.dou.toFixed(2)} />
               <Row k="attested" v={new Date(latest.ts).toUTCString()} />
               <Row k="excerpt" v={latest.excerpt + (latest.fullText.length > 80 ? "…" : "")} />
-              <div className="mt-2 border border-primary/60 px-3 py-1 text-[0.65rem] uppercase tracking-[0.2em] text-primary">⌬ TRUTH MIRROR VALIDATED</div>
+              <div
+                className={`mt-2 border px-3 py-1 text-[0.65rem] uppercase tracking-[0.2em] ${
+                  latestMirror === "validated"
+                    ? "border-primary/60 text-primary"
+                    : "border-destructive/60 text-destructive"
+                }`}
+                title={`stored ${latest.hash} · re-derived ${latestRederived}`}
+              >
+                {latestMirror === "validated"
+                  ? "⌬ TRUTH MIRROR VALIDATED"
+                  : `⚠ TRUTH MIRROR DRIFT · stored ${latest.hash} ≠ re-derived ${latestRederived}`}
+              </div>
             </div>
           </div>
         ) : (

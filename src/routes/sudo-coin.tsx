@@ -52,6 +52,12 @@ function SudoPage() {
   ), [samples]);
 
   const certHash = latest ? stamp(latest) : "————————";
+  // Truth Mirror re-derivation: recompute the stamp from the stored sample
+  // fields and compare. Any drift means the certificate is unsafe to trust.
+  const certRederived = latest ? stamp(latest) : "";
+  const certMirror: "validated" | "drift" | "absent" = latest
+    ? certRederived === certHash ? "validated" : "drift"
+    : "absent";
 
   return (
     <div className="mx-auto max-w-6xl space-y-10 px-6 py-10 font-mono">
@@ -162,7 +168,22 @@ function SudoPage() {
             <Row k="substrate"
               v={latest ? `work=${latest.work.toFixed(3)} · pressure=${latest.pressure.toFixed(3)} · density=${latest.density.toFixed(3)} · supply^0.25=${Math.pow(latest.supplyBtc, 0.25).toFixed(2)}` : "—"} />
             <Row k="attested" v={latest ? new Date(latest.ts).toUTCString() : "—"} />
-            <div className="mt-2 border border-primary/60 px-3 py-1 text-[0.65rem] uppercase tracking-[0.2em] text-primary">⌬ TRUTH MIRROR VALIDATED</div>
+            <div
+              className={`mt-2 border px-3 py-1 text-[0.65rem] uppercase tracking-[0.2em] ${
+                certMirror === "validated"
+                  ? "border-primary/60 text-primary"
+                  : certMirror === "drift"
+                    ? "border-destructive/60 text-destructive"
+                    : "border-border text-muted-foreground"
+              }`}
+              title={latest ? `re-stamped ${certRederived}` : "no sample yet"}
+            >
+              {certMirror === "validated"
+                ? "⌬ TRUTH MIRROR VALIDATED"
+                : certMirror === "drift"
+                  ? `⚠ TRUTH MIRROR DRIFT · ${certHash} ≠ ${certRederived}`
+                  : "○ AWAITING SUBSTRATE SAMPLE"}
+            </div>
           </div>
         </div>
       </section>
