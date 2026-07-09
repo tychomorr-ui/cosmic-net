@@ -40,6 +40,15 @@ function DigitalOrePage() {
 
   const latest = ledger[0];
 
+  // Truth Mirror re-derivation on the latest claim. The certificate below
+  // must not display "VALIDATED" unless the stored hash regenerates from
+  // the stored (source, fullText) pair right now, in this browser. Any
+  // mismatch is surfaced as DRIFT — never silently smoothed.
+  const latestRederived = latest ? fnv1a(`${latest.source}::${latest.fullText}`) : "";
+  const latestMirror: "validated" | "drift" | "absent" = latest
+    ? latestRederived === latest.hash ? "validated" : "drift"
+    : "absent";
+
   function mint() {
     const t = text.trim();
     if (!t) return;
