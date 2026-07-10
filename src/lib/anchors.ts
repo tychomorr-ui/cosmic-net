@@ -14,6 +14,7 @@
 // The UI then promotes the matching receipt from PENDING → ANCHORED.
 
 import { kvGet, kvSet } from "@/lib/sovereign-store";
+import { KNOWN_ANCHORS, getKnownAnchor } from "@/data/known-anchors";
 
 const KEY = "nexinus.ops.anchors.v1";
 
@@ -47,11 +48,21 @@ function write(map: AnchorMap): void {
 }
 
 export function listAnchors(): Anchor[] {
-  return Object.values(read()).sort((a, b) => b.anchored_at - a.anchored_at);
+  const local = read();
+  const merged: AnchorMap = {};
+  // Known anchors form the public floor; local overrides only if operator
+  // has recorded a more recent verification for the same sha.
+  for (const sha of Object.keys(KNOWN_ANCHORS)) {
+    const k = getKnownAnchor(sha);
+    if (k) merged[sha] = k;
+  }
+  for (const [sha, a] of Object.entries(local)) merged[sha] = a;
+  return Object.values(merged).sort((a, b) => b.anchored_at - a.anchored_at);
 }
 
 export function getAnchor(sha256: string): Anchor | undefined {
-  return read()[sha256.toLowerCase()];
+  const sha = sha256.toLowerCase();
+  return read()[sha] ?? getKnownAnchor(sha);
 }
 
 export function recordAnchor(input: Omit<Anchor, "anchored_at" | "source"> & {
