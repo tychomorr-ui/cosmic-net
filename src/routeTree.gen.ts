@@ -24,6 +24,7 @@ import { Route as ProofFulcrumRouteImport } from './routes/proof-fulcrum'
 import { Route as PamRouteImport } from './routes/pam'
 import { Route as OpsRouteImport } from './routes/ops'
 import { Route as NebulaRouteImport } from './routes/nebula'
+import { Route as LedgerRouteImport } from './routes/ledger'
 import { Route as GatewayRouteImport } from './routes/gateway'
 import { Route as FleetRouteImport } from './routes/fleet'
 import { Route as DigitalOreRouteImport } from './routes/digital-ore'
@@ -104,6 +105,11 @@ const NebulaRoute = NebulaRouteImport.update({
   path: '/nebula',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LedgerRoute = LedgerRouteImport.update({
+  id: '/ledger',
+  path: '/ledger',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const GatewayRoute = GatewayRouteImport.update({
   id: '/gateway',
   path: '/gateway',
@@ -130,6 +136,7 @@ export interface FileRoutesByFullPath {
   '/digital-ore': typeof DigitalOreRoute
   '/fleet': typeof FleetRoute
   '/gateway': typeof GatewayRoute
+  '/ledger': typeof LedgerRoute
   '/nebula': typeof NebulaRoute
   '/ops': typeof OpsRoute
   '/pam': typeof PamRoute
@@ -151,6 +158,7 @@ export interface FileRoutesByTo {
   '/digital-ore': typeof DigitalOreRoute
   '/fleet': typeof FleetRoute
   '/gateway': typeof GatewayRoute
+  '/ledger': typeof LedgerRoute
   '/nebula': typeof NebulaRoute
   '/ops': typeof OpsRoute
   '/pam': typeof PamRoute
@@ -173,6 +181,7 @@ export interface FileRoutesById {
   '/digital-ore': typeof DigitalOreRoute
   '/fleet': typeof FleetRoute
   '/gateway': typeof GatewayRoute
+  '/ledger': typeof LedgerRoute
   '/nebula': typeof NebulaRoute
   '/ops': typeof OpsRoute
   '/pam': typeof PamRoute
@@ -196,6 +205,7 @@ export interface FileRouteTypes {
     | '/digital-ore'
     | '/fleet'
     | '/gateway'
+    | '/ledger'
     | '/nebula'
     | '/ops'
     | '/pam'
@@ -217,6 +227,7 @@ export interface FileRouteTypes {
     | '/digital-ore'
     | '/fleet'
     | '/gateway'
+    | '/ledger'
     | '/nebula'
     | '/ops'
     | '/pam'
@@ -238,6 +249,7 @@ export interface FileRouteTypes {
     | '/digital-ore'
     | '/fleet'
     | '/gateway'
+    | '/ledger'
     | '/nebula'
     | '/ops'
     | '/pam'
@@ -260,6 +272,7 @@ export interface RootRouteChildren {
   DigitalOreRoute: typeof DigitalOreRoute
   FleetRoute: typeof FleetRoute
   GatewayRoute: typeof GatewayRoute
+  LedgerRoute: typeof LedgerRoute
   NebulaRoute: typeof NebulaRoute
   OpsRoute: typeof OpsRoute
   PamRoute: typeof PamRoute
@@ -384,6 +397,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NebulaRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/ledger': {
+      id: '/ledger'
+      path: '/ledger'
+      fullPath: '/ledger'
+      preLoaderRoute: typeof LedgerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/gateway': {
       id: '/gateway'
       path: '/gateway'
@@ -420,6 +440,7 @@ const rootRouteChildren: RootRouteChildren = {
   DigitalOreRoute: DigitalOreRoute,
   FleetRoute: FleetRoute,
   GatewayRoute: GatewayRoute,
+  LedgerRoute: LedgerRoute,
   NebulaRoute: NebulaRoute,
   OpsRoute: OpsRoute,
   PamRoute: PamRoute,
