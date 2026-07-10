@@ -14,6 +14,7 @@
 // The UI then promotes the matching receipt from PENDING → ANCHORED.
 
 import { kvGet, kvSet } from "@/lib/sovereign-store";
+import { KNOWN_ANCHORS, getKnownAnchor } from "@/data/known-anchors";
 
 const KEY = "nexinus.ops.anchors.v1";
 
