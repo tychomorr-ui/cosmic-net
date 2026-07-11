@@ -46,6 +46,50 @@ function LedgerPage() {
   const [, force] = useState(0);
   useEffect(() => subscribeAnchors(() => force((n) => n + 1)), []);
 
+  // Live BTC tip height so we render REAL confirmation depth per anchor.
+  // Fetched from mempool.space (independent third party). If the fetch
+  // fails we omit confirmations — never fabricate a number.
+  const [tipHeight, setTipHeight] = useState<number | null>(null);
+  const [tipFetchedAt, setTipFetchedAt] = useState<number | null>(null);
+  const [tipError, setTipError] = useState<string | null>(null);
+  useEffect(() => {
+    let alive = true;
+    const load = async () => {
+      try {
+        const res = await fetch("https://mempool.space/api/blocks/tip/height", {
+          cache: "no-store",
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const h = Number((await res.text()).trim());
+        if (!Number.isFinite(h)) throw new Error("non-numeric tip");
+        if (!alive) return;
+        setTipHeight(h);
+        setTipFetchedAt(Date.now());
+        setTipError(null);
+      } catch (e) {
+        if (!alive) return;
+        setTipError(e instanceof Error ? e.message : "fetch failed");
+      }
+    };
+    void load();
+    const id = setInterval(load, 60_000);
+    return () => {
+      alive = false;
+      clearInterval(id);
+    };
+  }, []);
+
+  const confirmationsFor = (h: number): number | null =>
+    tipHeight === null ? null : Math.max(0, tipHeight - h + 1);
+
+  const settlementLabel = (n: number): { label: string; tone: string } => {
+    if (n >= 2016) return { label: "IRREVERSIBLE", tone: "text-[color:var(--measured)]" };
+    if (n >= 144) return { label: "SETTLED", tone: "text-[color:var(--measured)]" };
+    if (n >= 6) return { label: "CONFIRMED", tone: "text-gold" };
+    if (n >= 1) return { label: "FRESH", tone: "text-gold" };
+    return { label: "PROPAGATING", tone: "text-muted-foreground" };
+  };
+
   const rows = useMemo<Row[]>(() => {
     const seen = new Set<string>();
     const out: Row[] = [];
@@ -155,7 +199,11 @@ function LedgerPage() {
       <section className="mt-6 grid gap-3 sm:grid-cols-4">
         <Tile label="Total hashes" value={String(rows.length)} />
         <Tile label="Anchored (BTC)" value={String(anchored)} tone="measured" />
-        <Tile label="Pending" value={String(pending)} tone={pending ? "gold" : "muted"} />
+        <Tile
+          label={tipError ? "BTC tip · offline" : "BTC tip (live)"}
+          value={tipHeight !== null ? `#${tipHeight.toLocaleString()}` : "…"}
+          tone={tipHeight !== null ? "measured" : "muted"}
+        />
         <button
           onClick={() => void exportBundle()}
           className="border border-gold bg-background/60 p-3 text-left transition-colors hover:bg-gold/10"
@@ -168,6 +216,20 @@ function LedgerPage() {
           </div>
         </button>
       </section>
+
+      <div className="mt-3 font-mono text-[0.6rem] uppercase tracking-[0.18em] text-muted-foreground">
+        {tipHeight !== null && tipFetchedAt !== null ? (
+          <>
+            live tip from mempool.space · fetched{" "}
+            {new Date(tipFetchedAt).toISOString().slice(11, 19)}Z · pending: {pending}
+          </>
+        ) : tipError ? (
+          <>could not reach mempool.space ({tipError}) · confirmations hidden</>
+        ) : (
+          <>loading live BTC tip…</>
+        )}
+      </div>
+
 
       <div className="mt-6 flex flex-wrap items-center gap-2">
         <input
@@ -214,6 +276,19 @@ function LedgerPage() {
                     <span className="font-mono text-[0.7rem] uppercase tracking-[0.16em] text-[color:var(--measured)]">
                       ⛓ ANCHORED · BTC block #{r.anchor.block_height}
                     </span>
+                    {(() => {
+                      const c = confirmationsFor(r.anchor.block_height);
+                      if (c === null) return null;
+                      const s = settlementLabel(c);
+                      return (
+                        <span
+                          className={`border border-[color:var(--measured)]/40 px-2 py-0.5 font-mono text-[0.6rem] uppercase tracking-[0.16em] ${s.tone}`}
+                          title={`Live from mempool.space · tip #${tipHeight}`}
+                        >
+                          {c.toLocaleString()} conf · {s.label}
+                        </span>
+                      );
+                    })()}
                     <a
                       href={`https://mempool.space/block/${r.anchor.block_height}`}
                       target="_blank"
@@ -247,6 +322,7 @@ function LedgerPage() {
                       </span>
                     )}
                   </div>
+
                 ) : (
                   <div className="mt-2 flex flex-wrap items-center gap-3">
                     <span className="font-mono text-[0.7rem] uppercase tracking-[0.16em] text-gold">
