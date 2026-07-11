@@ -46,6 +46,50 @@ function LedgerPage() {
   const [, force] = useState(0);
   useEffect(() => subscribeAnchors(() => force((n) => n + 1)), []);
 
+  // Live BTC tip height so we render REAL confirmation depth per anchor.
+  // Fetched from mempool.space (independent third party). If the fetch
+  // fails we omit confirmations — never fabricate a number.
+  const [tipHeight, setTipHeight] = useState<number | null>(null);
+  const [tipFetchedAt, setTipFetchedAt] = useState<number | null>(null);
+  const [tipError, setTipError] = useState<string | null>(null);
+  useEffect(() => {
+    let alive = true;
+    const load = async () => {
+      try {
+        const res = await fetch("https://mempool.space/api/blocks/tip/height", {
+          cache: "no-store",
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const h = Number((await res.text()).trim());
+        if (!Number.isFinite(h)) throw new Error("non-numeric tip");
+        if (!alive) return;
+        setTipHeight(h);
+        setTipFetchedAt(Date.now());
+        setTipError(null);
+      } catch (e) {
+        if (!alive) return;
+        setTipError(e instanceof Error ? e.message : "fetch failed");
+      }
+    };
+    void load();
+    const id = setInterval(load, 60_000);
+    return () => {
+      alive = false;
+      clearInterval(id);
+    };
+  }, []);
+
+  const confirmationsFor = (h: number): number | null =>
+    tipHeight === null ? null : Math.max(0, tipHeight - h + 1);
+
+  const settlementLabel = (n: number): { label: string; tone: string } => {
+    if (n >= 2016) return { label: "IRREVERSIBLE", tone: "text-[color:var(--measured)]" };
+    if (n >= 144) return { label: "SETTLED", tone: "text-[color:var(--measured)]" };
+    if (n >= 6) return { label: "CONFIRMED", tone: "text-gold" };
+    if (n >= 1) return { label: "FRESH", tone: "text-gold" };
+    return { label: "PROPAGATING", tone: "text-muted-foreground" };
+  };
+
   const rows = useMemo<Row[]>(() => {
     const seen = new Set<string>();
     const out: Row[] = [];
