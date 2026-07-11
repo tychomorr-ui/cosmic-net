@@ -199,7 +199,11 @@ function LedgerPage() {
       <section className="mt-6 grid gap-3 sm:grid-cols-4">
         <Tile label="Total hashes" value={String(rows.length)} />
         <Tile label="Anchored (BTC)" value={String(anchored)} tone="measured" />
-        <Tile label="Pending" value={String(pending)} tone={pending ? "gold" : "muted"} />
+        <Tile
+          label={tipError ? "BTC tip · offline" : "BTC tip (live)"}
+          value={tipHeight !== null ? `#${tipHeight.toLocaleString()}` : "…"}
+          tone={tipHeight !== null ? "measured" : "muted"}
+        />
         <button
           onClick={() => void exportBundle()}
           className="border border-gold bg-background/60 p-3 text-left transition-colors hover:bg-gold/10"
@@ -212,6 +216,20 @@ function LedgerPage() {
           </div>
         </button>
       </section>
+
+      <div className="mt-3 font-mono text-[0.6rem] uppercase tracking-[0.18em] text-muted-foreground">
+        {tipHeight !== null && tipFetchedAt !== null ? (
+          <>
+            live tip from mempool.space · fetched{" "}
+            {new Date(tipFetchedAt).toISOString().slice(11, 19)}Z · pending: {pending}
+          </>
+        ) : tipError ? (
+          <>could not reach mempool.space ({tipError}) · confirmations hidden</>
+        ) : (
+          <>loading live BTC tip…</>
+        )}
+      </div>
+
 
       <div className="mt-6 flex flex-wrap items-center gap-2">
         <input
