@@ -258,6 +258,19 @@ function LedgerPage() {
                     <span className="font-mono text-[0.7rem] uppercase tracking-[0.16em] text-[color:var(--measured)]">
                       ⛓ ANCHORED · BTC block #{r.anchor.block_height}
                     </span>
+                    {(() => {
+                      const c = confirmationsFor(r.anchor.block_height);
+                      if (c === null) return null;
+                      const s = settlementLabel(c);
+                      return (
+                        <span
+                          className={`border border-[color:var(--measured)]/40 px-2 py-0.5 font-mono text-[0.6rem] uppercase tracking-[0.16em] ${s.tone}`}
+                          title={`Live from mempool.space · tip #${tipHeight}`}
+                        >
+                          {c.toLocaleString()} conf · {s.label}
+                        </span>
+                      );
+                    })()}
                     <a
                       href={`https://mempool.space/block/${r.anchor.block_height}`}
                       target="_blank"
@@ -291,6 +304,7 @@ function LedgerPage() {
                       </span>
                     )}
                   </div>
+
                 ) : (
                   <div className="mt-2 flex flex-wrap items-center gap-3">
                     <span className="font-mono text-[0.7rem] uppercase tracking-[0.16em] text-gold">
