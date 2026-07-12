@@ -1,0 +1,18 @@
+{
+  "name": "truth-coin-contracts",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Hardhat scaffold to deploy TruthCoin.sol to Base Sepolia.",
+  "scripts": {
+    "compile": "hardhat compile",
+    "deploy:base-sepolia": "hardhat run scripts/deploy.js --network baseSepolia",
+    "deploy:sepolia": "hardhat run scripts/deploy.js --network sepolia",
+    "verify:base-sepolia": "hardhat verify --network baseSepolia",
+    "readout": "hardhat run scripts/readout.js --network baseSepolia"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "hardhat": "^2.22.10",
+    "dotenv": "^16.4.5"
+  }
+}
