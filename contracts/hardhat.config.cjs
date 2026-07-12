@@ -21,7 +21,7 @@ module.exports = {
     settings: { optimizer: { enabled: true, runs: 200 } },
   },
   paths: {
-    sources: "./",         // TruthCoin.sol lives at contracts/TruthCoin.sol
+    sources: "./src",      // TruthCoin.sol lives at contracts/src/TruthCoin.sol
     artifacts: "./artifacts",
     cache: "./cache",
     tests: "./test",
