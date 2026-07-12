@@ -71,6 +71,14 @@ Custom domain (`cosmic-mesh.dev`) → DNSLink TXT record on `_dnslink`
 pointing at the IPNS hash. The script never asks for a third-party API
 key; if a service is in the path, it is your node, your key, your name.
 
+## Contract
+
+`contracts/` holds the Hardhat scaffold for `TruthCoin.sol` (TRC). The
+local deploy path requires **no wallet, no faucet, no network** — run
+`npm run deploy:local` inside `contracts/` and the contract deploys to an
+in-memory node with a built-in funded signer. See `contracts/HARDHAT.md`
+for the full path from local proof to Base Sepolia live deployment.
+
 ## Pass log
 
 - **Pass 1** Doctrine Audit (`/pam`) — UI claims ↔ in-browser evidence.
