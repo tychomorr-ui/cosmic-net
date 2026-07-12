@@ -1,4 +1,4 @@
-# Truth Coin · Hardhat Deploy (Base Sepolia)
+# Truth Coin · Hardhat Deploy
 
 Foundry version lives in `README.md`. This is the Hardhat path — same
 contract (`TruthCoin.sol`), one command to deploy after setup.
@@ -6,34 +6,49 @@ contract (`TruthCoin.sol`), one command to deploy after setup.
 ## 0 · One-time prerequisites (Lovable can't do these for you)
 
 1. **Node 18+** installed locally.
-2. **A fresh testnet wallet + private key** (MetaMask → create new account →
-   export private key). **Never reuse a mainnet key.**
-3. **Base Sepolia ETH** (free, ~1 minute):
-   - https://www.alchemy.com/faucets/base-sepolia
-   - https://www.coinbase.com/faucets/base-ethereum-sepolia-faucet
-4. *(Optional)* Basescan API key for source verification:
-   https://basescan.org/myapikey
+2. *(Optional for live testnet)* A fresh testnet wallet + private key
+   (MetaMask → create new account → export private key). **Never reuse a
+   mainnet key.**
+3. *(Optional for live testnet)* Base Sepolia ETH. If Alchemy/Coinbase
+   faucets reject you, these work without mainnet balance:
+   - **Coinbase Developer Platform (CDP)** — up to 0.1 ETH/day, just a wallet
+     address: https://portal.cdp.coinbase.com/products/faucet
+   - **QuickNode Multi-Chain Faucet** — connect wallet, no mainnet check:
+     https://faucet.quicknode.com/base/sepolia
+   - **thirdweb Base Sepolia Faucet** — 0.01 ETH/day:
+     https://thirdweb.com/base-sepolia-testnet
+   - **ethfaucet.com** — 0.1 ETH/day: https://ethfaucet.com/
 
 ## 1 · Install & configure
 
 ```bash
 cd contracts
 npm install
+# only needed for live testnet deploy:
 cp .env.example .env
 # edit .env, paste PRIVATE_KEY (0x…) and optional BASESCAN_API_KEY
 ```
 
-## 2 · Prove it works locally (no gas, no network)
+## 2 · Prove it works locally (no wallet, no faucet, no network)
 
 ```bash
-npx hardhat compile
-npx hardhat test
+npm run compile
+npm run test
+npm run deploy:local
 ```
 
-All five tests must pass — that's your local proof the contract does what
-it says before you spend a satoshi.
+- `npm run test` runs 5 assertions that verify the contract compiles and its
+  core rules hold.
+- `npm run deploy:local` deploys to an in-memory Hardhat network using a
+  built-in signer with 10,000 fake ETH. It prints the contract address and
+  writes `contracts/deployed-local.json`.
 
-## 3 · Deploy to Base Sepolia
+This is the **zero-friction** proof that the deployment bytecode and constructor
+work. No faucet, no private key, no browser extension.
+
+## 3 · Deploy to Base Sepolia (live testnet)
+
+Once you have a funded testnet wallet:
 
 ```bash
 npm run deploy:base-sepolia
@@ -75,7 +90,9 @@ Base Sepolia's log history.
 
 ## Troubleshooting
 
-- **"deployer has 0 ETH"** — hit the faucet in step 0 (#3), wait a minute.
+- **"it won't let me find a testnet wallet"** — use the local path in
+  section 2. The contract is proven to deploy without a wallet.
+- **"deployer has 0 ETH"** — hit a faucet in step 0 (#3), wait a minute.
 - **"insufficient funds"** — same, or the faucet only gave you dust.
 - **"nonce too low / replacement fee too low"** — you have a pending tx;
   wait or bump gas in MetaMask.
