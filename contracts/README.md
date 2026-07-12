@@ -4,7 +4,7 @@ Real deployable Solidity contract for **Base Sepolia** (or Sepolia). Non-transfe
 
 ## What this is
 
-- `TruthCoin.sol` — ERC-20-shaped contract. `transfer` reverts until owner calls `enableTransfers()` (soulbound-by-default). Owner mints via `issueDignityCredit(to, amount, reason)`, emitting the reason on-chain.
+- `src/TruthCoin.sol` — ERC-20-shaped contract. `transfer` reverts until owner calls `enableTransfers()` (soulbound-by-default). Owner mints via `issueDignityCredit(to, amount, reason)`, emitting the reason on-chain.
 - No security, no legal tender, no investment. Testnet only.
 
 ## One-time setup
@@ -23,9 +23,7 @@ curl -L https://foundry.paradigm.xyz | bash && foundryup
 
 # 2. from repo root
 cd contracts
-forge init --no-git --force .
-# overwrite src/Counter.sol with TruthCoin.sol
-cp TruthCoin.sol src/TruthCoin.sol
+# Foundry expects src/TruthCoin.sol — already in place. If you `forge init`, keep the existing file.
 
 # 3. deploy
 export PRIVATE_KEY=0xYOUR_TESTNET_KEY
