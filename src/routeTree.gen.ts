@@ -24,6 +24,7 @@ import { Route as ProofFulcrumRouteImport } from './routes/proof-fulcrum'
 import { Route as PamRouteImport } from './routes/pam'
 import { Route as OpsRouteImport } from './routes/ops'
 import { Route as NebulaRouteImport } from './routes/nebula'
+import { Route as MeshRouteImport } from './routes/mesh'
 import { Route as LedgerRouteImport } from './routes/ledger'
 import { Route as GatewayRouteImport } from './routes/gateway'
 import { Route as FleetRouteImport } from './routes/fleet'
@@ -105,6 +106,11 @@ const NebulaRoute = NebulaRouteImport.update({
   path: '/nebula',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MeshRoute = MeshRouteImport.update({
+  id: '/mesh',
+  path: '/mesh',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LedgerRoute = LedgerRouteImport.update({
   id: '/ledger',
   path: '/ledger',
@@ -137,6 +143,7 @@ export interface FileRoutesByFullPath {
   '/fleet': typeof FleetRoute
   '/gateway': typeof GatewayRoute
   '/ledger': typeof LedgerRoute
+  '/mesh': typeof MeshRoute
   '/nebula': typeof NebulaRoute
   '/ops': typeof OpsRoute
   '/pam': typeof PamRoute
@@ -159,6 +166,7 @@ export interface FileRoutesByTo {
   '/fleet': typeof FleetRoute
   '/gateway': typeof GatewayRoute
   '/ledger': typeof LedgerRoute
+  '/mesh': typeof MeshRoute
   '/nebula': typeof NebulaRoute
   '/ops': typeof OpsRoute
   '/pam': typeof PamRoute
@@ -182,6 +190,7 @@ export interface FileRoutesById {
   '/fleet': typeof FleetRoute
   '/gateway': typeof GatewayRoute
   '/ledger': typeof LedgerRoute
+  '/mesh': typeof MeshRoute
   '/nebula': typeof NebulaRoute
   '/ops': typeof OpsRoute
   '/pam': typeof PamRoute
@@ -206,6 +215,7 @@ export interface FileRouteTypes {
     | '/fleet'
     | '/gateway'
     | '/ledger'
+    | '/mesh'
     | '/nebula'
     | '/ops'
     | '/pam'
@@ -228,6 +238,7 @@ export interface FileRouteTypes {
     | '/fleet'
     | '/gateway'
     | '/ledger'
+    | '/mesh'
     | '/nebula'
     | '/ops'
     | '/pam'
@@ -250,6 +261,7 @@ export interface FileRouteTypes {
     | '/fleet'
     | '/gateway'
     | '/ledger'
+    | '/mesh'
     | '/nebula'
     | '/ops'
     | '/pam'
@@ -273,6 +285,7 @@ export interface RootRouteChildren {
   FleetRoute: typeof FleetRoute
   GatewayRoute: typeof GatewayRoute
   LedgerRoute: typeof LedgerRoute
+  MeshRoute: typeof MeshRoute
   NebulaRoute: typeof NebulaRoute
   OpsRoute: typeof OpsRoute
   PamRoute: typeof PamRoute
@@ -397,6 +410,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NebulaRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/mesh': {
+      id: '/mesh'
+      path: '/mesh'
+      fullPath: '/mesh'
+      preLoaderRoute: typeof MeshRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/ledger': {
       id: '/ledger'
       path: '/ledger'
@@ -441,6 +461,7 @@ const rootRouteChildren: RootRouteChildren = {
   FleetRoute: FleetRoute,
   GatewayRoute: GatewayRoute,
   LedgerRoute: LedgerRoute,
+  MeshRoute: MeshRoute,
   NebulaRoute: NebulaRoute,
   OpsRoute: OpsRoute,
   PamRoute: PamRoute,
@@ -460,13 +481,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
