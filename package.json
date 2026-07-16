@@ -17,6 +17,7 @@
     "@fontsource/vt323": "^5.2.7",
     "@hookform/resolvers": "^5.2.2",
     "@ipld/dag-json": "^11.0.0",
+    "@lovable.dev/mcp-js": "^0.22.2",
     "@noble/curves": "^2.2.0",
     "@noble/hashes": "^2.2.0",
     "@radix-ui/react-accordion": "^1.2.12",
@@ -73,7 +74,7 @@
     "vaul": "^1.1.2",
     "viem": "^2.54.3",
     "vite-tsconfig-paths": "^6.0.2",
-    "zod": "^3.24.2"
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.32.0",
