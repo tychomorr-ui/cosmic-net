@@ -17,6 +17,7 @@
     "@fontsource/vt323": "^5.2.7",
     "@hookform/resolvers": "^5.2.2",
     "@ipld/dag-json": "^11.0.0",
+    "@lovable.dev/cloud-auth-js": "^1.1.2",
     "@lovable.dev/mcp-js": "^0.22.2",
     "@noble/curves": "^2.2.0",
     "@noble/hashes": "^2.2.0",
