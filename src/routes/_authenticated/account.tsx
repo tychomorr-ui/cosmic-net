@@ -73,7 +73,7 @@ function AccountPage() {
 
   async function signOut() {
     await supabase.auth.signOut();
-    navigate({ to: "/auth" });
+    navigate({ to: "/auth", search: { next: undefined } });
   }
 
   return (
