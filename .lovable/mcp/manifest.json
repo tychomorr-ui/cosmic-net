@@ -3,19 +3,23 @@
   "sdk_version": "0.22.2",
   "path": "/mcp",
   "auth": {
-    "type": "none"
+    "type": "oauth",
+    "issuer": "https://szpbjbhgrocselypiafh.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
   },
   "mcp": {
     "server": {
       "name": "cmap-mcp",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "title": "cMAP — Cosmic Mesh Alignment Protocol"
     },
     "tools": [
       {
         "name": "list_nodes",
         "title": "List sovereign nodes",
-        "description": "List all declared sovereign mesh nodes in the cMAP fleet with their region, role, tier, declared purpose, and public probe endpoint. Public, read-only.",
+        "description": "List all declared sovereign mesh nodes in the cMAP fleet with region, role, tier, declared purpose, and public probe endpoint. Requires an active cMAP MCP subscription.",
         "annotations": {
           "readOnlyHint": true,
           "idempotentHint": true,
@@ -41,7 +45,7 @@
       {
         "name": "list_blades",
         "title": "List OMNI-SAM AXIS blades",
-        "description": "List the 13 canonical OMNI-SAM AXIS blades of cMAP with their status (LIVE, STANDBY, AWAITING), sovereign route, and tagline. Public, read-only.",
+        "description": "List the 13 canonical OMNI-SAM AXIS blades of cMAP with status (LIVE, STANDBY, AWAITING), sovereign route, and tagline. Requires an active cMAP MCP subscription.",
         "annotations": {
           "readOnlyHint": true,
           "idempotentHint": true,
@@ -67,7 +71,7 @@
       {
         "name": "centralization_inventory",
         "title": "Centralization inventory",
-        "description": "Return the honest inventory of every non-sovereign dependency the cMAP browser app has (analytics, fonts, host, probes), the removable status of each, and the migration path to sovereignty. Public, read-only.",
+        "description": "Return the honest inventory of every non-sovereign dependency the cMAP browser app has (analytics, fonts, host, probes), the removable status of each, and the migration path to sovereignty. Requires an active cMAP MCP subscription.",
         "annotations": {
           "readOnlyHint": true,
           "idempotentHint": true,
