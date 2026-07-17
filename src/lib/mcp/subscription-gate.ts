@@ -22,8 +22,8 @@ function environment(): "sandbox" | "live" {
   return process.env.NODE_ENV === "production" ? "live" : "sandbox";
 }
 
-let _admin: ReturnType<typeof createClient> | null = null;
-function admin() {
+let _admin: any = null;
+function admin(): any {
   if (!_admin) {
     _admin = createClient(
       process.env.SUPABASE_URL!,
