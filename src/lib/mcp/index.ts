@@ -1,13 +1,26 @@
-import { defineMcp } from "@lovable.dev/mcp-js";
+import { auth, defineMcp } from "@lovable.dev/mcp-js";
 import listNodes from "./tools/list_nodes";
 import listBlades from "./tools/list_blades";
 import centralizationInventory from "./tools/centralization_inventory";
 
+// The OAuth issuer MUST be the direct Supabase host, never the .lovable.cloud
+// proxy — mcp-js rejects any token whose configured issuer doesn't match the
+// discovery document's issuer (RFC 8414 §3.3).
+const projectRef = import.meta.env.VITE_SUPABASE_PROJECT_ID ?? "project-ref-unset";
+
 export default defineMcp({
   name: "cmap-mcp",
   title: "cMAP — Cosmic Mesh Alignment Protocol",
-  version: "0.1.0",
+  version: "0.2.0",
   instructions:
-    "Read-only tools that expose the public cMAP sovereign mesh: the OMNI-SAM AXIS blade registry, the declared sovereign node fleet, and the honest centralization inventory. All data is intentionally public. Use list_nodes to enumerate the fleet, list_blades for the 13-blade axis, and centralization_inventory to see which non-sovereign dependencies remain and their migration paths.",
+    "Subscription-gated MCP server for cMAP (Cosmic Mesh Alignment Protocol). " +
+    "Read-only tools that expose the OMNI-SAM AXIS blade registry, the sovereign node fleet, " +
+    "and the honest centralization inventory. Requires an active subscription: sign in and " +
+    "subscribe at https://cosmictruth.lovable.app/pricing to unlock. Tools: list_nodes, " +
+    "list_blades, centralization_inventory.",
+  auth: auth.oauth.issuer({
+    issuer: `https://${projectRef}.supabase.co/auth/v1`,
+    acceptedAudiences: "authenticated",
+  }),
   tools: [listNodes, listBlades, centralizationInventory],
 });

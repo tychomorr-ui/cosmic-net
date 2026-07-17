@@ -21,6 +21,7 @@ import { Route as ReflectiveIntelRouteImport } from './routes/reflective-intel'
 import { Route as ReclaimRouteImport } from './routes/reclaim'
 import { Route as QuantotalusRouteImport } from './routes/quantotalus'
 import { Route as ProofFulcrumRouteImport } from './routes/proof-fulcrum'
+import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as PamRouteImport } from './routes/pam'
 import { Route as OpsRouteImport } from './routes/ops'
 import { Route as NebulaRouteImport } from './routes/nebula'
@@ -30,10 +31,15 @@ import { Route as LedgerRouteImport } from './routes/ledger'
 import { Route as GatewayRouteImport } from './routes/gateway'
 import { Route as FleetRouteImport } from './routes/fleet'
 import { Route as DigitalOreRouteImport } from './routes/digital-ore'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CheckoutReturnRouteImport } from './routes/checkout.return'
+import { Route as AuthenticatedAccountRouteImport } from './routes/_authenticated/account'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
+import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 
 const VerifyRoute = VerifyRouteImport.update({
@@ -96,6 +102,11 @@ const ProofFulcrumRoute = ProofFulcrumRouteImport.update({
   path: '/proof-fulcrum',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PricingRoute = PricingRouteImport.update({
+  id: '/pricing',
+  path: '/pricing',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PamRoute = PamRouteImport.update({
   id: '/pam',
   path: '/pam',
@@ -141,10 +152,29 @@ const DigitalOreRoute = DigitalOreRouteImport.update({
   path: '/digital-ore',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const CheckoutReturnRoute = CheckoutReturnRouteImport.update({
+  id: '/checkout/return',
+  path: '/checkout/return',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAccountRoute = AuthenticatedAccountRouteImport.update({
+  id: '/account',
+  path: '/account',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const Char91DotwellKnownChar93OauthProtectedResourceRoute =
   Char91DotwellKnownChar93OauthProtectedResourceRouteImport.update({
@@ -164,6 +194,11 @@ const Char91DotmcpChar93InvokeToolToolRoute =
     path: '/.mcp/invoke-tool/$tool',
     getParentRoute: () => rootRouteImport,
   } as any)
+const DotlovableOauthConsentRoute = DotlovableOauthConsentRouteImport.update({
+  id: '/.lovable/oauth/consent',
+  path: '/.lovable/oauth/consent',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicPaymentsWebhookRoute =
   ApiPublicPaymentsWebhookRouteImport.update({
     id: '/api/public/payments/webhook',
@@ -173,6 +208,7 @@ const ApiPublicPaymentsWebhookRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/digital-ore': typeof DigitalOreRoute
   '/fleet': typeof FleetRoute
   '/gateway': typeof GatewayRoute
@@ -182,6 +218,7 @@ export interface FileRoutesByFullPath {
   '/nebula': typeof NebulaRoute
   '/ops': typeof OpsRoute
   '/pam': typeof PamRoute
+  '/pricing': typeof PricingRoute
   '/proof-fulcrum': typeof ProofFulcrumRoute
   '/quantotalus': typeof QuantotalusRoute
   '/reclaim': typeof ReclaimRoute
@@ -196,11 +233,15 @@ export interface FileRoutesByFullPath {
   '/verify': typeof VerifyRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/account': typeof AuthenticatedAccountRoute
+  '/checkout/return': typeof CheckoutReturnRoute
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/digital-ore': typeof DigitalOreRoute
   '/fleet': typeof FleetRoute
   '/gateway': typeof GatewayRoute
@@ -210,6 +251,7 @@ export interface FileRoutesByTo {
   '/nebula': typeof NebulaRoute
   '/ops': typeof OpsRoute
   '/pam': typeof PamRoute
+  '/pricing': typeof PricingRoute
   '/proof-fulcrum': typeof ProofFulcrumRoute
   '/quantotalus': typeof QuantotalusRoute
   '/reclaim': typeof ReclaimRoute
@@ -224,12 +266,17 @@ export interface FileRoutesByTo {
   '/verify': typeof VerifyRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/account': typeof AuthenticatedAccountRoute
+  '/checkout/return': typeof CheckoutReturnRoute
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
   '/digital-ore': typeof DigitalOreRoute
   '/fleet': typeof FleetRoute
   '/gateway': typeof GatewayRoute
@@ -239,6 +286,7 @@ export interface FileRoutesById {
   '/nebula': typeof NebulaRoute
   '/ops': typeof OpsRoute
   '/pam': typeof PamRoute
+  '/pricing': typeof PricingRoute
   '/proof-fulcrum': typeof ProofFulcrumRoute
   '/quantotalus': typeof QuantotalusRoute
   '/reclaim': typeof ReclaimRoute
@@ -253,6 +301,9 @@ export interface FileRoutesById {
   '/verify': typeof VerifyRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/_authenticated/account': typeof AuthenticatedAccountRoute
+  '/checkout/return': typeof CheckoutReturnRoute
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
@@ -260,6 +311,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/auth'
     | '/digital-ore'
     | '/fleet'
     | '/gateway'
@@ -269,6 +321,7 @@ export interface FileRouteTypes {
     | '/nebula'
     | '/ops'
     | '/pam'
+    | '/pricing'
     | '/proof-fulcrum'
     | '/quantotalus'
     | '/reclaim'
@@ -283,11 +336,15 @@ export interface FileRouteTypes {
     | '/verify'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
+    | '/account'
+    | '/checkout/return'
+    | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/api/public/payments/webhook'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/auth'
     | '/digital-ore'
     | '/fleet'
     | '/gateway'
@@ -297,6 +354,7 @@ export interface FileRouteTypes {
     | '/nebula'
     | '/ops'
     | '/pam'
+    | '/pricing'
     | '/proof-fulcrum'
     | '/quantotalus'
     | '/reclaim'
@@ -311,11 +369,16 @@ export interface FileRouteTypes {
     | '/verify'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
+    | '/account'
+    | '/checkout/return'
+    | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/api/public/payments/webhook'
   id:
     | '__root__'
     | '/'
+    | '/_authenticated'
+    | '/auth'
     | '/digital-ore'
     | '/fleet'
     | '/gateway'
@@ -325,6 +388,7 @@ export interface FileRouteTypes {
     | '/nebula'
     | '/ops'
     | '/pam'
+    | '/pricing'
     | '/proof-fulcrum'
     | '/quantotalus'
     | '/reclaim'
@@ -339,12 +403,17 @@ export interface FileRouteTypes {
     | '/verify'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
+    | '/_authenticated/account'
+    | '/checkout/return'
+    | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/api/public/payments/webhook'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
   DigitalOreRoute: typeof DigitalOreRoute
   FleetRoute: typeof FleetRoute
   GatewayRoute: typeof GatewayRoute
@@ -354,6 +423,7 @@ export interface RootRouteChildren {
   NebulaRoute: typeof NebulaRoute
   OpsRoute: typeof OpsRoute
   PamRoute: typeof PamRoute
+  PricingRoute: typeof PricingRoute
   ProofFulcrumRoute: typeof ProofFulcrumRoute
   QuantotalusRoute: typeof QuantotalusRoute
   ReclaimRoute: typeof ReclaimRoute
@@ -368,6 +438,8 @@ export interface RootRouteChildren {
   VerifyRoute: typeof VerifyRoute
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  CheckoutReturnRoute: typeof CheckoutReturnRoute
+  DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
 }
@@ -458,6 +530,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProofFulcrumRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/pricing': {
+      id: '/pricing'
+      path: '/pricing'
+      fullPath: '/pricing'
+      preLoaderRoute: typeof PricingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/pam': {
       id: '/pam'
       path: '/pam'
@@ -521,12 +600,40 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DigitalOreRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/checkout/return': {
+      id: '/checkout/return'
+      path: '/checkout/return'
+      fullPath: '/checkout/return'
+      preLoaderRoute: typeof CheckoutReturnRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/account': {
+      id: '/_authenticated/account'
+      path: '/account'
+      fullPath: '/account'
+      preLoaderRoute: typeof AuthenticatedAccountRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/.well-known/oauth-protected-resource': {
       id: '/.well-known/oauth-protected-resource'
@@ -549,6 +656,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Char91DotmcpChar93InvokeToolToolRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/.lovable/oauth/consent': {
+      id: '/.lovable/oauth/consent'
+      path: '/.lovable/oauth/consent'
+      fullPath: '/.lovable/oauth/consent'
+      preLoaderRoute: typeof DotlovableOauthConsentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/payments/webhook': {
       id: '/api/public/payments/webhook'
       path: '/api/public/payments/webhook'
@@ -559,8 +673,21 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAccountRoute: typeof AuthenticatedAccountRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAccountRoute: AuthenticatedAccountRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
   DigitalOreRoute: DigitalOreRoute,
   FleetRoute: FleetRoute,
   GatewayRoute: GatewayRoute,
@@ -570,6 +697,7 @@ const rootRouteChildren: RootRouteChildren = {
   NebulaRoute: NebulaRoute,
   OpsRoute: OpsRoute,
   PamRoute: PamRoute,
+  PricingRoute: PricingRoute,
   ProofFulcrumRoute: ProofFulcrumRoute,
   QuantotalusRoute: QuantotalusRoute,
   ReclaimRoute: ReclaimRoute,
@@ -585,6 +713,8 @@ const rootRouteChildren: RootRouteChildren = {
   Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
     Char91DotwellKnownChar93OauthProtectedResourceRoute,
+  CheckoutReturnRoute: CheckoutReturnRoute,
+  DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
 }
