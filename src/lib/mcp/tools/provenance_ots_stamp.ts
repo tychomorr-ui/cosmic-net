@@ -21,7 +21,9 @@ async function submitToCalendar(url: string, digest: Uint8Array) {
         "Content-Type": "application/octet-stream",
         Accept: "application/vnd.opentimestamps.v1",
       },
-      body: digest,
+      body: new Uint8Array(digest),
+      // @ts-expect-error Node/Workers fetch accepts Uint8Array bodies
+
       signal: controller.signal,
     });
     if (!res.ok) {
