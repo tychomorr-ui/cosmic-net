@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      stamps: {
+        Row: {
+          calendars: Json
+          client_id: string | null
+          created_at: string
+          id: string
+          kind: string
+          label: string | null
+          sha256: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          calendars?: Json
+          client_id?: string | null
+          created_at?: string
+          id?: string
+          kind: string
+          label?: string | null
+          sha256: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          calendars?: Json
+          client_id?: string | null
+          created_at?: string
+          id?: string
+          kind?: string
+          label?: string | null
+          sha256?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       subscriptions: {
         Row: {
           cancel_at_period_end: boolean | null
