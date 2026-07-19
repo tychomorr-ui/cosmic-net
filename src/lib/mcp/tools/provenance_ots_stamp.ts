@@ -22,7 +22,7 @@ async function submitToCalendar(url: string, digest: Uint8Array) {
         Accept: "application/vnd.opentimestamps.v1",
       },
       body: new Uint8Array(digest),
-      // @ts-expect-error Node/Workers fetch accepts Uint8Array bodies
+
 
       signal: controller.signal,
     });
