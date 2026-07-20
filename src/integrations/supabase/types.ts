@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      provenance_webhooks: {
+        Row: {
+          active: boolean
+          created_at: string
+          id: string
+          last_delivery_at: string | null
+          last_error: string | null
+          last_status: number | null
+          secret: string
+          updated_at: string
+          url: string
+          user_id: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          last_delivery_at?: string | null
+          last_error?: string | null
+          last_status?: number | null
+          secret: string
+          updated_at?: string
+          url: string
+          user_id: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          last_delivery_at?: string | null
+          last_error?: string | null
+          last_status?: number | null
+          secret?: string
+          updated_at?: string
+          url?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       stamps: {
         Row: {
           calendars: Json
@@ -106,6 +145,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_stamp_count_this_month: {
+        Args: { user_uuid: string }
+        Returns: number
+      }
+      get_subscription_tier: {
+        Args: { check_env?: string; user_uuid: string }
+        Returns: string
+      }
       has_active_subscription: {
         Args: { check_env?: string; user_uuid: string }
         Returns: boolean
