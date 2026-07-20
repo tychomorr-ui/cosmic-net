@@ -30,6 +30,7 @@ import { Route as McpRouteImport } from './routes/mcp'
 import { Route as LedgerRouteImport } from './routes/ledger'
 import { Route as GatewayRouteImport } from './routes/gateway'
 import { Route as FleetRouteImport } from './routes/fleet'
+import { Route as DocsRouteImport } from './routes/docs'
 import { Route as DigitalOreRouteImport } from './routes/digital-ore'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
@@ -147,6 +148,11 @@ const FleetRoute = FleetRouteImport.update({
   path: '/fleet',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DocsRoute = DocsRouteImport.update({
+  id: '/docs',
+  path: '/docs',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DigitalOreRoute = DigitalOreRouteImport.update({
   id: '/digital-ore',
   path: '/digital-ore',
@@ -210,6 +216,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/digital-ore': typeof DigitalOreRoute
+  '/docs': typeof DocsRoute
   '/fleet': typeof FleetRoute
   '/gateway': typeof GatewayRoute
   '/ledger': typeof LedgerRoute
@@ -243,6 +250,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/digital-ore': typeof DigitalOreRoute
+  '/docs': typeof DocsRoute
   '/fleet': typeof FleetRoute
   '/gateway': typeof GatewayRoute
   '/ledger': typeof LedgerRoute
@@ -278,6 +286,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/digital-ore': typeof DigitalOreRoute
+  '/docs': typeof DocsRoute
   '/fleet': typeof FleetRoute
   '/gateway': typeof GatewayRoute
   '/ledger': typeof LedgerRoute
@@ -313,6 +322,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/digital-ore'
+    | '/docs'
     | '/fleet'
     | '/gateway'
     | '/ledger'
@@ -346,6 +356,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/digital-ore'
+    | '/docs'
     | '/fleet'
     | '/gateway'
     | '/ledger'
@@ -380,6 +391,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/auth'
     | '/digital-ore'
+    | '/docs'
     | '/fleet'
     | '/gateway'
     | '/ledger'
@@ -415,6 +427,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   DigitalOreRoute: typeof DigitalOreRoute
+  DocsRoute: typeof DocsRoute
   FleetRoute: typeof FleetRoute
   GatewayRoute: typeof GatewayRoute
   LedgerRoute: typeof LedgerRoute
@@ -593,6 +606,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FleetRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/docs': {
+      id: '/docs'
+      path: '/docs'
+      fullPath: '/docs'
+      preLoaderRoute: typeof DocsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/digital-ore': {
       id: '/digital-ore'
       path: '/digital-ore'
@@ -689,6 +709,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   DigitalOreRoute: DigitalOreRoute,
+  DocsRoute: DocsRoute,
   FleetRoute: FleetRoute,
   GatewayRoute: GatewayRoute,
   LedgerRoute: LedgerRoute,
