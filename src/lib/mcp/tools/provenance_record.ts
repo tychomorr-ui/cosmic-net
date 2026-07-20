@@ -1,7 +1,8 @@
 import { defineTool } from "@lovable.dev/mcp-js";
 import { z } from "zod";
 import { createClient } from "@supabase/supabase-js";
-import { requireActiveSubscription } from "../subscription-gate";
+import { requireActiveSubscription, STARTER_MONTHLY_LIMIT } from "../subscription-gate";
+import { deliverStampWebhooks } from "../webhooks";
 
 const SHA256_RE = /^[0-9a-f]{64}$/i;
 
@@ -10,8 +11,8 @@ export default defineTool({
   title: "Record provenance stamp",
   description:
     "Record a SHA-256 hash as a provenance stamp attributed to the calling user. " +
-    "Fast, no external calls. Returns a receipt with the stored stamp id and timestamp. " +
-    "Requires an active cMAP MCP subscription.",
+    "Fast, no external calls. Starter tier: 1,000 stamps/month. Pro tier: unlimited + " +
+    "per-stamp HMAC-signed webhook delivery to configured endpoints. Requires an active subscription.",
   inputSchema: {
     sha256: z
       .string()
@@ -51,9 +52,25 @@ export default defineTool({
         isError: true,
       };
     }
+
+    const deliveries =
+      gate.tier === "pro" ? await deliverStampWebhooks(gate.userId, data as any) : [];
+
+    const payload = {
+      stamp: data,
+      tier: gate.tier,
+      quota:
+        gate.tier === "starter"
+          ? {
+              limit: STARTER_MONTHLY_LIMIT,
+              remaining_this_month: Math.max(0, (gate.remaining ?? 1) - 1),
+            }
+          : { limit: null, remaining_this_month: null },
+      webhooks: deliveries,
+    };
     return {
-      content: [{ type: "text", text: JSON.stringify(data, null, 2) }],
-      structuredContent: { stamp: data },
+      content: [{ type: "text", text: JSON.stringify(payload, null, 2) }],
+      structuredContent: payload,
     };
   },
 });

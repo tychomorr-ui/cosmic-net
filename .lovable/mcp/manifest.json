@@ -87,7 +87,7 @@
       {
         "name": "provenance_record",
         "title": "Record provenance stamp",
-        "description": "Record a SHA-256 hash as a provenance stamp attributed to the calling user. Fast, no external calls. Returns a receipt with the stored stamp id and timestamp. Requires an active cMAP MCP subscription.",
+        "description": "Record a SHA-256 hash as a provenance stamp attributed to the calling user. Fast, no external calls. Starter tier: 1,000 stamps/month. Pro tier: unlimited + per-stamp HMAC-signed webhook delivery to configured endpoints. Requires an active subscription.",
         "annotations": {
           "readOnlyHint": false,
           "idempotentHint": false,
@@ -117,7 +117,7 @@
       {
         "name": "provenance_ots_stamp",
         "title": "OTS-stamp provenance hash",
-        "description": "Submit a SHA-256 hash to public OpenTimestamps calendars for Bitcoin anchoring, then record the calendar receipts on the caller's account. Returns a receipt with the calendar responses; Bitcoin block inclusion happens later (poll `ots verify` upstream). Requires an active cMAP MCP subscription.",
+        "description": "Submit a SHA-256 hash to public OpenTimestamps calendars for Bitcoin anchoring, then record the calendar receipts on the caller's account. Starter tier: 1,000 stamps/month. Pro tier: unlimited + per-stamp HMAC-signed webhook delivery. Requires an active subscription.",
         "annotations": {
           "readOnlyHint": false,
           "idempotentHint": false,

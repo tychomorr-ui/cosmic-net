@@ -9,6 +9,14 @@ import {
 type CheckoutSessionResult = { clientSecret: string } | { error: string };
 type PortalSessionResult = { url: string } | { error: string };
 
+// Lookup keys for the tier plans. Kept in sync with payments--batch_create_product.
+const ALLOWED_LOOKUP_KEYS = new Set([
+  "cmap_starter_monthly",
+  "cmap_pro_monthly",
+  // Back-compat with the original single price.
+  "cmap_mcp_monthly",
+]);
+
 async function resolveOrCreateCustomer(
   stripe: ReturnType<typeof createStripeClient>,
   options: { email?: string; userId?: string },
@@ -44,17 +52,23 @@ async function resolveOrCreateCustomer(
 
 export const createMcpCheckoutSession = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((data: { returnUrl: string; environment: StripeEnv }) => data)
+  .inputValidator(
+    (data: { returnUrl: string; environment: StripeEnv; lookupKey?: string }) => data,
+  )
   .handler(async ({ data, context }): Promise<CheckoutSessionResult> => {
     try {
       const { userId, supabase } = context;
       const { data: authUser } = await supabase.auth.getUser();
       const email = authUser.user?.email ?? undefined;
 
-      const stripe = createStripeClient(data.environment);
+      const lookupKey = data.lookupKey ?? "cmap_starter_monthly";
+      if (!ALLOWED_LOOKUP_KEYS.has(lookupKey)) {
+        return { error: `Unknown plan: ${lookupKey}` };
+      }
 
-      const prices = await stripe.prices.list({ lookup_keys: ["cmap_mcp_monthly"] });
-      if (!prices.data.length) throw new Error("MCP price not configured");
+      const stripe = createStripeClient(data.environment);
+      const prices = await stripe.prices.list({ lookup_keys: [lookupKey] });
+      if (!prices.data.length) return { error: `Price not configured: ${lookupKey}` };
       const price = prices.data[0];
 
       const customerId = await resolveOrCreateCustomer(stripe, { email, userId });
@@ -65,8 +79,8 @@ export const createMcpCheckoutSession = createServerFn({ method: "POST" })
         ui_mode: "embedded_page",
         return_url: data.returnUrl,
         customer: customerId,
-        metadata: { userId },
-        subscription_data: { metadata: { userId } },
+        metadata: { userId, lookup_key: lookupKey },
+        subscription_data: { metadata: { userId, lookup_key: lookupKey } },
       });
       return { clientSecret: session.client_secret ?? "" };
     } catch (error) {

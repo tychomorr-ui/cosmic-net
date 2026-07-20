@@ -1,7 +1,8 @@
 import { defineTool } from "@lovable.dev/mcp-js";
 import { z } from "zod";
 import { createClient } from "@supabase/supabase-js";
-import { requireActiveSubscription } from "../subscription-gate";
+import { requireActiveSubscription, STARTER_MONTHLY_LIMIT } from "../subscription-gate";
+import { deliverStampWebhooks } from "../webhooks";
 
 const SHA256_RE = /^[0-9a-f]{64}$/i;
 
@@ -22,13 +23,9 @@ async function submitToCalendar(url: string, digest: Uint8Array) {
         Accept: "application/vnd.opentimestamps.v1",
       },
       body: new Uint8Array(digest),
-
-
       signal: controller.signal,
     });
-    if (!res.ok) {
-      return { url, ok: false, status: res.status, error: `HTTP ${res.status}` };
-    }
+    if (!res.ok) return { url, ok: false, status: res.status, error: `HTTP ${res.status}` };
     const buf = new Uint8Array(await res.arrayBuffer());
     const b64 =
       typeof Buffer !== "undefined"
@@ -47,9 +44,8 @@ export default defineTool({
   title: "OTS-stamp provenance hash",
   description:
     "Submit a SHA-256 hash to public OpenTimestamps calendars for Bitcoin anchoring, then " +
-    "record the calendar receipts on the caller's account. Returns a receipt with the calendar " +
-    "responses; Bitcoin block inclusion happens later (poll `ots verify` upstream). Requires an " +
-    "active cMAP MCP subscription.",
+    "record the calendar receipts on the caller's account. Starter tier: 1,000 stamps/month. " +
+    "Pro tier: unlimited + per-stamp HMAC-signed webhook delivery. Requires an active subscription.",
   inputSchema: {
     sha256: z
       .string()
@@ -66,9 +62,7 @@ export default defineTool({
     const gate = await requireActiveSubscription(ctx);
     if (!gate.ok) return gate.response;
 
-    const digest = new Uint8Array(
-      sha256.match(/.{2}/g)!.map((h) => parseInt(h, 16)),
-    );
+    const digest = new Uint8Array(sha256.match(/.{2}/g)!.map((h) => parseInt(h, 16)));
     const results = await Promise.all(CALENDARS.map((c) => submitToCalendar(c, digest)));
     const anyOk = results.some((r) => r.ok);
 
@@ -96,9 +90,25 @@ export default defineTool({
         isError: true,
       };
     }
+
+    const deliveries =
+      gate.tier === "pro" ? await deliverStampWebhooks(gate.userId, data as any) : [];
+
+    const payload = {
+      stamp: data,
+      tier: gate.tier,
+      quota:
+        gate.tier === "starter"
+          ? {
+              limit: STARTER_MONTHLY_LIMIT,
+              remaining_this_month: Math.max(0, (gate.remaining ?? 1) - 1),
+            }
+          : { limit: null, remaining_this_month: null },
+      webhooks: deliveries,
+    };
     return {
-      content: [{ type: "text", text: JSON.stringify(data, null, 2) }],
-      structuredContent: { stamp: data },
+      content: [{ type: "text", text: JSON.stringify(payload, null, 2) }],
+      structuredContent: payload,
     };
   },
 });
