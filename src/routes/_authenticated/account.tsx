@@ -60,7 +60,7 @@ function AccountPage() {
     setHooksLoading(true);
     setHookError(null);
     const res = await listWebhooks();
-    if ("error" in res) setHookError(res.error);
+    if ("error" in res) setHookError(res.error ?? null);
     else setHooks(res.webhooks as Hook[]);
     setHooksLoading(false);
   }, []);
