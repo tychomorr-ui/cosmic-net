@@ -89,7 +89,7 @@ function DocsPage() {
             <Link to="/pricing" className="underline hover:text-foreground">
               Get an API key →
             </Link>
-            <Link to="/_authenticated/account" className="underline hover:text-foreground">
+            <Link to="/account" className="underline hover:text-foreground">
               Manage subscription →
             </Link>
           </div>
@@ -196,7 +196,7 @@ URL: ${mcpUrl}`}
         </h2>
         <p className="mt-2 text-sm text-muted-foreground">
           On the Pro tier, every stamp fans out to your registered endpoints. Configure them in{" "}
-          <Link to="/_authenticated/account" className="underline hover:text-foreground">
+          <Link to="/account" className="underline hover:text-foreground">
             Account → Webhooks
           </Link>
           . Delivery headers:
