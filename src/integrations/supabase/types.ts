@@ -14,6 +14,96 @@ export type Database = {
   }
   public: {
     Tables: {
+      node_probes: {
+        Row: {
+          created_at: string
+          detail: string
+          expected_pub: string | null
+          id: string
+          last_probed_at: string
+          node_id: string
+          node_name: string
+          payload_cid: string | null
+          probe_kind: string
+          run_id: string
+          signed_ts: number | null
+          state: string
+          target: string | null
+        }
+        Insert: {
+          created_at?: string
+          detail: string
+          expected_pub?: string | null
+          id?: string
+          last_probed_at?: string
+          node_id: string
+          node_name: string
+          payload_cid?: string | null
+          probe_kind: string
+          run_id: string
+          signed_ts?: number | null
+          state: string
+          target?: string | null
+        }
+        Update: {
+          created_at?: string
+          detail?: string
+          expected_pub?: string | null
+          id?: string
+          last_probed_at?: string
+          node_id?: string
+          node_name?: string
+          payload_cid?: string | null
+          probe_kind?: string
+          run_id?: string
+          signed_ts?: number | null
+          state?: string
+          target?: string | null
+        }
+        Relationships: []
+      }
+      node_probes_latest: {
+        Row: {
+          detail: string
+          expected_pub: string | null
+          last_probed_at: string
+          node_id: string
+          node_name: string
+          payload_cid: string | null
+          probe_kind: string
+          run_id: string
+          signed_ts: number | null
+          state: string
+          target: string | null
+        }
+        Insert: {
+          detail: string
+          expected_pub?: string | null
+          last_probed_at?: string
+          node_id: string
+          node_name: string
+          payload_cid?: string | null
+          probe_kind: string
+          run_id: string
+          signed_ts?: number | null
+          state: string
+          target?: string | null
+        }
+        Update: {
+          detail?: string
+          expected_pub?: string | null
+          last_probed_at?: string
+          node_id?: string
+          node_name?: string
+          payload_cid?: string | null
+          probe_kind?: string
+          run_id?: string
+          signed_ts?: number | null
+          state?: string
+          target?: string | null
+        }
+        Relationships: []
+      }
       provenance_webhooks: {
         Row: {
           active: boolean
