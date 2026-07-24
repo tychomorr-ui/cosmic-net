@@ -7,6 +7,7 @@
     "compile": "hardhat compile",
     "test": "hardhat test",
     "deploy:local": "hardhat run scripts/deploy-local.js",
+    "preflight": "hardhat run scripts/preflight.js",
     "deploy:base-sepolia": "hardhat run scripts/deploy.js --network baseSepolia",
     "deploy:sepolia": "hardhat run scripts/deploy.js --network sepolia",
     "verify:base-sepolia": "hardhat verify --network baseSepolia",
