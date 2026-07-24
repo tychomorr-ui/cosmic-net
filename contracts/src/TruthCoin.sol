@@ -26,12 +26,34 @@ contract TruthCoin {
     event Approval(address indexed owner, address indexed spender, uint256 value);
     event DignityCredit(address indexed recipient, uint256 amount, string reason);
     event TransfersEnabled();
+    event OwnershipTransferStarted(address indexed from, address indexed to);
+    event OwnershipTransferred(address indexed from, address indexed to);
 
     modifier onlyOwner() { require(msg.sender == owner, "not owner"); _; }
 
     constructor() {
         owner = msg.sender;
+        emit OwnershipTransferred(address(0), msg.sender);
     }
+
+    /// @notice Step 1 of the sovereignty handoff. Owner nominates a multisig.
+    ///         Nothing changes until the nominee calls acceptOwnership().
+    function transferOwnership(address newOwner) external onlyOwner {
+        require(newOwner != address(0), "zero addr");
+        pendingOwner = newOwner;
+        emit OwnershipTransferStarted(owner, newOwner);
+    }
+
+    /// @notice Step 2. Only the nominee can complete the handoff — this proves
+    ///         the multisig can actually sign, so ownership cannot be burned by typo.
+    function acceptOwnership() external {
+        require(msg.sender == pendingOwner, "not pending owner");
+        address prev = owner;
+        owner = pendingOwner;
+        pendingOwner = address(0);
+        emit OwnershipTransferred(prev, owner);
+    }
+
 
     /// @notice Mint dignity credits to a recipient with an on-chain reason string.
     function issueDignityCredit(address to, uint256 amount, string calldata reason) external onlyOwner {
