@@ -62,4 +62,36 @@ describe("TruthCoin", () => {
       c.connect(alice).issueDignityCredit(alice.address, 1n, "x")
     ).to.be.revertedWith("not owner");
   });
+
+  it("hands ownership over in two steps and only to the nominee", async () => {
+    const [owner, multisig, mallory] = await ethers.getSigners();
+    const c = await (await ethers.getContractFactory("TruthCoin")).deploy();
+    await c.waitForDeployment();
+
+    await expect(c.connect(mallory).transferOwnership(mallory.address)).to.be.revertedWith(
+      "not owner"
+    );
+    await expect(c.transferOwnership(ethers.ZeroAddress)).to.be.revertedWith("zero addr");
+
+    await expect(c.transferOwnership(multisig.address))
+      .to.emit(c, "OwnershipTransferStarted")
+      .withArgs(owner.address, multisig.address);
+
+    // nothing changes until the nominee proves it can sign
+    expect(await c.owner()).to.equal(owner.address);
+    expect(await c.pendingOwner()).to.equal(multisig.address);
+    await expect(c.connect(mallory).acceptOwnership()).to.be.revertedWith("not pending owner");
+
+    await expect(c.connect(multisig).acceptOwnership())
+      .to.emit(c, "OwnershipTransferred")
+      .withArgs(owner.address, multisig.address);
+
+    expect(await c.owner()).to.equal(multisig.address);
+    expect(await c.pendingOwner()).to.equal(ethers.ZeroAddress);
+
+    // the old key is fully demoted
+    await expect(c.issueDignityCredit(owner.address, 1n, "x")).to.be.revertedWith("not owner");
+    await c.connect(multisig).issueDignityCredit(owner.address, 1n, "post-handoff");
+    expect(await c.totalSupply()).to.equal(1n);
+  });
 });
