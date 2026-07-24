@@ -16,6 +16,7 @@ contract TruthCoin {
 
     uint256 public totalSupply;
     address public owner;
+    address public pendingOwner; // two-step handoff target (multisig)
     bool    public transfersEnabled; // stays false on testnet — soulbound dignity credit
 
     mapping(address => uint256) public balanceOf;
