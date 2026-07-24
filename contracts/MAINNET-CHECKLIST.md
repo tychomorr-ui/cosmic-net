@@ -71,3 +71,85 @@ No DAO contract exists today. The vectors a future one would own:
 | Node set / pinned pubkeys | source-controlled | on-chain registry (unbuilt) |
 
 Nothing here is implemented as code. Listing it is a plan, not a claim.
+
+## 6 · External dependency intake
+
+Two blockers cannot be cleared from inside this repo. The internal framework is
+now built to *receive* them; the fields below stay empty until real evidence
+exists. `src/data/trc-governance.ts` is the machine-readable mirror of this
+section, and `mainnetGateOpen()` there returns `false` while anything is blank.
+
+### 6.1 Safe (multisig) on Base — **NOT CREATED**
+
+Paste values here and into `TRC_SAFE` in `src/data/trc-governance.ts`:
+
+| Field | Value | Where it comes from |
+|-------|-------|---------------------|
+| Safe address | _(empty)_ | Safe UI, after creation on Base (chainId 8453) |
+| Chain | Base (8453) | fixed |
+| Signer 1 | _(empty)_ | hardware key #1 |
+| Signer 2 | _(empty)_ | hardware key #2 |
+| Signer 3 | _(empty)_ | hardware key #3 |
+| Threshold | _(empty)_ | must be ≥ 2-of-3 |
+| Created (UTC) | _(empty)_ | Safe deployment tx timestamp |
+| Deploy tx hash | _(empty)_ | Basescan — this is the evidence |
+
+Rules:
+
+- [ ] Each signer key lives on separate hardware, held by a distinct person or location.
+- [ ] Threshold ≥ 2-of-3. A 1-of-N Safe is a single point of control wearing a multisig costume — it does not clear this gate.
+- [ ] Signer set recorded from the **deployed Safe's on-chain `getOwners()`**, not from what was typed into a form.
+- [ ] The Safe has executed at least one trivial test transaction before it is trusted with ownership.
+
+Once the address is real:
+
+```bash
+cd contracts
+npm run safe:transfer -- --safe 0x<your-safe>
+```
+
+That prints unsigned `transferOwnership(address)` and `acceptOwnership()`
+calldata plus the verification steps. It broadcasts nothing and never touches a
+key. With no Safe address it halts — it will not substitute an example address.
+
+### 6.2 Independent third-party audit — **NOT COMMISSIONED**
+
+| Field | Value |
+|-------|-------|
+| Firm | _(empty)_ |
+| Report date | _(empty)_ |
+| Report URL | _(empty)_ |
+| Report SHA-256 | _(empty)_ |
+| Audited source SHA-256 | _(empty)_ |
+| Remediation commit | _(empty)_ |
+
+Mirror into `TRC_AUDIT` in `src/data/trc-governance.ts`.
+
+Generate the package to send:
+
+```bash
+cd contracts
+npm run audit:bundle
+# -> /mnt/documents/truthcoin-audit-bundle.txt
+```
+
+The bundle contains `TruthCoin.sol`, the full test suite, `preflight.js`,
+`deploy.js`, `prepare-safe-transfer.js`, the Hardhat config, and this
+checklist — each with a per-file SHA-256 and a bundle-level SHA-256 at the
+foot, plus an explicit scope / out-of-scope statement.
+
+- [ ] `ots stamp truthcoin-audit-bundle.txt` **before** sending, so the exact
+      bytes handed to the auditor are timestamped. Record the receipt in
+      `src/data/known-anchors.ts` once a real block height returns.
+- [ ] Auditor confirms in writing that the bundle SHA-256 they reviewed matches
+      the stamped one.
+- [ ] Self-review does not count. A tool run (Slither/Mythril) alone does not
+      count. The firm must be independent of this project.
+
+### 6.3 Gate
+
+Mainnet deploy is authorized only when **6.1 and 6.2 are both fully populated
+with verifiable evidence** and every box in §1–§2 is checked. Until then
+`mainnetGateOpen()` returns `false`, no mainnet address is pinned anywhere, and
+the UI states plainly that TRS is testnet-only.
+

@@ -11,7 +11,9 @@
     "deploy:base-sepolia": "hardhat run scripts/deploy.js --network baseSepolia",
     "deploy:sepolia": "hardhat run scripts/deploy.js --network sepolia",
     "verify:base-sepolia": "hardhat verify --network baseSepolia",
-    "readout": "hardhat run scripts/readout.js --network baseSepolia"
+    "readout": "hardhat run scripts/readout.js --network baseSepolia",
+    "safe:transfer": "node scripts/prepare-safe-transfer.js",
+    "audit:bundle": "node scripts/audit-bundle.js"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",
