@@ -81,6 +81,12 @@ export const KNOWN_ANCHORS: Record<string, KnownAnchor> = {
     block_height: 954181,
     note: "trc-feasibility-001.txt — 2026-06-17 PST",
   },
+  "8f21bb6e58e67ef925170b39b66d9bb78c2f416553919a0c57b8cb7509809a30": {
+    sha256: "8f21bb6e58e67ef925170b39b66d9bb78c2f416553919a0c57b8cb7509809a30",
+    anchored_at: 1784862000000,
+    block_height: 959472,
+    note: "truthcoin-audit-bundle.txt — independent third-party audit engagement bundle",
+  },
 };
 
 export function getKnownAnchor(sha256: string): Anchor | undefined {
