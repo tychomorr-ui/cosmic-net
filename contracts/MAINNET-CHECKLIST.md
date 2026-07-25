@@ -144,13 +144,14 @@ The bundle contains `TruthCoin.sol`, the full test suite, `preflight.js`,
 checklist — each with a per-file SHA-256 and a bundle-level SHA-256 at the
 foot, plus an explicit scope / out-of-scope statement.
 
-- [ ] `ots stamp truthcoin-audit-bundle.txt` **before** sending, so the exact
-      bytes handed to the auditor are timestamped. Record the receipt in
-      `src/data/known-anchors.ts` once a real block height returns.
+- [x] `ots stamp truthcoin-audit-bundle.txt` completed. Receipt recorded at
+      **BTC block 959472** in `src/data/known-anchors.ts` under SHA-256
+      `8f21bb6e58e67ef925170b39b66d9bb78c2f416553919a0c57b8cb7509809a30`.
 - [ ] Auditor confirms in writing that the bundle SHA-256 they reviewed matches
       the stamped one.
 - [ ] Self-review does not count. A tool run (Slither/Mythril) alone does not
       count. The firm must be independent of this project.
+
 
 ### 6.3 Gate
 
