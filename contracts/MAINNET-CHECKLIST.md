@@ -114,14 +114,20 @@ key. With no Safe address it halts — it will not substitute an example address
 
 ### 6.2 Independent third-party audit — **NOT COMMISSIONED**
 
+Bundle under engagement (stamped, do not modify):
+`8f21bb6e58e67ef925170b39b66d9bb78c2f416553919a0c57b8cb7509809a30`
+Transmittal + scope letter: `/mnt/documents/AUDIT-TRANSMITTAL.md`
+
 | Field | Value |
 |-------|-------|
 | Firm | _(empty)_ |
 | Report date | _(empty)_ |
 | Report URL | _(empty)_ |
 | Report SHA-256 | _(empty)_ |
-| Audited source SHA-256 | _(empty)_ |
+| Audited source SHA-256 | _(empty — expected `8f21bb6e…09a30`)_ |
 | Remediation commit | _(empty)_ |
+| Remediation bundle SHA-256 | _(empty — only if fixes were required)_ |
+
 
 Mirror into `TRC_AUDIT` in `src/data/trc-governance.ts`.
 
