@@ -94,56 +94,84 @@ async function probeSigned(url: string, expectedPubHex: string) {
     const body: any = await res.json();
     if (
       body &&
+      typeof body === "object" &&
+      !Array.isArray(body) &&
       body.v === "ARCHANGEL/v0" &&
       body.payload &&
-      body.payload_cid &&
-      body.sig &&
-      body.pub &&
+      typeof body.payload === "object" &&
+      !Array.isArray(body.payload) &&
+      typeof body.payload_cid === "string" &&
+      typeof body.sig === "string" &&
+      typeof body.pub === "string" &&
       typeof body.ts === "number"
     ) {
       const pub = String(body.pub).toLowerCase();
+      const sig = String(body.sig).toLowerCase();
+      const cid = String(body.payload_cid).toLowerCase();
+
+      // Shape-check before any crypto call: malformed hex must never reach verify().
+      if (!HEX64.test(pub) || !HEX128.test(sig) || !HEX64.test(cid)) {
+        return {
+          state: "unreachable" as const,
+          detail: "malformed envelope fields",
+          payload_cid: null,
+          signed_ts: null,
+        };
+      }
+      if (!Number.isSafeInteger(body.ts) || body.ts <= 0) {
+        return { state: "unreachable" as const, detail: "ts malformed", payload_cid: cid, signed_ts: null };
+      }
       if (pub !== expectedPubHex.toLowerCase()) {
         return {
           state: "unreachable" as const,
           detail: `pub mismatch (${pub.slice(0, 12)}…)`,
-          payload_cid: body.payload_cid,
+          payload_cid: cid,
           signed_ts: body.ts,
         };
       }
       const recomputed = sha256Hex(canonical(body.payload));
-      if (recomputed !== String(body.payload_cid).toLowerCase()) {
+      if (recomputed !== cid) {
         return {
           state: "unreachable" as const,
           detail: "payload_cid drift",
-          payload_cid: body.payload_cid,
+          payload_cid: cid,
           signed_ts: body.ts,
         };
       }
-      const msg = `${body.payload_cid}|${body.ts}`;
-      const ok = ed25519.verify(hexToBytes(body.sig), new TextEncoder().encode(msg), hexToBytes(body.pub));
+      const msg = `${cid}|${body.ts}`;
+      const ok = ed25519.verify(hexToBytes(sig), new TextEncoder().encode(msg), hexToBytes(pub));
       if (!ok) {
         return {
           state: "unreachable" as const,
           detail: "signature invalid",
-          payload_cid: body.payload_cid,
+          payload_cid: cid,
           signed_ts: body.ts,
         };
       }
-      const ageS = Math.max(0, Math.floor(Date.now() / 1000) - body.ts);
+      const ageS = Math.floor(Date.now() / 1000) - body.ts;
+      if (ageS < -MAX_SKEW_S) {
+        return {
+          state: "unreachable" as const,
+          detail: `ts in future by ${-ageS}s`,
+          payload_cid: cid,
+          signed_ts: body.ts,
+        };
+      }
       if (ageS > MAX_SIGNED_AGE_S) {
         return {
           state: "unreachable" as const,
           detail: `signed but stale ${ageS}s`,
-          payload_cid: body.payload_cid,
+          payload_cid: cid,
           signed_ts: body.ts,
         };
       }
       return {
         state: "measured" as const,
-        detail: `signed · cid matched · ${ageS}s fresh`,
-        payload_cid: body.payload_cid as string,
+        detail: `signed · cid matched · ${Math.max(0, ageS)}s fresh`,
+        payload_cid: cid,
         signed_ts: body.ts as number,
       };
+
     }
     return { state: "unreachable" as const, detail: "200 · unknown envelope", payload_cid: null, signed_ts: null };
   } catch (e: any) {
