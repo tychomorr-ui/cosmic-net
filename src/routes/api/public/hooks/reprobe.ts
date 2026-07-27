@@ -21,6 +21,12 @@ import { NODES } from "@/data/nodes";
 
 const TIMEOUT_MS = 5000;
 const MAX_SIGNED_AGE_S = 180;
+// Clock skew tolerated on a future-dated `ts`. Anything beyond is forged:
+// a node cannot legitimately sign a status it has not yet observed.
+const MAX_SKEW_S = 30;
+
+const HEX64 = /^[0-9a-f]{64}$/;
+const HEX128 = /^[0-9a-f]{128}$/;
 
 function hexToBytes(h: string): Uint8Array {
   const s = h.startsWith("0x") ? h.slice(2) : h;
@@ -29,16 +35,30 @@ function hexToBytes(h: string): Uint8Array {
   return out;
 }
 
+// Mirrors src/lib/signed-envelope.ts canonical(): deterministic, and THROWS on
+// any value it cannot canonicalize identically in both stacks. A throw here is
+// a verification failure, never a soft pass.
 function canonical(obj: unknown): string {
-  if (obj === null || typeof obj !== "object" || Array.isArray(obj)) return JSON.stringify(obj);
-  const o = obj as Record<string, unknown>;
-  const keys = Object.keys(o).sort();
-  return "{" + keys.map((k) => JSON.stringify(k) + ":" + canonical(o[k])).join(",") + "}";
+  if (obj === null) return "null";
+  const t = typeof obj;
+  if (t === "string" || t === "boolean") return JSON.stringify(obj);
+  if (t === "number") {
+    if (!Number.isFinite(obj as number)) throw new Error("non-finite number");
+    return JSON.stringify(obj);
+  }
+  if (Array.isArray(obj)) return "[" + obj.map((v) => canonical(v)).join(",") + "]";
+  if (t === "object") {
+    const o = obj as Record<string, unknown>;
+    const keys = Object.keys(o).sort();
+    return "{" + keys.map((k) => JSON.stringify(k) + ":" + canonical(o[k])).join(",") + "}";
+  }
+  throw new Error(`uncanonicalizable value: ${t}`);
 }
 
 function sha256Hex(s: string): string {
   return createHash("sha256").update(s).digest("hex");
 }
+
 
 type ProbeResult = {
   node_id: string;
