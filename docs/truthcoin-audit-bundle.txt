@@ -1,0 +1,799 @@
+TRUTHCOIN (TRS) — AUDIT BUNDLE
+==============================================================================
+
+Scope: the soulbound ERC-20 `TruthCoin` and its deployment/ownership
+tooling. No mainnet deployment exists. The only live deployment is on
+Base Sepolia (testnet).
+
+What we are asking to be reviewed:
+  1. Soulbound invariant — transfer/transferFrom/approve must be
+     unusable while `transfersEnabled == false`, with no bypass.
+  2. `enableTransfers()` one-way semantics and access control.
+  3. Two-step ownership handoff (transferOwnership / acceptOwnership):
+     no path to burn or hijack ownership; pendingOwner cleared on accept.
+  4. `issueDignityCredit()` owner-gating; no autonomous or metric-driven
+     mint path anywhere in the codebase.
+  5. MANIFESTO_HASH immutability. Its value must equal the SHA-256
+     0x4edab582bd0eb5a72ad58df4fe677d2af685e254539b9e72c78ebc95f5ef70f7
+     anchored in Bitcoin block 954181.
+  6. Any reentrancy, overflow, or event-emission gaps.
+
+Explicitly out of scope (does not exist): DAO/governance contract,
+staking, liquidity, price oracle, bridging, upgradeability (contract is
+non-upgradeable by design).
+
+Generated (UTC): 2026-07-24T20:32:45.944Z
+
+FILE INDEX (sha256):
+  4e6cc7b43a902c777b772e804c1708b949208655a79d19a742952ae5ec8c31f2  src/TruthCoin.sol  (4243 bytes)
+  435ac94d69018f790eb61f213b12db97af06129d898f59f0f46dcc11c4adddfd  test/TruthCoin.test.js  (4165 bytes)
+  82de267558efceca3bc6e2b022b1cfeb8b0cf3b4952d215b0f296899f6f3ece5  scripts/preflight.js  (3570 bytes)
+  19ff4a1320eb9ed047e9fa5fcf9e65101983ee52b754c24f6f97d9de66495374  scripts/deploy.js  (2370 bytes)
+  94f82563b5b42e8d6e27411b54c789529c48ef0cfc277ac29a403d5d52518c45  scripts/prepare-safe-transfer.js  (3612 bytes)
+  b924d8d96ebf020950804f687658b5b28a19dd28b98ac7b7534fc45eccbb3805  hardhat.config.cjs  (1656 bytes)
+  d3db08452fd22f8c6460e10352e618afda844d7baff3eebbe6614d8ac5a29669  package.json  (885 bytes)
+  424e9f2658ade21e531efb290b720bb6f46952e79224f978a074aacb5a02cc04  MAINNET-CHECKLIST.md  (7424 bytes)
+
+
+==============================================================================
+FILE   : src/TruthCoin.sol
+SHA256 : 4e6cc7b43a902c777b772e804c1708b949208655a79d19a742952ae5ec8c31f2
+==============================================================================
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.24;
+
+/// @title Truth Coin (TRC) — testnet doctrine token
+/// @notice Non-transferable dignity-credit ledger. Owner mints; holders cannot transfer.
+///         This is a TESTNET contract. No security, no legal tender, no investment.
+///         Anchored to Bitcoin block 954181 · manifesto hash
+///         0x4edab582bd0eb5a72ad58df4fe677d2af685e254539b9e72c78ebc95f5ef70f7
+contract TruthCoin {
+    string public constant name     = "Truth Coin";
+    string public constant symbol   = "TRC";
+    uint8  public constant decimals = 18;
+
+    bytes32 public constant MANIFESTO_HASH =
+        0x4edab582bd0eb5a72ad58df4fe677d2af685e254539b9e72c78ebc95f5ef70f7;
+
+    uint256 public totalSupply;
+    address public owner;
+    address public pendingOwner; // two-step handoff target (multisig)
+    bool    public transfersEnabled; // stays false on testnet — soulbound dignity credit
+
+    mapping(address => uint256) public balanceOf;
+    mapping(address => mapping(address => uint256)) public allowance;
+
+    event Transfer(address indexed from, address indexed to, uint256 value);
+    event Approval(address indexed owner, address indexed spender, uint256 value);
+    event DignityCredit(address indexed recipient, uint256 amount, string reason);
+    event TransfersEnabled();
+    event OwnershipTransferStarted(address indexed from, address indexed to);
+    event OwnershipTransferred(address indexed from, address indexed to);
+
+    modifier onlyOwner() { require(msg.sender == owner, "not owner"); _; }
+
+    constructor() {
+        owner = msg.sender;
+        emit OwnershipTransferred(address(0), msg.sender);
+    }
+
+    /// @notice Step 1 of the sovereignty handoff. Owner nominates a multisig.
+    ///         Nothing changes until the nominee calls acceptOwnership().
+    function transferOwnership(address newOwner) external onlyOwner {
+        require(newOwner != address(0), "zero addr");
+        pendingOwner = newOwner;
+        emit OwnershipTransferStarted(owner, newOwner);
+    }
+
+    /// @notice Step 2. Only the nominee can complete the handoff — this proves
+    ///         the multisig can actually sign, so ownership cannot be burned by typo.
+    function acceptOwnership() external {
+        require(msg.sender == pendingOwner, "not pending owner");
+        address prev = owner;
+        owner = pendingOwner;
+        pendingOwner = address(0);
+        emit OwnershipTransferred(prev, owner);
+    }
+
+
+    /// @notice Mint dignity credits to a recipient with an on-chain reason string.
+    function issueDignityCredit(address to, uint256 amount, string calldata reason) external onlyOwner {
+        require(to != address(0), "zero addr");
+        totalSupply += amount;
+        balanceOf[to] += amount;
+        emit DignityCredit(to, amount, reason);
+        emit Transfer(address(0), to, amount);
+    }
+
+    /// @notice One-way switch. Once transfers are enabled they cannot be disabled.
+    function enableTransfers() external onlyOwner {
+        transfersEnabled = true;
+        emit TransfersEnabled();
+    }
+
+    function transfer(address to, uint256 amount) external returns (bool) {
+        require(transfersEnabled, "soulbound: transfers disabled");
+        _transfer(msg.sender, to, amount);
+        return true;
+    }
+
+    function approve(address spender, uint256 amount) external returns (bool) {
+        allowance[msg.sender][spender] = amount;
+        emit Approval(msg.sender, spender, amount);
+        return true;
+    }
+
+    function transferFrom(address from, address to, uint256 amount) external returns (bool) {
+        require(transfersEnabled, "soulbound: transfers disabled");
+        uint256 a = allowance[from][msg.sender];
+        require(a >= amount, "allowance");
+        if (a != type(uint256).max) allowance[from][msg.sender] = a - amount;
+        _transfer(from, to, amount);
+        return true;
+    }
+
+    function _transfer(address from, address to, uint256 amount) internal {
+        require(to != address(0), "zero addr");
+        uint256 b = balanceOf[from];
+        require(b >= amount, "balance");
+        unchecked { balanceOf[from] = b - amount; }
+        balanceOf[to] += amount;
+        emit Transfer(from, to, amount);
+    }
+}
+
+==============================================================================
+FILE   : test/TruthCoin.test.js
+SHA256 : 435ac94d69018f790eb61f213b12db97af06129d898f59f0f46dcc11c4adddfd
+==============================================================================
+// Local Hardhat sanity tests — proves the contract compiles and its
+// invariants hold BEFORE you spend testnet ETH. Run: npx hardhat test
+const { expect } = require("chai");
+const { ethers } = require("hardhat");
+
+const MANIFESTO =
+  "0x4edab582bd0eb5a72ad58df4fe677d2af685e254539b9e72c78ebc95f5ef70f7";
+
+describe("TruthCoin", () => {
+  it("deploys with zero supply, disabled transfers, and the pinned manifesto hash", async () => {
+    const [owner] = await ethers.getSigners();
+    const C = await ethers.getContractFactory("TruthCoin");
+    const c = await C.deploy();
+    await c.waitForDeployment();
+
+    expect(await c.name()).to.equal("Truth Coin");
+    expect(await c.symbol()).to.equal("TRC");
+    expect(await c.decimals()).to.equal(18);
+    expect(await c.totalSupply()).to.equal(0n);
+    expect(await c.transfersEnabled()).to.equal(false);
+    expect(await c.owner()).to.equal(owner.address);
+    expect(await c.MANIFESTO_HASH()).to.equal(MANIFESTO);
+  });
+
+  it("mints dignity credits and emits reason", async () => {
+    const [owner, alice] = await ethers.getSigners();
+    const c = await (await ethers.getContractFactory("TruthCoin")).deploy();
+    await c.waitForDeployment();
+    const amt = ethers.parseUnits("50000", 18);
+    await expect(c.issueDignityCredit(alice.address, amt, "5yr survival"))
+      .to.emit(c, "DignityCredit")
+      .withArgs(alice.address, amt, "5yr survival");
+    expect(await c.balanceOf(alice.address)).to.equal(amt);
+    expect(await c.totalSupply()).to.equal(amt);
+  });
+
+  it("rejects transfers while soulbound", async () => {
+    const [owner, alice, bob] = await ethers.getSigners();
+    const c = await (await ethers.getContractFactory("TruthCoin")).deploy();
+    await c.waitForDeployment();
+    await c.issueDignityCredit(alice.address, 100n, "seed");
+    await expect(c.connect(alice).transfer(bob.address, 1n)).to.be.revertedWith(
+      "soulbound: transfers disabled"
+    );
+  });
+
+  it("allows transfers only after enableTransfers()", async () => {
+    const [owner, alice, bob] = await ethers.getSigners();
+    const c = await (await ethers.getContractFactory("TruthCoin")).deploy();
+    await c.waitForDeployment();
+    await c.issueDignityCredit(alice.address, 100n, "seed");
+    await c.enableTransfers();
+    await c.connect(alice).transfer(bob.address, 40n);
+    expect(await c.balanceOf(bob.address)).to.equal(40n);
+  });
+
+  it("only owner can mint", async () => {
+    const [_o, alice] = await ethers.getSigners();
+    const c = await (await ethers.getContractFactory("TruthCoin")).deploy();
+    await c.waitForDeployment();
+    await expect(
+      c.connect(alice).issueDignityCredit(alice.address, 1n, "x")
+    ).to.be.revertedWith("not owner");
+  });
+
+  it("hands ownership over in two steps and only to the nominee", async () => {
+    const [owner, multisig, mallory] = await ethers.getSigners();
+    const c = await (await ethers.getContractFactory("TruthCoin")).deploy();
+    await c.waitForDeployment();
+
+    await expect(c.connect(mallory).transferOwnership(mallory.address)).to.be.revertedWith(
+      "not owner"
+    );
+    await expect(c.transferOwnership(ethers.ZeroAddress)).to.be.revertedWith("zero addr");
+
+    await expect(c.transferOwnership(multisig.address))
+      .to.emit(c, "OwnershipTransferStarted")
+      .withArgs(owner.address, multisig.address);
+
+    // nothing changes until the nominee proves it can sign
+    expect(await c.owner()).to.equal(owner.address);
+    expect(await c.pendingOwner()).to.equal(multisig.address);
+    await expect(c.connect(mallory).acceptOwnership()).to.be.revertedWith("not pending owner");
+
+    await expect(c.connect(multisig).acceptOwnership())
+      .to.emit(c, "OwnershipTransferred")
+      .withArgs(owner.address, multisig.address);
+
+    expect(await c.owner()).to.equal(multisig.address);
+    expect(await c.pendingOwner()).to.equal(ethers.ZeroAddress);
+
+    // the old key is fully demoted
+    await expect(c.issueDignityCredit(owner.address, 1n, "x")).to.be.revertedWith("not owner");
+    await c.connect(multisig).issueDignityCredit(owner.address, 1n, "post-handoff");
+    expect(await c.totalSupply()).to.equal(1n);
+  });
+});
+
+==============================================================================
+FILE   : scripts/preflight.js
+SHA256 : 82de267558efceca3bc6e2b022b1cfeb8b0cf3b4952d215b0f296899f6f3ece5
+==============================================================================
+// Mainnet readiness dry-run. Deploys TruthCoin to an in-memory Hardhat
+// network and asserts every condition on the mainnet checklist. Exits
+// non-zero on ANY deviation. Nothing is broadcast to a live network.
+//
+//   npm run preflight
+//   MULTISIG=0x... npm run preflight   # also rehearses the owner handoff
+
+const hre = require("hardhat");
+
+const EXPECTED_MANIFESTO =
+  "0x4edab582bd0eb5a72ad58df4fe677d2af685e254539b9e72c78ebc95f5ef70f7";
+
+const checks = [];
+function check(name, ok, detail) {
+  checks.push({ name, ok, detail });
+  console.log(`${ok ? "PASS" : "FAIL"}  ${name}${detail ? " — " + detail : ""}`);
+}
+
+async function main() {
+  const [deployer, nominee] = await hre.ethers.getSigners();
+  console.log("preflight network:", hre.network.name);
+  console.log("deployer         :", deployer.address, "\n");
+
+  const c = await (await hre.ethers.getContractFactory("TruthCoin")).deploy();
+  await c.waitForDeployment();
+  const address = await c.getAddress();
+  console.log("dry-run address  :", address, "\n");
+
+  // 1 — soulbinding: manifesto hash equality
+  const manifesto = await c.MANIFESTO_HASH();
+  check(
+    "manifesto hash equals BTC-anchored manifesto (block 954181)",
+    manifesto.toLowerCase() === EXPECTED_MANIFESTO,
+    manifesto,
+  );
+
+  // 2 — transfers must be off at birth
+  check("transfersEnabled is false at deploy", (await c.transfersEnabled()) === false);
+
+  // 3 — no premint
+  check("totalSupply is 0 at deploy", (await c.totalSupply()) === 0n);
+
+  // 4 — soulbound enforcement is real, not cosmetic
+  await c.issueDignityCredit(deployer.address, 1n, "preflight");
+  let reverted = false;
+  try {
+    await c.transfer(nominee.address, 1n);
+  } catch {
+    reverted = true;
+  }
+  check("transfer() reverts while soulbound", reverted);
+
+  // 5 — mint is owner-gated (no open mint, no attestation-triggered mint path)
+  let mintGated = false;
+  try {
+    await c.connect(nominee).issueDignityCredit(nominee.address, 1n, "x");
+  } catch {
+    mintGated = true;
+  }
+  check("issueDignityCredit is owner-only", mintGated);
+
+  // 6 — ownership handoff is two-step (cannot be lost to a typo)
+  const multisig = process.env.MULTISIG;
+  const target = multisig || nominee.address;
+  await c.transferOwnership(target);
+  check(
+    "transferOwnership does not change owner immediately",
+    (await c.owner()) === deployer.address,
+    "pendingOwner=" + (await c.pendingOwner()),
+  );
+  if (multisig) {
+    console.log(
+      "\nNOTE: MULTISIG set to " +
+        multisig +
+        " — acceptOwnership() must be executed BY that multisig on-chain. " +
+        "Preflight cannot sign for it; that step stays manual and ceremonial.\n",
+    );
+  } else {
+    await c.connect(nominee).acceptOwnership();
+    check("acceptOwnership completes handoff", (await c.owner()) === nominee.address);
+    let oldOwnerLocked = false;
+    try {
+      await c.issueDignityCredit(deployer.address, 1n, "x");
+    } catch {
+      oldOwnerLocked = true;
+    }
+    check("previous owner loses mint authority after handoff", oldOwnerLocked);
+  }
+
+  const failed = checks.filter((c) => !c.ok);
+  console.log("\n" + (checks.length - failed.length) + "/" + checks.length + " checks passed");
+  if (failed.length) {
+    console.error("\nHALT — mainnet deployment is NOT authorized. Failing checks:");
+    for (const f of failed) console.error("  - " + f.name);
+    process.exit(1);
+  }
+  console.log("\nDry-run congruent. Mainnet deploy remains a manual, operator-signed act.");
+}
+
+main().catch((e) => {
+  console.error(e);
+  process.exit(1);
+});
+
+==============================================================================
+FILE   : scripts/deploy.js
+SHA256 : 19ff4a1320eb9ed047e9fa5fcf9e65101983ee52b754c24f6f97d9de66495374
+==============================================================================
+// Deploy TruthCoin to the selected network. Prints address, tx hash, and
+// writes contracts/deployed.json. After success, paste `address` into
+// src/data/truth-coin-contract.ts (TRC_CONTRACT.address).
+
+const hre = require("hardhat");
+const fs = require("fs");
+const path = require("path");
+
+async function main() {
+  const [deployer] = await hre.ethers.getSigners();
+  const net = hre.network.name;
+  const bal = await hre.ethers.provider.getBalance(deployer.address);
+
+  console.log("network :", net);
+  console.log("deployer:", deployer.address);
+  console.log("balance :", hre.ethers.formatEther(bal), "ETH");
+
+  if (bal === 0n) {
+    throw new Error(
+      "deployer has 0 ETH — fund it from a faucet (Base Sepolia: https://www.alchemy.com/faucets/base-sepolia)"
+    );
+  }
+
+  const Factory = await hre.ethers.getContractFactory("TruthCoin");
+  const contract = await Factory.deploy();
+  const txHash = contract.deploymentTransaction()?.hash;
+  console.log("deploy tx:", txHash);
+  await contract.waitForDeployment();
+  const address = await contract.getAddress();
+
+  // Sanity: read the constant back
+  const manifesto = await contract.MANIFESTO_HASH();
+  const supply = await contract.totalSupply();
+  const transfers = await contract.transfersEnabled();
+
+  console.log("");
+  console.log("✅ TruthCoin deployed");
+  console.log("   address        :", address);
+  console.log("   manifesto hash :", manifesto);
+  console.log("   totalSupply    :", supply.toString());
+  console.log("   transfers      :", transfers);
+  console.log("");
+  console.log("Explorer:");
+  if (net === "baseSepolia") {
+    console.log("   https://sepolia.basescan.org/address/" + address);
+  } else if (net === "sepolia") {
+    console.log("   https://sepolia.etherscan.io/address/" + address);
+  }
+
+  const out = {
+    network: net,
+    chainId: (await hre.ethers.provider.getNetwork()).chainId.toString(),
+    address,
+    deployer: deployer.address,
+    txHash,
+    manifestoHash: manifesto,
+    deployedAt: new Date().toISOString(),
+  };
+  fs.writeFileSync(
+    path.join(__dirname, "..", "deployed.json"),
+    JSON.stringify(out, null, 2)
+  );
+  console.log("\nWrote contracts/deployed.json");
+  console.log(
+    "\nNext: paste this address into src/data/truth-coin-contract.ts → TRC_CONTRACT.address"
+  );
+}
+
+main().catch((e) => {
+  console.error(e);
+  process.exit(1);
+});
+
+==============================================================================
+FILE   : scripts/prepare-safe-transfer.js
+SHA256 : 94f82563b5b42e8d6e27411b54c789529c48ef0cfc277ac29a403d5d52518c45
+==============================================================================
+#!/usr/bin/env node
+/**
+ * prepare-safe-transfer.js
+ *
+ * Encodes the `transferOwnership(<safe>)` calldata for TruthCoin and prints the
+ * exact ceremony steps. It NEVER broadcasts anything and NEVER touches a key.
+ *
+ *   node scripts/prepare-safe-transfer.js --safe 0xSAFE... [--contract 0xTRC...]
+ *
+ * If --safe is omitted, the script reads src/data/trc-governance.ts's TRC_SAFE
+ * address. If that is still empty (it is, by default), the script halts.
+ */
+
+const fs = require("fs");
+const path = require("path");
+const { keccak256, toUtf8Bytes, getAddress, isAddress } = require("ethers");
+
+function arg(name) {
+  const i = process.argv.indexOf(`--${name}`);
+  return i > -1 ? process.argv[i + 1] : undefined;
+}
+
+function readPinned(file, re) {
+  try {
+    const src = fs.readFileSync(path.join(__dirname, "..", "..", file), "utf8");
+    const m = src.match(re);
+    return m && m[1] ? m[1] : "";
+  } catch {
+    return "";
+  }
+}
+
+function main() {
+  const safeArg = arg("safe");
+  const safeFromCode = readPinned(
+    "src/data/trc-governance.ts",
+    /address:\s*"(0x[0-9a-fA-F]{40})"/
+  );
+  const safe = safeArg || safeFromCode;
+
+  const contractArg = arg("contract");
+  const contractFromCode = readPinned(
+    "src/data/truth-coin-contract.ts",
+    /address:\s*"(0x[0-9a-fA-F]{40})"/
+  );
+  const contract = contractArg || contractFromCode;
+
+  if (!safe) {
+    console.error(
+      [
+        "HALT: no Safe address.",
+        "",
+        "The Safe does not exist yet, or has not been recorded.",
+        "Create it on Base, then either:",
+        "  - paste it into TRC_SAFE.address in src/data/trc-governance.ts, or",
+        "  - pass it here:  node scripts/prepare-safe-transfer.js --safe 0x...",
+        "",
+        "No placeholder or example address will be substituted.",
+      ].join("\n")
+    );
+    process.exit(1);
+  }
+  if (!isAddress(safe)) {
+    console.error(`HALT: --safe "${safe}" is not a valid address.`);
+    process.exit(1);
+  }
+  if (!contract) {
+    console.error(
+      "HALT: no TruthCoin address. Pass --contract 0x... or pin it in src/data/truth-coin-contract.ts."
+    );
+    process.exit(1);
+  }
+  if (!isAddress(contract)) {
+    console.error(`HALT: --contract "${contract}" is not a valid address.`);
+    process.exit(1);
+  }
+
+  const safeCs = getAddress(safe);
+  const trcCs = getAddress(contract);
+
+  const sigTransfer = keccak256(toUtf8Bytes("transferOwnership(address)")).slice(0, 10);
+  const sigAccept = keccak256(toUtf8Bytes("acceptOwnership()")).slice(0, 10);
+  const transferData = sigTransfer + safeCs.slice(2).toLowerCase().padStart(64, "0");
+
+  console.log("TruthCoin ownership handoff — UNSIGNED CALLDATA ONLY");
+  console.log("=".repeat(62));
+  console.log("contract (to) :", trcCs);
+  console.log("new owner     :", safeCs);
+  console.log("value         : 0");
+  console.log("");
+  console.log("STEP 1 — from the CURRENT owner (deployer key):");
+  console.log("  function : transferOwnership(address)");
+  console.log("  calldata :", transferData);
+  console.log("");
+  console.log("STEP 2 — from the SAFE (as a Safe transaction):");
+  console.log("  to       :", trcCs);
+  console.log("  function : acceptOwnership()");
+  console.log("  calldata :", sigAccept);
+  console.log("");
+  console.log("STEP 3 — verify, do not assume:");
+  console.log("  owner()        == " + safeCs);
+  console.log("  pendingOwner() == 0x0000000000000000000000000000000000000000");
+  console.log("  old deployer key can no longer call issueDignityCredit()");
+  console.log("");
+  console.log("This script broadcast nothing. Both steps are operator-signed.");
+}
+
+main();
+
+==============================================================================
+FILE   : hardhat.config.cjs
+SHA256 : b924d8d96ebf020950804f687658b5b28a19dd28b98ac7b7534fc45eccbb3805
+==============================================================================
+// Hardhat config for Truth Coin (TRC) — Base Sepolia testnet deploy.
+// Usage (from /contracts):
+//   npm install
+//   cp .env.example .env      # fill in PRIVATE_KEY and (optionally) BASESCAN_API_KEY
+//   npx hardhat compile
+//   npx hardhat run scripts/deploy.js --network baseSepolia
+//
+// The deploy script prints the deployed address AND writes it to
+// contracts/deployed.json so you can paste it into
+// src/data/truth-coin-contract.ts.
+
+require("@nomicfoundation/hardhat-toolbox");
+require("dotenv").config();
+
+const PRIVATE_KEY = process.env.PRIVATE_KEY || "";
+const BASESCAN_API_KEY = process.env.BASESCAN_API_KEY || "";
+
+module.exports = {
+  solidity: {
+    version: "0.8.24",
+    settings: { optimizer: { enabled: true, runs: 200 } },
+  },
+  paths: {
+    sources: "./src",      // TruthCoin.sol lives at contracts/src/TruthCoin.sol
+    artifacts: "./artifacts",
+    cache: "./cache",
+    tests: "./test",
+  },
+  networks: {
+    baseSepolia: {
+      url: process.env.BASE_SEPOLIA_RPC_URL || "https://sepolia.base.org",
+      chainId: 84532,
+      accounts: PRIVATE_KEY ? [PRIVATE_KEY] : [],
+    },
+    sepolia: {
+      url: process.env.SEPOLIA_RPC_URL || "https://ethereum-sepolia-rpc.publicnode.com",
+      chainId: 11155111,
+      accounts: PRIVATE_KEY ? [PRIVATE_KEY] : [],
+    },
+  },
+  etherscan: {
+    apiKey: {
+      baseSepolia: BASESCAN_API_KEY,
+      sepolia: BASESCAN_API_KEY,
+    },
+    customChains: [
+      {
+        network: "baseSepolia",
+        chainId: 84532,
+        urls: {
+          apiURL: "https://api-sepolia.basescan.org/api",
+          browserURL: "https://sepolia.basescan.org",
+        },
+      },
+    ],
+  },
+};
+
+==============================================================================
+FILE   : package.json
+SHA256 : d3db08452fd22f8c6460e10352e618afda844d7baff3eebbe6614d8ac5a29669
+==============================================================================
+{
+  "name": "truth-coin-contracts",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Hardhat scaffold to deploy TruthCoin.sol to Base Sepolia.",
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "deploy:local": "hardhat run scripts/deploy-local.js",
+    "preflight": "hardhat run scripts/preflight.js",
+    "deploy:base-sepolia": "hardhat run scripts/deploy.js --network baseSepolia",
+    "deploy:sepolia": "hardhat run scripts/deploy.js --network sepolia",
+    "verify:base-sepolia": "hardhat verify --network baseSepolia",
+    "readout": "hardhat run scripts/readout.js --network baseSepolia",
+    "safe:transfer": "node scripts/prepare-safe-transfer.js",
+    "audit:bundle": "node scripts/audit-bundle.js"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "hardhat": "^2.22.10",
+    "dotenv": "^16.4.5"
+  }
+}
+
+==============================================================================
+FILE   : MAINNET-CHECKLIST.md
+SHA256 : 424e9f2658ade21e531efb290b720bb6f46952e79224f978a074aacb5a02cc04
+==============================================================================
+# TRS / TruthCoin — Mainnet Readiness Checklist
+
+Status: **NOT AUTHORIZED FOR MAINNET.** No mainnet address exists. The only
+deployed contract is Base Sepolia testnet
+`0x85b1C3c32B4Da3203b3B3c3B670Cb90e67410b78`.
+
+This file is the gate. Every box must be checked by a human with evidence
+before any mainnet `deploy` command is run.
+
+## 0 · What TRS is (and is not)
+
+- TRS is a **soulbound record of attestation**, not a tradeable asset.
+- Minting is `onlyOwner` and manual. There is **no** code path that mints on a
+  score, a probe result, a cron tick, or an "alignment" metric — and none will
+  be added. Attestation is what Bitcoin's OTS receipts prove; the token merely
+  records an operator's acknowledgement of an already-anchored fact.
+- No price, no liquidity, no market claim is made anywhere in this repo.
+
+## 1 · Audit findings (resolved in-repo)
+
+| # | Finding | Resolution | Sovereignty impact |
+|---|---------|-----------|--------------------|
+| A1 | `owner` was permanent — no way to hand off to a multisig, so the contract could never decentralize. | Added two-step `transferOwnership` / `acceptOwnership`. | Removes the permanent single point of control. |
+| A2 | A one-step handoff can burn ownership on a typo'd address. | Nominee must call `acceptOwnership()`, proving it can sign. | Prevents accidental irreversible capture/loss. |
+| A3 | Constructor emitted no ownership event — off-chain indexers could not reconstruct control history. | `OwnershipTransferred(0x0, deployer)` emitted in constructor. | Control history is publicly auditable. |
+| A4 | No automated proof that soulbound-ness and owner-gating actually hold. | `npm run preflight` asserts both and exits non-zero on failure. | Claims in the UI are machine-verified, not asserted. |
+
+Open, **unresolved** items (these block mainnet):
+
+- [ ] **No independent third-party security audit has been performed.** Self-review is not an audit.
+- [ ] No legal/securities review.
+- [ ] Multisig not yet created; no signer set defined.
+
+## 2 · Pre-deploy gate
+
+- [ ] `npm run compile` clean.
+- [ ] `npm run test` all passing.
+- [ ] `npm run preflight` exits 0 (asserts manifesto hash, `transfersEnabled == false`, `totalSupply == 0`, transfer reverts, mint is owner-only, two-step handoff works).
+- [ ] Manifesto hash in the compiled bytecode equals
+      `0x4edab582bd0eb5a72ad58df4fe677d2af685e254539b9e72c78ebc95f5ef70f7`
+      — the same SHA-256 anchored at **BTC block 954181**. Any mismatch = halt.
+- [ ] Multisig deployed (Safe on Base), signers recorded, threshold ≥ 2-of-3, each signer key held on separate hardware.
+- [ ] Deployer key is fresh, single-purpose, and funded with only deploy gas.
+
+## 3 · Deploy ceremony (manual, operator-signed — never automated)
+
+1. Deploy from the fresh key. Record address + tx hash.
+2. `readout` — confirm `totalSupply == 0`, `transfersEnabled == false`, `MANIFESTO_HASH` matches.
+3. Verify source on Basescan.
+4. `transferOwnership(<multisig>)` from the deployer.
+5. From the **multisig**, execute `acceptOwnership()`. Confirm `owner == multisig` and `pendingOwner == 0x0`.
+6. Confirm the old deployer key can no longer mint.
+7. SHA-256 the deploy record, stamp it with OpenTimestamps, and add the receipt to `src/data/known-anchors.ts` once a real block height returns.
+
+## 4 · Post-deploy invariants
+
+- `transfersEnabled` stays `false`. Flipping it is one-way and is **not** an
+  operator decision — it requires a published, hash-anchored governance
+  decision executed by the multisig.
+- Only after 4 is a mainnet address pinned in `src/data/truth-coin-contract.ts`.
+
+## 5 · Governance vectors (mapped, not deployed)
+
+No DAO contract exists today. The vectors a future one would own:
+
+| Vector | Today | Future owner |
+|--------|-------|--------------|
+| `enableTransfers()` | `onlyOwner`, unused | Multisig → DAO vote |
+| `issueDignityCredit()` | `onlyOwner`, manual | DAO-ratified attestation list |
+| `transferOwnership()` | `onlyOwner`, two-step | DAO timelock |
+| Node set / pinned pubkeys | source-controlled | on-chain registry (unbuilt) |
+
+Nothing here is implemented as code. Listing it is a plan, not a claim.
+
+## 6 · External dependency intake
+
+Two blockers cannot be cleared from inside this repo. The internal framework is
+now built to *receive* them; the fields below stay empty until real evidence
+exists. `src/data/trc-governance.ts` is the machine-readable mirror of this
+section, and `mainnetGateOpen()` there returns `false` while anything is blank.
+
+### 6.1 Safe (multisig) on Base — **NOT CREATED**
+
+Paste values here and into `TRC_SAFE` in `src/data/trc-governance.ts`:
+
+| Field | Value | Where it comes from |
+|-------|-------|---------------------|
+| Safe address | _(empty)_ | Safe UI, after creation on Base (chainId 8453) |
+| Chain | Base (8453) | fixed |
+| Signer 1 | _(empty)_ | hardware key #1 |
+| Signer 2 | _(empty)_ | hardware key #2 |
+| Signer 3 | _(empty)_ | hardware key #3 |
+| Threshold | _(empty)_ | must be ≥ 2-of-3 |
+| Created (UTC) | _(empty)_ | Safe deployment tx timestamp |
+| Deploy tx hash | _(empty)_ | Basescan — this is the evidence |
+
+Rules:
+
+- [ ] Each signer key lives on separate hardware, held by a distinct person or location.
+- [ ] Threshold ≥ 2-of-3. A 1-of-N Safe is a single point of control wearing a multisig costume — it does not clear this gate.
+- [ ] Signer set recorded from the **deployed Safe's on-chain `getOwners()`**, not from what was typed into a form.
+- [ ] The Safe has executed at least one trivial test transaction before it is trusted with ownership.
+
+Once the address is real:
+
+```bash
+cd contracts
+npm run safe:transfer -- --safe 0x<your-safe>
+```
+
+That prints unsigned `transferOwnership(address)` and `acceptOwnership()`
+calldata plus the verification steps. It broadcasts nothing and never touches a
+key. With no Safe address it halts — it will not substitute an example address.
+
+### 6.2 Independent third-party audit — **NOT COMMISSIONED**
+
+| Field | Value |
+|-------|-------|
+| Firm | _(empty)_ |
+| Report date | _(empty)_ |
+| Report URL | _(empty)_ |
+| Report SHA-256 | _(empty)_ |
+| Audited source SHA-256 | _(empty)_ |
+| Remediation commit | _(empty)_ |
+
+Mirror into `TRC_AUDIT` in `src/data/trc-governance.ts`.
+
+Generate the package to send:
+
+```bash
+cd contracts
+npm run audit:bundle
+# -> /mnt/documents/truthcoin-audit-bundle.txt
+```
+
+The bundle contains `TruthCoin.sol`, the full test suite, `preflight.js`,
+`deploy.js`, `prepare-safe-transfer.js`, the Hardhat config, and this
+checklist — each with a per-file SHA-256 and a bundle-level SHA-256 at the
+foot, plus an explicit scope / out-of-scope statement.
+
+- [ ] `ots stamp truthcoin-audit-bundle.txt` **before** sending, so the exact
+      bytes handed to the auditor are timestamped. Record the receipt in
+      `src/data/known-anchors.ts` once a real block height returns.
+- [ ] Auditor confirms in writing that the bundle SHA-256 they reviewed matches
+      the stamped one.
+- [ ] Self-review does not count. A tool run (Slither/Mythril) alone does not
+      count. The firm must be independent of this project.
+
+### 6.3 Gate
+
+Mainnet deploy is authorized only when **6.1 and 6.2 are both fully populated
+with verifiable evidence** and every box in §1–§2 is checked. Until then
+`mainnetGateOpen()` returns `false`, no mainnet address is pinned anywhere, and
+the UI states plainly that TRS is testnet-only.
+
+==============================================================================
+BUNDLE SHA256 (of everything above this line):
+a6307df6dd24256c1d7fa3a283b093b9bf79bb6515213acb9ad43ae631548777
+Stamp this with OpenTimestamps before sending:
+  ots stamp truthcoin-audit-bundle.txt
+==============================================================================

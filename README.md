@@ -79,6 +79,42 @@ local deploy path requires **no wallet, no faucet, no network** — run
 in-memory node with a built-in funded signer. See `contracts/HARDHAT.md`
 for the full path from local proof to Base Sepolia live deployment.
 
+## Audit status (Sherlock engagement)
+
+The audit scope is a single frozen file, not a moving branch.
+
+```
+Bundle  : docs/truthcoin-audit-bundle.txt
+SHA-256 : 8f21bb6e58e67ef925170b39b66d9bb78c2f416553919a0c57b8cb7509809a30
+OTS     : Bitcoin block 959472  (docs/truthcoin-audit-bundle.ots)
+```
+
+- Scope, invariants, deliverables → [`docs/AUDIT-TRANSMITTAL.md`](docs/AUDIT-TRANSMITTAL.md)
+- Governance and upgrade logic → [`POLICY-OF-INTENT.md`](POLICY-OF-INTENT.md)
+- Auditor index → [`docs/README.md`](docs/README.md)
+
+Reproduce the hardened state:
+
+```bash
+cd contracts && npm install && npm run preflight   # exits 0 on a hardened tree
+node scripts/substrate-snapshot.mjs                 # prints the substrate root
+```
+
+No mainnet deployment exists. The only live deployment is Base Sepolia
+`0x85b1C3c32B4Da3203b3B3c3B670Cb90e67410b78`. `mainnetGateOpen()` stays `false`
+until the Safe multisig and the audit report are both recorded with verifiable
+evidence.
+
+### Repository layout for reviewers
+
+| Path | Contents |
+|------|----------|
+| `contracts/` | `src/TruthCoin.sol`, tests, deploy/preflight/Safe-handoff scripts |
+| `src/lib/` | Hardened verification logic — `signed-envelope.ts` + `signed-envelope.test.ts` |
+| `scripts/` | `substrate-snapshot.mjs` — deterministic substrate root derivation |
+| `docs/` | Transmittal, audit bundle, OTS receipt, auditor index |
+
+
 ## Pass log
 
 - **Pass 1** Doctrine Audit (`/pam`) — UI claims ↔ in-browser evidence.
