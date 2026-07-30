@@ -1,0 +1,50 @@
+name: verify
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  bundle-integrity:
+    name: Audit bundle digests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify frozen bundle digests
+        run: |
+          set -euo pipefail
+          echo "8f21bb6e58e67ef925170b39b66d9bb78c2f416553919a0c57b8cb7509809a30  docs/truthcoin-audit-bundle.txt" > /tmp/sums
+          echo "cdd91224da75142d092ea418db4aa045be59b3f74c225313899557603f0db2f5  docs/truthcoin-audit-bundle-v2.txt" >> /tmp/sums
+          sha256sum -c /tmp/sums
+      - name: Confirm OTS receipts present
+        run: |
+          test -s docs/truthcoin-audit-bundle.ots
+          test -s docs/truthcoin-audit-bundle-v2.ots
+
+  contracts:
+    name: Contract tests + preflight
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: contracts
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - run: npm ci || npm install
+      - run: npm test
+      - run: npm run preflight
+
+  app:
+    name: App build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - run: npm ci || npm install
+      - run: npm run build
