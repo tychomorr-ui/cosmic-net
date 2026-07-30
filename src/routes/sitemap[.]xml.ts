@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
 
-const BASE_URL = "https://cosmictruth.lovable.app";
+const BASE_URL = "https://universaltruth.life";
 
 // Mirrors src/routes/*.tsx exactly (post-purge: no /forge, /payment-nexus,
 // /investigation). /ops and /verify are operator surfaces and are excluded

@@ -6,4 +6,4 @@ Allow: /
 Disallow: /ops
 Disallow: /verify
 
-Sitemap: https://cosmictruth.lovable.app/sitemap.xml
+Sitemap: https://universaltruth.life/sitemap.xml
