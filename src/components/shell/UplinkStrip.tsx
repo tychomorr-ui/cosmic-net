@@ -2,9 +2,12 @@ import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 
 export function UplinkStrip() {
-  const [utc, setUtc] = useState(() => new Date().toISOString().slice(11, 19));
+  // Start empty so SSR and first client render agree; the clock starts after hydration.
+  const [utc, setUtc] = useState("--:--:--");
   useEffect(() => {
-    const t = setInterval(() => setUtc(new Date().toISOString().slice(11, 19)), 1000);
+    const tick = () => setUtc(new Date().toISOString().slice(11, 19));
+    tick();
+    const t = setInterval(tick, 1000);
     return () => clearInterval(t);
   }, []);
   return (
