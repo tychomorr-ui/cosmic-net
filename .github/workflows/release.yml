@@ -1,0 +1,60 @@
+name: release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag to release (e.g. v1.1.0-audit-v2)"
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Resolve tag
+        id: tag
+        run: echo "value=${{ github.event.inputs.tag || github.ref_name }}" >> "$GITHUB_OUTPUT"
+
+      - name: Pick release notes
+        id: notes
+        run: |
+          set -euo pipefail
+          TAG="${{ steps.tag.outputs.value }}"
+          case "$TAG" in
+            v1.1.0*) FILE=docs/RELEASE-v1.1.0-audit-v2.md ;;
+            v1.0.0*) FILE=docs/RELEASE-v1.0.0-audit.md ;;
+            *)       FILE=docs/RELEASE-v1.1.0-audit-v2.md ;;
+          esac
+          echo "file=$FILE" >> "$GITHUB_OUTPUT"
+
+      - name: Verify bundle digests before publishing
+        run: |
+          set -euo pipefail
+          echo "8f21bb6e58e67ef925170b39b66d9bb78c2f416553919a0c57b8cb7509809a30  docs/truthcoin-audit-bundle.txt" > /tmp/sums
+          echo "cdd91224da75142d092ea418db4aa045be59b3f74c225313899557603f0db2f5  docs/truthcoin-audit-bundle-v2.txt" >> /tmp/sums
+          sha256sum -c /tmp/sums
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.tag.outputs.value }}
+          name: ${{ steps.tag.outputs.value }}
+          body_path: ${{ steps.notes.outputs.file }}
+          draft: false
+          prerelease: false
+          files: |
+            docs/truthcoin-audit-bundle.txt
+            docs/truthcoin-audit-bundle.ots
+            docs/truthcoin-audit-bundle-v2.txt
+            docs/truthcoin-audit-bundle-v2.ots
+            docs/AUDIT-TRANSMITTAL.md
+            docs/AUDIT-TRANSMITTAL-v2.md
+            docs/SHERLOCK-CHECKLIST.md
