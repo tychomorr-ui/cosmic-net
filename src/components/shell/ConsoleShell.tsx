@@ -12,6 +12,7 @@ import {
   Sparkles,
   Triangle,
   ShieldCheck,
+  FileCheck,
   type LucideIcon,
 } from "lucide-react";
 import { NebulaBackdrop } from "./NebulaBackdrop";
