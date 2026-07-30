@@ -44,6 +44,18 @@ edits — see [`Governance.md`](./Governance.md).
 - [`../contracts/MAINNET-CHECKLIST.md`](../contracts/MAINNET-CHECKLIST.md) — the
   gate on mainnet deployment.
 
+## Releases and reviewer entry points
+
+- [`RELEASE-v1.0.0-audit.md`](./RELEASE-v1.0.0-audit.md) — frozen v1 candidate.
+- [`RELEASE-v1.1.0-audit-v2.md`](./RELEASE-v1.1.0-audit-v2.md) — additive
+  companion bundle v2.
+- [`SHERLOCK-CHECKLIST.md`](./SHERLOCK-CHECKLIST.md) — engagement readiness
+  status and reviewer quick start.
+
+CI enforces the frozen digests, contract tests, and preflight on every push
+(`.github/workflows/verify.yml`); tagging `v*` publishes a release with the
+bundle assets attached (`.github/workflows/release.yml`).
+
 ## Status
 
 **Independent security audit: pending.** No certification is claimed anywhere in
