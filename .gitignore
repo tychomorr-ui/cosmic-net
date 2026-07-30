@@ -30,3 +30,22 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Secrets / local env — never commit
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.crt
+contracts/.env
+contracts/artifacts/
+contracts/cache/
+contracts/deployed.json
+
+# Local data / scratch
+*.sqlite
+*.sqlite3
+*.db
+/mnt/
+tmp/
