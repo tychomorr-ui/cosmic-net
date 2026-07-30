@@ -12,6 +12,7 @@ import {
   Sparkles,
   Triangle,
   ShieldCheck,
+  FileCheck,
   type LucideIcon,
 } from "lucide-react";
 import { NebulaBackdrop } from "./NebulaBackdrop";
@@ -35,6 +36,7 @@ const NAV: NavItem[] = [
   { name: "Truth Substrate",  path: "/sudo-coin",       icon: Sparkles,       sigil: "◈", code: "TRS" },
   { name: "QUANTOTALUS",      path: "/quantotalus",     icon: Triangle,       sigil: "◬", code: "QUANT" },
   { name: "PROOF FULCRUM",    path: "/proof-fulcrum",   icon: ShieldCheck,    sigil: "◇", code: "PROOF" },
+  { name: "Audit Center",     path: "/audit",           icon: FileCheck,      sigil: "▤", code: "AUDIT" },
 ];
 
 const STANCE_FEED: Array<{ tag: string; msg: string }> = [
@@ -54,19 +56,22 @@ const CrtOverlay = memo(function CrtOverlay() {
 
 export function ConsoleShell({ children }: { children: ReactNode }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const [now, setNow] = useState<Date>(() => new Date());
+  // Clock stays null through SSR + first client render so the server HTML and
+  // the hydrated tree agree; the real time lands on the first effect tick.
+  const [now, setNow] = useState<Date | null>(null);
   useEffect(() => {
+    setNow(new Date());
     const id = setInterval(() => setNow(new Date()), 1000);
     return () => clearInterval(id);
   }, []);
 
-  const h = now.getHours();
-  const mm = String(now.getMinutes()).padStart(2, "0");
-  const ss = String(now.getSeconds()).padStart(2, "0");
-  const isDay = h >= 6 && h < 18;
-  const dayHour = isDay ? String(h - 5).padStart(2, "0") : null;
-  const nightHour = !isDay ? String(h < 6 ? h + 7 : h - 17).padStart(2, "0") : null;
-  const utc = now.toISOString().slice(11, 19);
+  const h = now ? now.getHours() : 0;
+  const mm = now ? String(now.getMinutes()).padStart(2, "0") : "--";
+  const ss = now ? String(now.getSeconds()).padStart(2, "0") : "--";
+  const isDay = now ? h >= 6 && h < 18 : false;
+  const dayHour = now && isDay ? String(h - 5).padStart(2, "0") : null;
+  const nightHour = now && !isDay ? String(h < 6 ? h + 7 : h - 17).padStart(2, "0") : null;
+  const utc = now ? now.toISOString().slice(11, 19) : "--:--:--";
 
   // Live ticker: Archangel probe events (sliding window, 64). Synced to the
   // 1Hz global clock — `now` invalidates this memo each tick.
