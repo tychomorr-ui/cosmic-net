@@ -9,11 +9,15 @@ pragma solidity ^0.8.24;
 /// single-owner check — it widens authority from one owner to any one signer.
 ///
 /// Here, functions marked `onlyGovernance` are callable ONLY by this contract
-/// calling itself, and the only path to a self-call is `execute()`, which
+/// calling itself, and the only path to a self-call is `executeProposal()`, which
 /// requires `threshold` distinct approvals. The threshold is therefore load
 /// bearing rather than decorative.
 ///
-/// Flow: propose(data) -> approve(id) x threshold -> execute(id)
+/// Flow: propose(data) -> approveProposal(id) x threshold -> executeProposal(id)
+///
+/// The governance methods are deliberately NOT named `approve`/`execute`: an
+/// `approve(uint256)` here would collide with ERC20 `approve(address,uint256)`
+/// in DigitalOre, producing an ambiguous ABI for every integrator.
 abstract contract MultiSigGoverned {
     struct Proposal {
         /// @dev ABI-encoded call to be made against this contract.
@@ -124,7 +128,7 @@ abstract contract MultiSigGoverned {
         emit ProposalApproved(id, msg.sender, 1);
     }
 
-    function approve(uint256 id) external onlySigner {
+    function approveProposal(uint256 id) external onlySigner {
         Proposal storage p = _open(id);
         if (hasApproved[id][msg.sender]) revert AlreadyApproved();
         hasApproved[id][msg.sender] = true;
@@ -132,7 +136,7 @@ abstract contract MultiSigGoverned {
         emit ProposalApproved(id, msg.sender, p.approvals);
     }
 
-    function revokeApproval(uint256 id) external onlySigner {
+    function revokeProposalApproval(uint256 id) external onlySigner {
         Proposal storage p = _open(id);
         if (!hasApproved[id][msg.sender]) revert NotApproved();
         hasApproved[id][msg.sender] = false;
@@ -147,9 +151,9 @@ abstract contract MultiSigGoverned {
     }
 
     /// @notice Execute once `threshold` distinct signers have approved.
-    /// @dev Marks executed BEFORE the self-call, so a reentrant `execute(id)`
+    /// @dev Marks executed BEFORE the self-call, so a reentrant `executeProposal(id)`
     ///      hits `ProposalClosed`.
-    function execute(uint256 id) external onlySigner {
+    function executeProposal(uint256 id) external onlySigner {
         Proposal storage p = _open(id);
         if (p.approvals < threshold) revert ThresholdNotMet();
         p.executed = true;

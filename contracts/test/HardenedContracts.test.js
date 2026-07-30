@@ -70,7 +70,7 @@ describe("MultiSigGoverned (via DigitalOre)", () => {
   it("B1: one signer alone cannot change a governed parameter", async () => {
     const before = await ore.mintCapPerPeriod();
     await ore.propose(encodeCap(CAP)); // proposer auto-approves => 1 of 2
-    await expect(ore.execute(0)).to.be.revertedWithCustomError(ore, "ThresholdNotMet");
+    await expect(ore.executeProposal(0)).to.be.revertedWithCustomError(ore, "ThresholdNotMet");
     expect(await ore.mintCapPerPeriod()).to.equal(before);
   });
 
@@ -80,49 +80,49 @@ describe("MultiSigGoverned (via DigitalOre)", () => {
 
   it("B1: threshold approvals do change the parameter", async () => {
     await ore.propose(encodeCap(CAP));
-    await ore.connect(alice).approve(0);
-    await ore.execute(0);
+    await ore.connect(alice).approveProposal(0);
+    await ore.executeProposal(0);
     expect(await ore.mintCapPerPeriod()).to.equal(CAP);
   });
 
   it("B1: the same signer cannot approve twice to fake a threshold", async () => {
     await ore.propose(encodeCap(CAP));
-    await expect(ore.approve(0)).to.be.revertedWithCustomError(ore, "AlreadyApproved");
+    await expect(ore.approveProposal(0)).to.be.revertedWithCustomError(ore, "AlreadyApproved");
   });
 
   it("B1: a non-signer can neither propose nor approve", async () => {
     await expect(ore.connect(mallory).propose(encodeCap(CAP))).to.be.revertedWithCustomError(ore, "NotSigner");
     await ore.propose(encodeCap(CAP));
-    await expect(ore.connect(mallory).approve(0)).to.be.revertedWithCustomError(ore, "NotSigner");
+    await expect(ore.connect(mallory).approveProposal(0)).to.be.revertedWithCustomError(ore, "NotSigner");
   });
 
   it("a revoked approval drops the count back below threshold", async () => {
     await ore.propose(encodeCap(CAP));
-    await ore.connect(alice).approve(0);
-    await ore.connect(alice).revokeApproval(0);
-    await expect(ore.execute(0)).to.be.revertedWithCustomError(ore, "ThresholdNotMet");
+    await ore.connect(alice).approveProposal(0);
+    await ore.connect(alice).revokeProposalApproval(0);
+    await expect(ore.executeProposal(0)).to.be.revertedWithCustomError(ore, "ThresholdNotMet");
   });
 
   it("a proposal cannot be executed twice", async () => {
     await ore.propose(encodeCap(CAP));
-    await ore.connect(alice).approve(0);
-    await ore.execute(0);
-    await expect(ore.execute(0)).to.be.revertedWithCustomError(ore, "ProposalClosed");
+    await ore.connect(alice).approveProposal(0);
+    await ore.executeProposal(0);
+    await expect(ore.executeProposal(0)).to.be.revertedWithCustomError(ore, "ProposalClosed");
   });
 
   it("a cancelled proposal cannot execute", async () => {
     await ore.propose(encodeCap(CAP));
-    await ore.connect(alice).approve(0);
+    await ore.connect(alice).approveProposal(0);
     await ore.cancelProposal(0);
-    await expect(ore.execute(0)).to.be.revertedWithCustomError(ore, "ProposalClosed");
+    await expect(ore.executeProposal(0)).to.be.revertedWithCustomError(ore, "ProposalClosed");
   });
 
   it("the signer set is itself threshold-governed", async () => {
     const data = ore.interface.encodeFunctionData("addSigner", [mallory.address]);
     await ore.propose(data);
-    await expect(ore.execute(0)).to.be.revertedWithCustomError(ore, "ThresholdNotMet");
-    await ore.connect(alice).approve(0);
-    await ore.execute(0);
+    await expect(ore.executeProposal(0)).to.be.revertedWithCustomError(ore, "ThresholdNotMet");
+    await ore.connect(alice).approveProposal(0);
+    await ore.executeProposal(0);
     expect(await ore.isSigner(mallory.address)).to.equal(true);
     expect(await ore.signerCount()).to.equal(4n);
   });
@@ -130,13 +130,13 @@ describe("MultiSigGoverned (via DigitalOre)", () => {
   it("signers cannot be reduced below the threshold", async () => {
     const remove = (a) => ore.interface.encodeFunctionData("removeSigner", [a]);
     await ore.propose(remove(bob.address));
-    await ore.connect(alice).approve(0);
-    await ore.execute(0);
+    await ore.connect(alice).approveProposal(0);
+    await ore.executeProposal(0);
     expect(await ore.signerCount()).to.equal(2n);
 
     await ore.propose(remove(alice.address));
-    await ore.connect(alice).approve(1);
-    await expect(ore.execute(1)).to.be.revertedWithCustomError(ore, "ExecutionFailed");
+    await ore.connect(alice).approveProposal(1);
+    await expect(ore.executeProposal(1)).to.be.revertedWithCustomError(ore, "ExecutionFailed");
   });
 
   it("deployment rejects a threshold larger than the signer set", async () => {
@@ -170,24 +170,24 @@ describe("DigitalOre", () => {
   it("D1: governance cannot collapse the window to defeat the cap", async () => {
     const data = ore.interface.encodeFunctionData("updatePeriodDuration", [1]);
     await ore.propose(data);
-    await ore.connect(alice).approve(0);
-    await expect(ore.execute(0)).to.be.revertedWithCustomError(ore, "ExecutionFailed");
+    await ore.connect(alice).approveProposal(0);
+    await expect(ore.executeProposal(0)).to.be.revertedWithCustomError(ore, "ExecutionFailed");
   });
 
   it("D1: governance cannot raise the period cap above MAX_SUPPLY", async () => {
     const max = await ore.MAX_SUPPLY();
     const data = ore.interface.encodeFunctionData("updateMintCap", [max + 1n]);
     await ore.propose(data);
-    await ore.connect(alice).approve(0);
-    await expect(ore.execute(0)).to.be.revertedWithCustomError(ore, "ExecutionFailed");
+    await ore.connect(alice).approveProposal(0);
+    await expect(ore.executeProposal(0)).to.be.revertedWithCustomError(ore, "ExecutionFailed");
   });
 
   it("D1: MAX_SUPPLY is an absolute ceiling", async () => {
     const max = await ore.MAX_SUPPLY();
     const bump = ore.interface.encodeFunctionData("updateMintCap", [max]);
     await ore.propose(bump);
-    await ore.connect(alice).approve(0);
-    await ore.execute(0);
+    await ore.connect(alice).approveProposal(0);
+    await ore.executeProposal(0);
 
     await ore.mint(alice.address, max);
     await expect(ore.mint(alice.address, 1n)).to.be.revertedWithCustomError(ore, "ExceedsMaxSupply");
@@ -427,9 +427,9 @@ describe("KetherGateRegistry", () => {
   it("K6: the threshold is enforced for registry governance too", async () => {
     const data = reg.interface.encodeFunctionData("setThreshold", [3]);
     await reg.propose(data);
-    await expect(reg.execute(0)).to.be.revertedWithCustomError(reg, "ThresholdNotMet");
-    await reg.connect(alice).approve(0);
-    await reg.execute(0);
+    await expect(reg.executeProposal(0)).to.be.revertedWithCustomError(reg, "ThresholdNotMet");
+    await reg.connect(alice).approveProposal(0);
+    await reg.executeProposal(0);
     expect(await reg.threshold()).to.equal(3n);
   });
 
