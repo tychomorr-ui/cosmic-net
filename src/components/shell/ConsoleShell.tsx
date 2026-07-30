@@ -35,6 +35,7 @@ const NAV: NavItem[] = [
   { name: "Truth Substrate",  path: "/sudo-coin",       icon: Sparkles,       sigil: "◈", code: "TRS" },
   { name: "QUANTOTALUS",      path: "/quantotalus",     icon: Triangle,       sigil: "◬", code: "QUANT" },
   { name: "PROOF FULCRUM",    path: "/proof-fulcrum",   icon: ShieldCheck,    sigil: "◇", code: "PROOF" },
+  { name: "Audit Center",     path: "/audit",           icon: FileCheck,      sigil: "▤", code: "AUDIT" },
 ];
 
 const STANCE_FEED: Array<{ tag: string; msg: string }> = [
