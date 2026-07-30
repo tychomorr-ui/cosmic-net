@@ -23,11 +23,19 @@ Candidate firms: Sherlock, Cyfrin, Spearbit.
 
 Deployed (testnet): Base Sepolia `0x85b1C3c32B4Da3203b3B3c3B670Cb90e67410b78`.
 
-## Pending scope — companion bundle v2 (not yet stamped)
+## Companion bundle v2 — stamped, awaiting Bitcoin confirmation
 
 Bundle `8f21bb6e…09a30` is frozen and its scope is closed. The contracts below
-are **additive** and require a separately generated and separately anchored
-bundle before they enter any engagement.
+are **additive** and are carried by a separately generated, separately anchored
+bundle. Bundle v1 was not edited to produce it.
+
+```
+File    : docs/truthcoin-audit-bundle-v2.txt
+SHA-256 : cdd91224da75142d092ea418db4aa045be59b3f74c225313899557603f0db2f5
+Bytes   : 70847
+OTS     : docs/truthcoin-audit-bundle-v2.ots — submitted to alice/bob/finney
+          calendars, pending Bitcoin block inclusion (upgrade with `ots upgrade`)
+```
 
 | Item | Path | Status |
 | --- | --- | --- |
@@ -35,12 +43,22 @@ bundle before they enter any engagement.
 | M-of-N threshold governance | `contracts/src/MultiSigGoverned.sol` | New |
 | Digital Ore (soulbound ERC-20, DOU) | `contracts/src/DigitalOre.sol` | Hardened from draft |
 | KETHER_GATE identity registry | `contracts/src/KetherGateRegistry.sol` | Hardened from draft |
-| Tests (50 cases) | `contracts/test/HardenedContracts.test.js` | New |
+| Tests (56 cases) | `contracts/test/HardenedContracts.test.js` | New |
 | Deployment + post-deploy checks | `contracts/scripts/deploy-blades.js` | New |
 
 Not deployed on any network. `KetherGateRegistry` records owner-asserted
 Bitcoin anchor **claims** (`attestClaim`, `claimedBitcoinBlockHeight`); it
 performs no on-chain verification and does not present itself as doing so.
+
+Regenerate and verify:
+
+```bash
+cd contracts && node scripts/audit-bundle-v2.js --out /tmp/v2.txt
+sha256sum docs/truthcoin-audit-bundle-v2.txt   # cdd91224…0db2f5
+ots upgrade docs/truthcoin-audit-bundle-v2.ots && ots verify docs/truthcoin-audit-bundle-v2.ots
+```
+
+
 
 
 ## Secondary scope — protocol and verification
