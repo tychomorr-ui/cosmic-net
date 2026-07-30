@@ -1,10 +1,15 @@
 # NEXINUS — cMAP (Cosmic Mesh Alignment Protocol)
 
+![Version](https://img.shields.io/badge/version-v1.0.0--audit-1f2937)
+![Status](https://img.shields.io/badge/status-independent%20security%20audit%20pending-b45309)
+![License](https://img.shields.io/badge/license-MIT-374151)
+
 Sovereign witness console for a peer-to-peer mesh. No central capture point, no
 managed relays, no silent overwrites. **The browser is a verifier and a witness
 — never the source of truth.**
 
 Live: <https://universaltruth.life>
+
 
 > **Independent security audit: pending.** Nothing here claims certification.
 > See [`docs/AuditScope.md`](./docs/AuditScope.md).
