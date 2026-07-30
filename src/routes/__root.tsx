@@ -88,6 +88,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "description", content: "cMAP — Cosmic Mesh Alignment Protocol. A sovereign, peer-to-peer alignment framework with no central capture point: local-first witness, signed provenance, zero telemetry." },
       { name: "keywords", content: "cMAP, Cosmic Mesh Alignment Protocol, sovereign infrastructure, peer-to-peer, decentralized protocol, local-first, signed provenance, Truth Chain, zero telemetry" },
       { name: "robots", content: "index,follow" },
+      { name: "google-site-verification", content: "HlMWkQxcqTYe6reUMu5Wtl4QyYMLF_2oqkvQINWH2s4" },
       { property: "og:type", content: "website" },
       { property: "og:site_name", content: "cMAP" },
       { property: "og:title", content: "cMAP — Cosmic Mesh Alignment Protocol" },
