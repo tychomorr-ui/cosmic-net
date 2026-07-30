@@ -106,9 +106,12 @@ function UplinkRow({ row }: { row: Row }) {
 }
 
 function useUtcClock() {
-  const [t, setT] = useState(() => new Date().toISOString().slice(11, 19));
+  // Placeholder on the server / first client render to avoid a hydration mismatch.
+  const [t, setT] = useState("--:--:--");
   useEffect(() => {
-    const id = setInterval(() => setT(new Date().toISOString().slice(11, 19)), 1000);
+    const tick = () => setT(new Date().toISOString().slice(11, 19));
+    tick();
+    const id = setInterval(tick, 1000);
     return () => clearInterval(id);
   }, []);
   return t;
