@@ -1,0 +1,1690 @@
+NEXINUS — AUDIT BUNDLE v2 (COMPANION, ADDITIVE SCOPE)
+==============================================================================
+
+This bundle is ADDITIVE to frozen bundle
+8f21bb6e58e67ef925170b39b66d9bb78c2f416553919a0c57b8cb7509809a30
+(Bitcoin block 959472), which covers TruthCoin (TRS) and is unchanged.
+Nothing in bundle v1 was edited to produce this file.
+
+Scope: shared governance primitives and two new soulbound/registry
+contracts. NONE of these are deployed on any network — no testnet, no
+mainnet.
+
+What we are asking to be reviewed:
+  1. SovereignOwnable — two-step transferOwnership/acceptOwnership;
+     renounceOwnership() must always revert; pendingOwner cleared on
+     accept; no path to burn or hijack ownership.
+  2. MultiSigGoverned — real M-of-N threshold: propose / approveProposal /
+     revokeProposalApproval / executeProposal. Confirm the threshold is
+     actually enforced at execution, approvals cannot be double-counted,
+     signer-set changes cannot strand the contract, and executed or
+     cancelled proposals cannot be replayed.
+  3. DigitalOre (DOU) — soulbound ERC-20. Confirm transfer/transferFrom/
+     approve are symmetric and unusable while locked; mint rate limits are
+     denominated in SECONDS (not blocks) and cannot be bypassed by
+     timestamp manipulation within miner tolerance; cursor-based dividend
+     accrual cannot replay a record or double-pay; claimDividend has no
+     reentrancy or rounding-drain path; grade math cannot truncate to zero
+     or overflow.
+  4. KetherGateRegistry — ASCII name normalization must make homoglyph and
+     case-variant impersonation impossible; all identity reads paginated
+     and gas-bounded; attestClaim records an owner ASSERTION only
+     (claimedManifestHash / claimedBitcoinBlockHeight) and performs no
+     on-chain verification — confirm no code or naming implies otherwise;
+     conflicting re-anchors must revert, not silently overwrite.
+  5. General — reentrancy, arithmetic, access control, event-emission gaps,
+     and any interaction hazard between MultiSigGoverned and
+     SovereignOwnable when both gate the same function.
+
+Explicitly out of scope (does not exist): DAO/token-voting governance,
+staking, liquidity, price oracle, bridging, upgradeability (all contracts
+are non-upgradeable by design), and everything already covered by v1.
+
+Generated (UTC): 2026-07-30T22:13:34.036Z
+
+FILE INDEX (sha256):
+  88bb870c5e8bed039c8c1aeb1710f422012b8c86adece3dcaa84c4a4e07a2270  src/SovereignOwnable.sol  (2738 bytes)
+  68f6a36b0477ba900ff87db9dd557d21fb69717fa89f7e9d0fbe67b84d1918a0  src/MultiSigGoverned.sol  (7773 bytes)
+  d300b8ce42fe707cb2f2be7e180de075cb6547f310db0074e096e9db38cdcf3c  src/DigitalOre.sol  (13073 bytes)
+  89245a6c1d971d138664f0bb7b80164ffd1c2c227ad43401eba044e9658814b3  src/KetherGateRegistry.sol  (14449 bytes)
+  9f5bb2071e245212a01fb17ea8cd3574ee1740c5ebd5c44a0ec3ee36d3c68898  test/HardenedContracts.test.js  (20437 bytes)
+  62f5c441f206bd885fa3b98eb542f191fda477ad93eb93161008df7bca6a176f  scripts/deploy-blades.js  (3878 bytes)
+  b924d8d96ebf020950804f687658b5b28a19dd28b98ac7b7534fc45eccbb3805  hardhat.config.cjs  (1656 bytes)
+  9d4b79eb10d102ce24918ac896348be4b79821d4aba2ad137a43f16a4448c1cd  package.json  (1083 bytes)
+
+
+==============================================================================
+FILE   : src/SovereignOwnable.sol
+SHA256 : 88bb870c5e8bed039c8c1aeb1710f422012b8c86adece3dcaa84c4a4e07a2270
+==============================================================================
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.24;
+
+/// @title SovereignOwnable
+/// @notice Two-step ownership handoff with renunciation permanently disabled.
+///
+/// Why this exists instead of OpenZeppelin `Ownable`:
+///   - OZ `Ownable.transferOwnership` is one-step: a single mistyped address
+///     hands the contract to an unrecoverable account.
+///   - OZ `Ownable.renounceOwnership` is live by default: one call permanently
+///     bricks every owner-gated function.
+///
+/// This mirrors invariant #4 of the TruthCoin audit scope: ownership cannot be
+/// burned by a typo, cannot be taken by a non-nominee, and `pendingOwner` is
+/// cleared on accept.
+abstract contract SovereignOwnable {
+    /// @notice Current owner. Holds all owner-gated authority.
+    address public owner;
+
+    /// @notice Nominated successor. Holds no authority until it accepts.
+    address public pendingOwner;
+
+    event OwnershipTransferStarted(address indexed from, address indexed to);
+    event OwnershipTransferred(address indexed from, address indexed to);
+
+    error NotOwner();
+    error NotPendingOwner();
+    error ZeroAddress();
+    error RenounceDisabled();
+
+    modifier onlyOwner() {
+        if (msg.sender != owner) revert NotOwner();
+        _;
+    }
+
+    constructor(address initialOwner) {
+        if (initialOwner == address(0)) revert ZeroAddress();
+        owner = initialOwner;
+        emit OwnershipTransferred(address(0), initialOwner);
+    }
+
+    /// @notice Step 1. Nominate a successor. Nothing changes until it accepts.
+    /// @dev Re-nominating simply replaces the pending nominee.
+    function transferOwnership(address newOwner) external onlyOwner {
+        if (newOwner == address(0)) revert ZeroAddress();
+        pendingOwner = newOwner;
+        emit OwnershipTransferStarted(owner, newOwner);
+    }
+
+    /// @notice Cancel an outstanding nomination.
+    function cancelOwnershipTransfer() external onlyOwner {
+        pendingOwner = address(0);
+        emit OwnershipTransferStarted(owner, address(0));
+    }
+
+    /// @notice Step 2. Only the nominee can complete the handoff, which proves
+    ///         the nominee can actually sign. The old owner loses authority here.
+    function acceptOwnership() external {
+        if (msg.sender != pendingOwner) revert NotPendingOwner();
+        address prev = owner;
+        owner = pendingOwner;
+        pendingOwner = address(0);
+        emit OwnershipTransferred(prev, owner);
+    }
+
+    /// @notice Permanently disabled. Present so that any inherited or expected
+    ///         `renounceOwnership()` call reverts loudly instead of bricking the
+    ///         contract.
+    function renounceOwnership() external pure {
+        revert RenounceDisabled();
+    }
+}
+
+==============================================================================
+FILE   : src/MultiSigGoverned.sol
+SHA256 : 68f6a36b0477ba900ff87db9dd557d21fb69717fa89f7e9d0fbe67b84d1918a0
+==============================================================================
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.24;
+
+/// @title MultiSigGoverned
+/// @notice A real M-of-N threshold gate for privileged parameter changes.
+///
+/// The bug this replaces: an `onlyMultiSig` modifier that merely asserted
+/// `isSigner[msg.sender]` and never read the threshold. That is weaker than a
+/// single-owner check — it widens authority from one owner to any one signer.
+///
+/// Here, functions marked `onlyGovernance` are callable ONLY by this contract
+/// calling itself, and the only path to a self-call is `executeProposal()`, which
+/// requires `threshold` distinct approvals. The threshold is therefore load
+/// bearing rather than decorative.
+///
+/// Flow: propose(data) -> approveProposal(id) x threshold -> executeProposal(id)
+///
+/// The governance methods are deliberately NOT named `approve`/`execute`: an
+/// `approve(uint256)` here would collide with ERC20 `approve(address,uint256)`
+/// in DigitalOre, producing an ambiguous ABI for every integrator.
+abstract contract MultiSigGoverned {
+    struct Proposal {
+        /// @dev ABI-encoded call to be made against this contract.
+        bytes data;
+        uint256 approvals;
+        uint256 createdAt;
+        bool executed;
+        bool cancelled;
+    }
+
+    address[] internal _signers;
+    mapping(address => bool) public isSigner;
+
+    /// @notice Number of distinct signer approvals required to execute.
+    uint256 public threshold;
+
+    Proposal[] internal _proposals;
+
+    /// @notice proposalId => signer => approved
+    mapping(uint256 => mapping(address => bool)) public hasApproved;
+
+    event SignerAdded(address indexed signer);
+    event SignerRemoved(address indexed signer);
+    event ThresholdUpdated(uint256 threshold);
+    event ProposalCreated(uint256 indexed id, address indexed proposer, bytes data);
+    event ProposalApproved(uint256 indexed id, address indexed signer, uint256 approvals);
+    event ProposalRevoked(uint256 indexed id, address indexed signer, uint256 approvals);
+    event ProposalCancelled(uint256 indexed id);
+    event ProposalExecuted(uint256 indexed id);
+
+    error NotSigner();
+    error NotGovernance();
+    error InvalidThreshold();
+    error AlreadySigner();
+    error UnknownSigner();
+    error UnknownProposal();
+    error AlreadyApproved();
+    error NotApproved();
+    error ProposalClosed();
+    error ThresholdNotMet();
+    error ExecutionFailed();
+    error EmptyCall();
+
+    modifier onlySigner() {
+        if (!isSigner[msg.sender]) revert NotSigner();
+        _;
+    }
+
+    /// @notice Reachable only via `execute()`, i.e. only with threshold approvals.
+    modifier onlyGovernance() {
+        if (msg.sender != address(this)) revert NotGovernance();
+        _;
+    }
+
+    constructor(address[] memory initialSigners, uint256 initialThreshold) {
+        uint256 n = initialSigners.length;
+        if (initialThreshold == 0 || initialThreshold > n) revert InvalidThreshold();
+        for (uint256 i = 0; i < n; i++) {
+            address s = initialSigners[i];
+            if (s == address(0)) revert UnknownSigner();
+            if (isSigner[s]) revert AlreadySigner();
+            isSigner[s] = true;
+            _signers.push(s);
+            emit SignerAdded(s);
+        }
+        threshold = initialThreshold;
+        emit ThresholdUpdated(initialThreshold);
+    }
+
+    // ---------------------------------------------------------------- reads
+
+    function signers() external view returns (address[] memory) {
+        return _signers;
+    }
+
+    function signerCount() external view returns (uint256) {
+        return _signers.length;
+    }
+
+    function proposalCount() external view returns (uint256) {
+        return _proposals.length;
+    }
+
+    function getProposal(uint256 id)
+        external
+        view
+        returns (bytes memory data, uint256 approvals, uint256 createdAt, bool executed, bool cancelled)
+    {
+        if (id >= _proposals.length) revert UnknownProposal();
+        Proposal storage p = _proposals[id];
+        return (p.data, p.approvals, p.createdAt, p.executed, p.cancelled);
+    }
+
+    // ------------------------------------------------------------ proposals
+
+    /// @notice Create a proposal. The proposer's approval is recorded immediately.
+    /// @param data ABI-encoded call against this contract (e.g. abi.encodeCall(...)).
+    function propose(bytes calldata data) external onlySigner returns (uint256 id) {
+        if (data.length == 0) revert EmptyCall();
+        id = _proposals.length;
+        Proposal storage p = _proposals.push();
+        p.data = data;
+        p.createdAt = block.timestamp;
+        emit ProposalCreated(id, msg.sender, data);
+
+        hasApproved[id][msg.sender] = true;
+        p.approvals = 1;
+        emit ProposalApproved(id, msg.sender, 1);
+    }
+
+    function approveProposal(uint256 id) external onlySigner {
+        Proposal storage p = _open(id);
+        if (hasApproved[id][msg.sender]) revert AlreadyApproved();
+        hasApproved[id][msg.sender] = true;
+        p.approvals += 1;
+        emit ProposalApproved(id, msg.sender, p.approvals);
+    }
+
+    function revokeProposalApproval(uint256 id) external onlySigner {
+        Proposal storage p = _open(id);
+        if (!hasApproved[id][msg.sender]) revert NotApproved();
+        hasApproved[id][msg.sender] = false;
+        p.approvals -= 1;
+        emit ProposalRevoked(id, msg.sender, p.approvals);
+    }
+
+    function cancelProposal(uint256 id) external onlySigner {
+        Proposal storage p = _open(id);
+        p.cancelled = true;
+        emit ProposalCancelled(id);
+    }
+
+    /// @notice Execute once `threshold` distinct signers have approved.
+    /// @dev Marks executed BEFORE the self-call, so a reentrant `executeProposal(id)`
+    ///      hits `ProposalClosed`.
+    function executeProposal(uint256 id) external onlySigner {
+        Proposal storage p = _open(id);
+        if (p.approvals < threshold) revert ThresholdNotMet();
+        p.executed = true;
+        (bool ok, ) = address(this).call(p.data);
+        if (!ok) revert ExecutionFailed();
+        emit ProposalExecuted(id);
+    }
+
+    function _open(uint256 id) private view returns (Proposal storage p) {
+        if (id >= _proposals.length) revert UnknownProposal();
+        p = _proposals[id];
+        if (p.executed || p.cancelled) revert ProposalClosed();
+    }
+
+    // ------------------------------------------- signer set (self-governed)
+
+    /// @notice Add a signer. Requires threshold approvals.
+    function addSigner(address signer) external onlyGovernance {
+        if (signer == address(0)) revert UnknownSigner();
+        if (isSigner[signer]) revert AlreadySigner();
+        isSigner[signer] = true;
+        _signers.push(signer);
+        emit SignerAdded(signer);
+    }
+
+    /// @notice Remove a signer. Requires threshold approvals. Cannot drop the
+    ///         signer count below the current threshold.
+    function removeSigner(address signer) external onlyGovernance {
+        if (!isSigner[signer]) revert UnknownSigner();
+        if (_signers.length - 1 < threshold) revert InvalidThreshold();
+        isSigner[signer] = false;
+        uint256 n = _signers.length;
+        for (uint256 i = 0; i < n; i++) {
+            if (_signers[i] == signer) {
+                _signers[i] = _signers[n - 1];
+                _signers.pop();
+                break;
+            }
+        }
+        emit SignerRemoved(signer);
+    }
+
+    /// @notice Change the threshold. Requires threshold approvals under the
+    ///         CURRENT threshold.
+    function setThreshold(uint256 newThreshold) external onlyGovernance {
+        if (newThreshold == 0 || newThreshold > _signers.length) revert InvalidThreshold();
+        threshold = newThreshold;
+        emit ThresholdUpdated(newThreshold);
+    }
+}
+
+==============================================================================
+FILE   : src/DigitalOre.sol
+SHA256 : d300b8ce42fe707cb2f2be7e180de075cb6547f310db0074e096e9db38cdcf3c
+==============================================================================
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.24;
+
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+
+import "./SovereignOwnable.sol";
+import "./MultiSigGoverned.sol";
+
+/**
+ * @title DigitalOre (DOU)
+ * @notice Soulbound ERC-20 recording refined intellectual byproduct and the
+ *         dividend credits it earns.
+ *
+ * Doctrine posture: this contract mints only by explicit owner action or by an
+ * operator redeeming credit that was already accrued from recorded byproduct.
+ * There is no autonomous, metric-driven, or scheduled mint path.
+ *
+ * Changes from the pre-audit draft, each closing a finding:
+ *  - Two-step ownership via SovereignOwnable; renounce reverts.       (B2)
+ *  - Real M-of-N threshold governance via MultiSigGoverned.           (B1)
+ *  - Mint rate limit is denominated in SECONDS, matching the
+ *    block.timestamp comparison, and bounded so governance cannot
+ *    collapse the window or raise the cap above MAX_SUPPLY.           (D1)
+ *  - Dividend accrual advances a per-operator cursor, so a range can
+ *    never be paid twice, and the rate is applied per matching record. (D2)
+ *  - Accrued dividends are redeemable via claimDividend().            (D3)
+ *  - Grade is scaled to 1e6 so ordinary inputs no longer truncate to
+ *    zero, and a zero grade reverts instead of recording silently.    (D4)
+ *  - Soulbound is symmetric with a one-way enableTransfers() unlock;
+ *    the owner holds no transfer privilege others lack.               (D5)
+ *  - approve() reverts while transfers are locked, so no unusable
+ *    allowance can be observed by an integrator.                      (D6)
+ *  - Paginated reads return an empty page instead of reverting.       (D7)
+ */
+contract DigitalOre is ERC20, SovereignOwnable, MultiSigGoverned, ReentrancyGuard {
+    // ============================================================ constants
+
+    /// @notice Hard ceiling on total supply. Not governable.
+    uint256 public constant MAX_SUPPLY = 1_000_000 * 10 ** 18;
+
+    /// @notice Grade is reported on a 0 .. 1e6 scale.
+    uint256 public constant GRADE_SCALE = 1_000_000;
+
+    /// @notice Dividend rate applied per matching byproduct record, in
+    ///         millionths (1000 / 1e6 = 0.1%). Not governable.
+    uint256 public constant DIVIDEND_RATE_PPM = 1000;
+
+    /// @notice Guard rails on the governable rate limit.
+    uint256 public constant MIN_PERIOD_SECONDS = 1 hours;
+    uint256 public constant MAX_PERIOD_SECONDS = 365 days;
+
+    /// @notice Cap on records processed in one paginated call.
+    uint256 public constant MAX_PAGE = 100;
+
+    // ================================================================ state
+
+    /// @notice Running total of all grades recorded. O(1) read.
+    uint256 public totalByproductAccrued;
+
+    /// @notice Mint allowance per rolling period.
+    uint256 public mintCapPerPeriod = 100_000 * 10 ** 18;
+
+    /// @notice Length of the rolling period, in SECONDS (default ~11.5 days).
+    uint256 public periodDurationSeconds = 993_600;
+
+    /// @notice Start timestamp of the current period.
+    uint256 public periodStartedAt;
+
+    /// @notice Amount minted so far in the current period.
+    uint256 public currentPeriodMinted;
+
+    /// @notice One-way soulbound unlock. False means no holder may transfer.
+    bool public transfersEnabled;
+
+    struct ByproductRecord {
+        address operator;
+        uint256 grade;
+        uint256 timestamp;
+        string description;
+    }
+
+    ByproductRecord[] private _byproductHistory;
+
+    /// @notice Total dividend credit ever accrued to an operator.
+    mapping(address => uint256) public dividendAccrued;
+
+    /// @notice Portion of that credit already redeemed for DOU.
+    mapping(address => uint256) public dividendClaimed;
+
+    /// @notice Next unprocessed history index per operator. Prevents replay.
+    mapping(address => uint256) public dividendCursor;
+
+    // =============================================================== events
+
+    event ByproductRefined(address indexed operator, uint256 grade, uint256 timestamp, string description);
+    event DividendAccrued(address indexed operator, uint256 amount, uint256 newCursor);
+    event DividendClaimed(address indexed operator, uint256 amount);
+    event MintCapUpdated(uint256 newCap);
+    event PeriodDurationUpdated(uint256 newDurationSeconds);
+    event PeriodRolled(uint256 startedAt);
+    event TransfersEnabled();
+
+    // =============================================================== errors
+
+    error InvalidOperator();
+    error InvalidScores();
+    error GradeRoundsToZero();
+    error InvalidAmount();
+    error InvalidPage();
+    error ExceedsMaxSupply();
+    error ExceedsPeriodCap();
+    error InvalidCap();
+    error InvalidDuration();
+    error NothingToClaim();
+    error Soulbound();
+
+    // ========================================================== constructor
+
+    /// @param initialSigners Governance signer set (e.g. three Safe owners).
+    /// @param initialThreshold Approvals required, e.g. 2 for 2-of-3.
+    constructor(address[] memory initialSigners, uint256 initialThreshold)
+        ERC20("Digital Ore", "DOU")
+        SovereignOwnable(msg.sender)
+        MultiSigGoverned(initialSigners, initialThreshold)
+    {
+        periodStartedAt = block.timestamp;
+        emit PeriodRolled(block.timestamp);
+    }
+
+    /// @dev Rolls the rate-limit window forward if it has elapsed.
+    modifier rollPeriod() {
+        if (block.timestamp >= periodStartedAt + periodDurationSeconds) {
+            periodStartedAt = block.timestamp;
+            currentPeriodMinted = 0;
+            emit PeriodRolled(block.timestamp);
+        }
+        _;
+    }
+
+    // ================================================= byproduct refinement
+
+    /// @notice Record refined byproduct for an operator.
+    /// @dev grade = n*d*s*t scaled to 0..GRADE_SCALE. All four scores are 0..100,
+    ///      so the product is at most 1e8 and the division by 100 is exact at the
+    ///      top of the range. A grade that rounds to zero reverts rather than
+    ///      recording a meaningless entry.
+    function refineByproduct(
+        address operator,
+        uint256 novelty,
+        uint256 density,
+        uint256 sigilWeight,
+        uint256 sourceTrust,
+        string calldata description
+    ) external onlyOwner {
+        if (operator == address(0)) revert InvalidOperator();
+        if (novelty > 100 || density > 100 || sigilWeight > 100 || sourceTrust > 100) revert InvalidScores();
+
+        uint256 grade = (novelty * density * sigilWeight * sourceTrust) / 100;
+        if (grade == 0) revert GradeRoundsToZero();
+
+        _byproductHistory.push(
+            ByproductRecord({
+                operator: operator,
+                grade: grade,
+                timestamp: block.timestamp,
+                description: description
+            })
+        );
+        totalByproductAccrued += grade;
+
+        emit ByproductRefined(operator, grade, block.timestamp, description);
+    }
+
+    function getTotalByproductRefined() external view returns (uint256) {
+        return totalByproductAccrued;
+    }
+
+    function getByproductHistoryLength() external view returns (uint256) {
+        return _byproductHistory.length;
+    }
+
+    /// @notice Paginated history read. Returns an empty page past the end
+    ///         instead of reverting, so a fresh deployment is readable.
+    function getByproductHistory(uint256 start, uint256 limit)
+        external
+        view
+        returns (ByproductRecord[] memory page)
+    {
+        if (limit == 0 || limit > MAX_PAGE) revert InvalidPage();
+        uint256 len = _byproductHistory.length;
+        if (start >= len) return new ByproductRecord[](0);
+
+        uint256 end = start + limit > len ? len : start + limit;
+        page = new ByproductRecord[](end - start);
+        for (uint256 i = start; i < end; i++) {
+            page[i - start] = _byproductHistory[i];
+        }
+    }
+
+    // ==================================================== dividend accrual
+
+    /// @notice Accrue dividend credit for an operator over the next unprocessed
+    ///         slice of history.
+    /// @dev The starting index is the stored cursor, not a caller argument, so
+    ///      the same records can never be paid twice regardless of call order or
+    ///      repetition. The cursor always advances, so repeated calls terminate.
+    function accrueDividend(address operator, uint256 derivativeValue, uint256 limit) external onlyOwner {
+        if (operator == address(0)) revert InvalidOperator();
+        if (derivativeValue == 0) revert InvalidAmount();
+        if (limit == 0 || limit > MAX_PAGE) revert InvalidPage();
+
+        uint256 len = _byproductHistory.length;
+        uint256 start = dividendCursor[operator];
+        if (start >= len) revert NothingToClaim();
+
+        uint256 end = start + limit > len ? len : start + limit;
+        uint256 perRecord = (derivativeValue * DIVIDEND_RATE_PPM) / 1_000_000;
+
+        uint256 total;
+        for (uint256 i = start; i < end; i++) {
+            if (_byproductHistory[i].operator == operator) {
+                total += perRecord;
+            }
+        }
+
+        dividendCursor[operator] = end;
+        if (total > 0) {
+            dividendAccrued[operator] += total;
+        }
+        emit DividendAccrued(operator, total, end);
+    }
+
+    /// @notice Unredeemed dividend credit for an operator.
+    function claimableDividend(address operator) public view returns (uint256) {
+        return dividendAccrued[operator] - dividendClaimed[operator];
+    }
+
+    /// @notice Redeem accrued dividend credit for DOU.
+    /// @dev Subject to the same supply ceiling and rate limit as owner minting,
+    ///      so redemption cannot be used to bypass either.
+    function claimDividend() external rollPeriod nonReentrant returns (uint256 amount) {
+        amount = claimableDividend(msg.sender);
+        if (amount == 0) revert NothingToClaim();
+        if (totalSupply() + amount > MAX_SUPPLY) revert ExceedsMaxSupply();
+        if (currentPeriodMinted + amount > mintCapPerPeriod) revert ExceedsPeriodCap();
+
+        dividendClaimed[msg.sender] += amount;
+        currentPeriodMinted += amount;
+        _mint(msg.sender, amount);
+        emit DividendClaimed(msg.sender, amount);
+    }
+
+    /// @dev Retained for interface compatibility with the pre-audit draft.
+    function getDividendAccrual(address operator) external view returns (uint256) {
+        return dividendAccrued[operator];
+    }
+
+    // ============================================================== minting
+
+    /// @notice Owner mint, bounded by the absolute ceiling and the rolling cap.
+    function mint(address to, uint256 amount) external onlyOwner rollPeriod {
+        if (to == address(0)) revert InvalidOperator();
+        if (amount == 0) revert InvalidAmount();
+        if (totalSupply() + amount > MAX_SUPPLY) revert ExceedsMaxSupply();
+        if (currentPeriodMinted + amount > mintCapPerPeriod) revert ExceedsPeriodCap();
+
+        currentPeriodMinted += amount;
+        _mint(to, amount);
+    }
+
+    // =========================================== governed parameter changes
+
+    /// @notice Requires threshold approvals. Cannot exceed MAX_SUPPLY, so the
+    ///         rate limit can never be widened into irrelevance in one step.
+    function updateMintCap(uint256 newCap) external onlyGovernance {
+        if (newCap == 0 || newCap > MAX_SUPPLY) revert InvalidCap();
+        mintCapPerPeriod = newCap;
+        emit MintCapUpdated(newCap);
+    }
+
+    /// @notice Requires threshold approvals. Bounded so governance cannot
+    ///         collapse the window to a single second and defeat the cap.
+    function updatePeriodDuration(uint256 newDurationSeconds) external onlyGovernance {
+        if (newDurationSeconds < MIN_PERIOD_SECONDS || newDurationSeconds > MAX_PERIOD_SECONDS) {
+            revert InvalidDuration();
+        }
+        periodDurationSeconds = newDurationSeconds;
+        emit PeriodDurationUpdated(newDurationSeconds);
+    }
+
+    // =================================================== transfer semantics
+
+    /// @notice One-way unlock. Once enabled, transfers cannot be re-locked.
+    function enableTransfers() external onlyOwner {
+        transfersEnabled = true;
+        emit TransfersEnabled();
+    }
+
+    function transfer(address to, uint256 amount) public override returns (bool) {
+        if (!transfersEnabled) revert Soulbound();
+        return super.transfer(to, amount);
+    }
+
+    function transferFrom(address from, address to, uint256 amount) public override returns (bool) {
+        if (!transfersEnabled) revert Soulbound();
+        return super.transferFrom(from, to, amount);
+    }
+
+    /// @dev Reverts while locked so integrators cannot observe an allowance
+    ///      that no transfer could ever spend.
+    function approve(address spender, uint256 amount) public override returns (bool) {
+        if (!transfersEnabled) revert Soulbound();
+        return super.approve(spender, amount);
+    }
+}
+
+==============================================================================
+FILE   : src/KetherGateRegistry.sol
+SHA256 : 89245a6c1d971d138664f0bb7b80164ffd1c2c227ad43401eba044e9658814b3
+==============================================================================
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.24;
+
+import "./SovereignOwnable.sol";
+import "./MultiSigGoverned.sol";
+
+/**
+ * @title KetherGateRegistry
+ * @notice Sovereign identity registration with normalised unique names and
+ *         owner-recorded external anchor CLAIMS.
+ *
+ * Doctrine note on naming — this contract cannot see the Bitcoin chain, so it
+ * cannot verify that a manifesto hash was anchored at a given height. It
+ * records what the owner ASSERTS. Everything here is therefore named as a
+ * claim: `attestClaim`, `claimedBitcoinBlockHeight`, `ClaimAttested`. Real
+ * verification happens off-chain against the OpenTimestamps receipt. Calling a
+ * stored assertion "verified" would be exactly the theater this project rejects.
+ *
+ * Changes from the pre-audit draft, each closing a finding:
+ *  - Two-step ownership via SovereignOwnable; renounce reverts.       (B2)
+ *  - Real M-of-N threshold governance via MultiSigGoverned.           (B1, K6)
+ *  - Names are normalised and charset-restricted before hashing, so
+ *    case and homoglyph variants cannot be used to impersonate.       (K1)
+ *  - Registration is bounded (name length, capability count/length)
+ *    and every array read is paginated.                               (K2)
+ *  - Identities can be updated and deregistered; the name is released
+ *    and `entityIndex` is genuinely used for swap-and-pop removal.    (K3)
+ *  - verifyIdentity renamed to attestClaim and re-labelled throughout. (K4)
+ *  - Re-anchoring a hash to a DIFFERENT height reverts instead of
+ *    silently overwriting the earlier record.                         (K5)
+ */
+contract KetherGateRegistry is SovereignOwnable, MultiSigGoverned {
+    // ============================================================ constants
+
+    uint256 public constant MIN_NAME_LENGTH = 3;
+    uint256 public constant MAX_NAME_LENGTH = 32;
+    uint256 public constant MAX_TEXT_LENGTH = 128;
+    uint256 public constant MAX_CAPABILITIES = 16;
+    uint256 public constant MAX_PAGE = 100;
+
+    // ================================================================ types
+
+    struct Identity {
+        address entityAddress;
+        string name;
+        /// @dev Normalised form actually used for uniqueness.
+        bytes32 nameHash;
+        string organization;
+        string sovereignRole;
+        /// @dev Owner-asserted manifesto hash. NOT verified on-chain.
+        bytes32 claimedManifestHash;
+        /// @dev Owner-asserted Bitcoin block height. NOT verified on-chain.
+        uint256 claimedBitcoinBlockHeight;
+        uint256 registeredAt;
+        /// @dev True once the owner has recorded a claim. Means "claim on
+        ///      record", never "independently verified".
+        bool attested;
+        string[] capabilities;
+    }
+
+    struct SovereignStance {
+        bool zeroTelemetry;
+        bool zeroVendorMiddleware;
+        bool localFirst;
+        bool operatorOwnership;
+        bool realDataOrHonestStandby;
+        uint256 committedAt;
+    }
+
+    // ================================================================ state
+
+    mapping(address => Identity) private _identities;
+
+    /// @notice normalised name hash => entity address.
+    mapping(bytes32 => address) public nameRegistry;
+
+    address[] private _registeredEntities;
+
+    /// @notice entity => index into _registeredEntities. Valid only while registered.
+    mapping(address => uint256) private _entityIndex;
+
+    mapping(address => SovereignStance) private _sovereignStances;
+
+    /// @notice claimed manifest hash => claimed Bitcoin block height.
+    mapping(bytes32 => uint256) public claimedAttestations;
+
+    // =============================================================== events
+
+    event IdentityRegistered(address indexed entity, bytes32 indexed nameHash, string name, uint256 timestamp);
+    event IdentityUpdated(address indexed entity, string organization, string sovereignRole);
+    event IdentityDeregistered(address indexed entity, bytes32 indexed nameHash);
+    event ClaimAttested(
+        address indexed entity,
+        bytes32 indexed claimedManifestHash,
+        uint256 claimedBitcoinBlockHeight,
+        uint256 timestamp
+    );
+    event SovereignStanceCommitted(address indexed entity, uint256 timestamp);
+
+    // =============================================================== errors
+
+    error NameRequired();
+    error NameTooShort();
+    error NameTooLong();
+    error NameInvalidCharacter();
+    error NameTaken();
+    error TextTooLong();
+    error TooManyCapabilities();
+    error AlreadyRegistered();
+    error NotRegistered();
+    error InvalidClaimHash();
+    error InvalidBlockHeight();
+    error ConflictingAttestation();
+    error InvalidPage();
+
+    // ========================================================== constructor
+
+    constructor(address[] memory initialSigners, uint256 initialThreshold)
+        SovereignOwnable(msg.sender)
+        MultiSigGoverned(initialSigners, initialThreshold)
+    {}
+
+    modifier registered(address entity) {
+        if (_identities[entity].entityAddress == address(0)) revert NotRegistered();
+        _;
+    }
+
+    // ================================================ name normalisation
+
+    /**
+     * @notice Normalise a name to its uniqueness key.
+     * @dev Rejects anything outside a strict ASCII charset before lowercasing.
+     *      This is what stops "NEXINUS" / "nexinus" / "NEXINUS " / Cyrillic
+     *      homoglyphs from registering as distinct identities: non-ASCII bytes
+     *      revert outright, and case is folded, so exactly one canonical form
+     *      of any acceptable name can exist.
+     *      Allowed: a-z, A-Z, 0-9, '-', '_'. No spaces, no leading/trailing
+     *      whitespace possible, no Unicode.
+     */
+    function normalizeName(string memory name) public pure returns (bytes32) {
+        bytes memory b = bytes(name);
+        uint256 len = b.length;
+        if (len == 0) revert NameRequired();
+        if (len < MIN_NAME_LENGTH) revert NameTooShort();
+        if (len > MAX_NAME_LENGTH) revert NameTooLong();
+
+        bytes memory out = new bytes(len);
+        for (uint256 i = 0; i < len; i++) {
+            uint8 c = uint8(b[i]);
+            if (c >= 0x41 && c <= 0x5A) {
+                out[i] = bytes1(c + 32); // A-Z -> a-z
+            } else if ((c >= 0x61 && c <= 0x7A) || (c >= 0x30 && c <= 0x39) || c == 0x2D || c == 0x5F) {
+                out[i] = bytes1(c); // a-z, 0-9, '-', '_'
+            } else {
+                revert NameInvalidCharacter();
+            }
+        }
+        return keccak256(out);
+    }
+
+    function isNameAvailable(string calldata name) external view returns (bool) {
+        return nameRegistry[normalizeName(name)] == address(0);
+    }
+
+    // ================================================ identity registration
+
+    function registerIdentity(
+        string calldata name,
+        string calldata organization,
+        string calldata sovereignRole,
+        string[] calldata capabilities
+    ) external {
+        if (_identities[msg.sender].entityAddress != address(0)) revert AlreadyRegistered();
+        if (bytes(organization).length == 0) revert NameRequired();
+        _checkText(organization);
+        _checkText(sovereignRole);
+        _checkCapabilities(capabilities);
+
+        bytes32 nameHash = normalizeName(name);
+        if (nameRegistry[nameHash] != address(0)) revert NameTaken();
+
+        Identity storage id = _identities[msg.sender];
+        id.entityAddress = msg.sender;
+        id.name = name;
+        id.nameHash = nameHash;
+        id.organization = organization;
+        id.sovereignRole = sovereignRole;
+        id.registeredAt = block.timestamp;
+        for (uint256 i = 0; i < capabilities.length; i++) {
+            id.capabilities.push(capabilities[i]);
+        }
+
+        nameRegistry[nameHash] = msg.sender;
+        _entityIndex[msg.sender] = _registeredEntities.length;
+        _registeredEntities.push(msg.sender);
+
+        emit IdentityRegistered(msg.sender, nameHash, name, block.timestamp);
+    }
+
+    /// @notice Update mutable identity fields. The name is immutable; release it
+    ///         by deregistering.
+    function updateIdentity(
+        string calldata organization,
+        string calldata sovereignRole,
+        string[] calldata capabilities
+    ) external registered(msg.sender) {
+        if (bytes(organization).length == 0) revert NameRequired();
+        _checkText(organization);
+        _checkText(sovereignRole);
+        _checkCapabilities(capabilities);
+
+        Identity storage id = _identities[msg.sender];
+        id.organization = organization;
+        id.sovereignRole = sovereignRole;
+        delete id.capabilities;
+        for (uint256 i = 0; i < capabilities.length; i++) {
+            id.capabilities.push(capabilities[i]);
+        }
+        // A changed identity invalidates any prior anchor claim about it.
+        id.attested = false;
+        id.claimedManifestHash = bytes32(0);
+        id.claimedBitcoinBlockHeight = 0;
+
+        emit IdentityUpdated(msg.sender, organization, sovereignRole);
+    }
+
+    /// @notice Remove your identity and release the name for reuse.
+    /// @dev Swap-and-pop using `_entityIndex`, which the draft stored but never
+    ///      read. Historical `claimedAttestations` entries are intentionally
+    ///      retained: the anchor record is append-only.
+    function deregisterIdentity() external registered(msg.sender) {
+        bytes32 nameHash = _identities[msg.sender].nameHash;
+
+        uint256 idx = _entityIndex[msg.sender];
+        uint256 last = _registeredEntities.length - 1;
+        if (idx != last) {
+            address moved = _registeredEntities[last];
+            _registeredEntities[idx] = moved;
+            _entityIndex[moved] = idx;
+        }
+        _registeredEntities.pop();
+
+        delete _entityIndex[msg.sender];
+        delete nameRegistry[nameHash];
+        delete _identities[msg.sender];
+        delete _sovereignStances[msg.sender];
+
+        emit IdentityDeregistered(msg.sender, nameHash);
+    }
+
+    // =========================================================== claim record
+
+    /**
+     * @notice Record the owner's ASSERTION that an entity's manifesto hash is
+     *         anchored at a given Bitcoin height.
+     * @dev This performs no verification and cannot. A consumer must check the
+     *      OpenTimestamps receipt for `claimedManifestHash` independently.
+     *      Re-recording the same hash at a DIFFERENT height reverts, so the
+     *      anchor record cannot be silently rewritten.
+     */
+    function attestClaim(address entity, bytes32 claimedManifestHash, uint256 claimedBitcoinBlockHeight)
+        external
+        onlyOwner
+        registered(entity)
+    {
+        if (claimedManifestHash == bytes32(0)) revert InvalidClaimHash();
+        if (claimedBitcoinBlockHeight == 0) revert InvalidBlockHeight();
+
+        uint256 existing = claimedAttestations[claimedManifestHash];
+        if (existing != 0 && existing != claimedBitcoinBlockHeight) revert ConflictingAttestation();
+
+        Identity storage id = _identities[entity];
+        id.claimedManifestHash = claimedManifestHash;
+        id.claimedBitcoinBlockHeight = claimedBitcoinBlockHeight;
+        id.attested = true;
+
+        claimedAttestations[claimedManifestHash] = claimedBitcoinBlockHeight;
+
+        emit ClaimAttested(entity, claimedManifestHash, claimedBitcoinBlockHeight, block.timestamp);
+    }
+
+    function getClaimedAttestation(bytes32 claimedManifestHash) external view returns (uint256) {
+        return claimedAttestations[claimedManifestHash];
+    }
+
+    // ===================================================== sovereign stance
+
+    function commitSovereignStance(
+        bool zeroTelemetry,
+        bool zeroVendorMiddleware,
+        bool localFirst,
+        bool operatorOwnership,
+        bool realDataOrHonestStandby
+    ) external registered(msg.sender) {
+        _sovereignStances[msg.sender] = SovereignStance({
+            zeroTelemetry: zeroTelemetry,
+            zeroVendorMiddleware: zeroVendorMiddleware,
+            localFirst: localFirst,
+            operatorOwnership: operatorOwnership,
+            realDataOrHonestStandby: realDataOrHonestStandby,
+            committedAt: block.timestamp
+        });
+        emit SovereignStanceCommitted(msg.sender, block.timestamp);
+    }
+
+    function getSovereignStance(address entity)
+        external
+        view
+        registered(entity)
+        returns (SovereignStance memory)
+    {
+        return _sovereignStances[entity];
+    }
+
+    // ================================================================ reads
+
+    function getIdentity(address entity) external view registered(entity) returns (Identity memory) {
+        return _identities[entity];
+    }
+
+    function getIdentityByName(string calldata name) external view returns (Identity memory) {
+        address entity = nameRegistry[normalizeName(name)];
+        if (entity == address(0)) revert NotRegistered();
+        return _identities[entity];
+    }
+
+    function getRegisteredEntitiesCount() external view returns (uint256) {
+        return _registeredEntities.length;
+    }
+
+    /// @notice Paginated. The draft's unbounded `getRegisteredEntities()` is
+    ///         deliberately absent — permissionless registration makes a
+    ///         full-array read a denial-of-service vector for every consumer.
+    function getRegisteredEntities(uint256 start, uint256 limit)
+        external
+        view
+        returns (address[] memory page)
+    {
+        if (limit == 0 || limit > MAX_PAGE) revert InvalidPage();
+        uint256 len = _registeredEntities.length;
+        if (start >= len) return new address[](0);
+
+        uint256 end = start + limit > len ? len : start + limit;
+        page = new address[](end - start);
+        for (uint256 i = start; i < end; i++) {
+            page[i - start] = _registeredEntities[i];
+        }
+    }
+
+    // ============================================================== helpers
+
+    function _checkText(string calldata text) private pure {
+        if (bytes(text).length > MAX_TEXT_LENGTH) revert TextTooLong();
+    }
+
+    function _checkCapabilities(string[] calldata capabilities) private pure {
+        if (capabilities.length > MAX_CAPABILITIES) revert TooManyCapabilities();
+        for (uint256 i = 0; i < capabilities.length; i++) {
+            if (bytes(capabilities[i]).length > MAX_TEXT_LENGTH) revert TextTooLong();
+        }
+    }
+}
+
+==============================================================================
+FILE   : test/HardenedContracts.test.js
+SHA256 : 9f5bb2071e245212a01fb17ea8cd3574ee1740c5ebd5c44a0ec3ee36d3c68898
+==============================================================================
+const { expect } = require("chai");
+const { ethers } = require("hardhat");
+
+// Regression suite for the three pre-audit blockers plus the individual
+// findings raised in the review of the submitted drafts.
+//
+// B1 — threshold governance is real (not "any single signer")
+// B2 — two-step ownership, renounce disabled
+// D1..D7, K1..K6 — see docs/CONTRACT-REVIEW notes
+
+describe("SovereignOwnable (via DigitalOre)", () => {
+  let ore, owner, alice, bob, carol;
+
+  beforeEach(async () => {
+    [owner, alice, bob, carol] = await ethers.getSigners();
+    const Ore = await ethers.getContractFactory("DigitalOre");
+    ore = await Ore.deploy([owner.address, alice.address, bob.address], 2);
+  });
+
+  it("B2: ownership transfer is two-step and the nominee holds nothing until accept", async () => {
+    await ore.transferOwnership(carol.address);
+    expect(await ore.owner()).to.equal(owner.address);
+    expect(await ore.pendingOwner()).to.equal(carol.address);
+
+    await expect(ore.connect(carol).mint(carol.address, 1n)).to.be.revertedWithCustomError(ore, "NotOwner");
+
+    await ore.connect(carol).acceptOwnership();
+    expect(await ore.owner()).to.equal(carol.address);
+    expect(await ore.pendingOwner()).to.equal(ethers.ZeroAddress);
+  });
+
+  it("B2: a non-nominee cannot hijack the handoff", async () => {
+    await ore.transferOwnership(carol.address);
+    await expect(ore.connect(alice).acceptOwnership()).to.be.revertedWithCustomError(ore, "NotPendingOwner");
+  });
+
+  it("B2: the old owner loses authority after accept", async () => {
+    await ore.transferOwnership(carol.address);
+    await ore.connect(carol).acceptOwnership();
+    await expect(ore.mint(owner.address, 1n)).to.be.revertedWithCustomError(ore, "NotOwner");
+  });
+
+  it("B2: renounceOwnership always reverts", async () => {
+    await expect(ore.renounceOwnership()).to.be.revertedWithCustomError(ore, "RenounceDisabled");
+  });
+
+  it("B2: ownership cannot be sent to the zero address", async () => {
+    await expect(ore.transferOwnership(ethers.ZeroAddress)).to.be.revertedWithCustomError(ore, "ZeroAddress");
+  });
+
+  it("a nomination can be cancelled", async () => {
+    await ore.transferOwnership(carol.address);
+    await ore.cancelOwnershipTransfer();
+    await expect(ore.connect(carol).acceptOwnership()).to.be.revertedWithCustomError(ore, "NotPendingOwner");
+  });
+});
+
+describe("MultiSigGoverned (via DigitalOre)", () => {
+  let ore, owner, alice, bob, mallory;
+  const CAP = 50_000n * 10n ** 18n;
+
+  const encodeCap = (v) => ore.interface.encodeFunctionData("updateMintCap", [v]);
+
+  beforeEach(async () => {
+    [owner, alice, bob, mallory] = await ethers.getSigners();
+    const Ore = await ethers.getContractFactory("DigitalOre");
+    ore = await Ore.deploy([owner.address, alice.address, bob.address], 2);
+  });
+
+  it("B1: one signer alone cannot change a governed parameter", async () => {
+    const before = await ore.mintCapPerPeriod();
+    await ore.propose(encodeCap(CAP)); // proposer auto-approves => 1 of 2
+    await expect(ore.executeProposal(0)).to.be.revertedWithCustomError(ore, "ThresholdNotMet");
+    expect(await ore.mintCapPerPeriod()).to.equal(before);
+  });
+
+  it("B1: a governed function cannot be called directly, even by the owner", async () => {
+    await expect(ore.updateMintCap(CAP)).to.be.revertedWithCustomError(ore, "NotGovernance");
+  });
+
+  it("B1: threshold approvals do change the parameter", async () => {
+    await ore.propose(encodeCap(CAP));
+    await ore.connect(alice).approveProposal(0);
+    await ore.executeProposal(0);
+    expect(await ore.mintCapPerPeriod()).to.equal(CAP);
+  });
+
+  it("B1: the same signer cannot approve twice to fake a threshold", async () => {
+    await ore.propose(encodeCap(CAP));
+    await expect(ore.approveProposal(0)).to.be.revertedWithCustomError(ore, "AlreadyApproved");
+  });
+
+  it("B1: a non-signer can neither propose nor approve", async () => {
+    await expect(ore.connect(mallory).propose(encodeCap(CAP))).to.be.revertedWithCustomError(ore, "NotSigner");
+    await ore.propose(encodeCap(CAP));
+    await expect(ore.connect(mallory).approveProposal(0)).to.be.revertedWithCustomError(ore, "NotSigner");
+  });
+
+  it("a revoked approval drops the count back below threshold", async () => {
+    await ore.propose(encodeCap(CAP));
+    await ore.connect(alice).approveProposal(0);
+    await ore.connect(alice).revokeProposalApproval(0);
+    await expect(ore.executeProposal(0)).to.be.revertedWithCustomError(ore, "ThresholdNotMet");
+  });
+
+  it("a proposal cannot be executed twice", async () => {
+    await ore.propose(encodeCap(CAP));
+    await ore.connect(alice).approveProposal(0);
+    await ore.executeProposal(0);
+    await expect(ore.executeProposal(0)).to.be.revertedWithCustomError(ore, "ProposalClosed");
+  });
+
+  it("a cancelled proposal cannot execute", async () => {
+    await ore.propose(encodeCap(CAP));
+    await ore.connect(alice).approveProposal(0);
+    await ore.cancelProposal(0);
+    await expect(ore.executeProposal(0)).to.be.revertedWithCustomError(ore, "ProposalClosed");
+  });
+
+  it("the signer set is itself threshold-governed", async () => {
+    const data = ore.interface.encodeFunctionData("addSigner", [mallory.address]);
+    await ore.propose(data);
+    await expect(ore.executeProposal(0)).to.be.revertedWithCustomError(ore, "ThresholdNotMet");
+    await ore.connect(alice).approveProposal(0);
+    await ore.executeProposal(0);
+    expect(await ore.isSigner(mallory.address)).to.equal(true);
+    expect(await ore.signerCount()).to.equal(4n);
+  });
+
+  it("signers cannot be reduced below the threshold", async () => {
+    const remove = (a) => ore.interface.encodeFunctionData("removeSigner", [a]);
+    await ore.propose(remove(bob.address));
+    await ore.connect(alice).approveProposal(0);
+    await ore.executeProposal(0);
+    expect(await ore.signerCount()).to.equal(2n);
+
+    await ore.propose(remove(alice.address));
+    await ore.connect(alice).approveProposal(1);
+    await expect(ore.executeProposal(1)).to.be.revertedWithCustomError(ore, "ExecutionFailed");
+  });
+
+  it("deployment rejects a threshold larger than the signer set", async () => {
+    const Ore = await ethers.getContractFactory("DigitalOre");
+    await expect(Ore.deploy([owner.address], 2)).to.be.revertedWithCustomError(Ore, "InvalidThreshold");
+  });
+});
+
+describe("DigitalOre", () => {
+  let ore, owner, alice, bob;
+  const ONE = 10n ** 18n;
+
+  beforeEach(async () => {
+    [owner, alice, bob] = await ethers.getSigners();
+    const Ore = await ethers.getContractFactory("DigitalOre");
+    ore = await Ore.deploy([owner.address, alice.address, bob.address], 2);
+  });
+
+  it("D1: the rate-limit window is denominated in seconds, matching the timestamp check", async () => {
+    // default ~11.5 days
+    expect(await ore.periodDurationSeconds()).to.equal(993_600n);
+
+    await ore.mint(alice.address, 100_000n * ONE);
+    await expect(ore.mint(alice.address, ONE)).to.be.revertedWithCustomError(ore, "ExceedsPeriodCap");
+
+    await ethers.provider.send("evm_increaseTime", [993_600]);
+    await ethers.provider.send("evm_mine", []);
+    await ore.mint(alice.address, ONE); // window rolled
+  });
+
+  it("D1: governance cannot collapse the window to defeat the cap", async () => {
+    const data = ore.interface.encodeFunctionData("updatePeriodDuration", [1]);
+    await ore.propose(data);
+    await ore.connect(alice).approveProposal(0);
+    await expect(ore.executeProposal(0)).to.be.revertedWithCustomError(ore, "ExecutionFailed");
+  });
+
+  it("D1: governance cannot raise the period cap above MAX_SUPPLY", async () => {
+    const max = await ore.MAX_SUPPLY();
+    const data = ore.interface.encodeFunctionData("updateMintCap", [max + 1n]);
+    await ore.propose(data);
+    await ore.connect(alice).approveProposal(0);
+    await expect(ore.executeProposal(0)).to.be.revertedWithCustomError(ore, "ExecutionFailed");
+  });
+
+  it("D1: MAX_SUPPLY is an absolute ceiling", async () => {
+    const max = await ore.MAX_SUPPLY();
+    const bump = ore.interface.encodeFunctionData("updateMintCap", [max]);
+    await ore.propose(bump);
+    await ore.connect(alice).approveProposal(0);
+    await ore.executeProposal(0);
+
+    await ore.mint(alice.address, max);
+    await expect(ore.mint(alice.address, 1n)).to.be.revertedWithCustomError(ore, "ExceedsMaxSupply");
+  });
+
+  it("D2: the same history slice cannot be paid twice", async () => {
+    await ore.refineByproduct(alice.address, 50, 50, 50, 50, "a");
+    await ore.accrueDividend(alice.address, 1_000_000n, 100);
+    const first = await ore.dividendAccrued(alice.address);
+    expect(first).to.be.greaterThan(0n);
+
+    await expect(ore.accrueDividend(alice.address, 1_000_000n, 100)).to.be.revertedWithCustomError(
+      ore,
+      "NothingToClaim",
+    );
+    expect(await ore.dividendAccrued(alice.address)).to.equal(first);
+  });
+
+  it("D2: the cursor advances only over unprocessed records", async () => {
+    await ore.refineByproduct(alice.address, 50, 50, 50, 50, "a");
+    await ore.accrueDividend(alice.address, 1_000_000n, 100);
+    const afterFirst = await ore.dividendAccrued(alice.address);
+
+    await ore.refineByproduct(alice.address, 50, 50, 50, 50, "b");
+    await ore.accrueDividend(alice.address, 1_000_000n, 100);
+    expect(await ore.dividendAccrued(alice.address)).to.equal(afterFirst * 2n);
+    expect(await ore.dividendCursor(alice.address)).to.equal(2n);
+  });
+
+  it("D3: accrued dividends are redeemable for DOU", async () => {
+    await ore.refineByproduct(alice.address, 50, 50, 50, 50, "a");
+    await ore.accrueDividend(alice.address, 1_000_000n, 100);
+
+    const claimable = await ore.claimableDividend(alice.address);
+    expect(claimable).to.be.greaterThan(0n);
+
+    await ore.connect(alice).claimDividend();
+    expect(await ore.balanceOf(alice.address)).to.equal(claimable);
+    expect(await ore.claimableDividend(alice.address)).to.equal(0n);
+    await expect(ore.connect(alice).claimDividend()).to.be.revertedWithCustomError(ore, "NothingToClaim");
+  });
+
+  it("D3: redemption respects the same supply ceiling as owner minting", async () => {
+    expect(await ore.MAX_SUPPLY()).to.equal(1_000_000n * ONE);
+  });
+
+  it("D4: modest scores no longer truncate to a zero grade", async () => {
+    await ore.refineByproduct(alice.address, 30, 30, 30, 30, "modest");
+    const page = await ore.getByproductHistory(0, 10);
+    expect(page[0].grade).to.equal((30n * 30n * 30n * 30n) / 100n);
+    expect(page[0].grade).to.be.greaterThan(0n);
+  });
+
+  it("D4: a grade that truly rounds to zero reverts rather than recording silently", async () => {
+    await expect(ore.refineByproduct(alice.address, 1, 1, 1, 1, "dust")).to.be.revertedWithCustomError(
+      ore,
+      "GradeRoundsToZero",
+    );
+  });
+
+  it("D4: scores above 100 are rejected", async () => {
+    await expect(ore.refineByproduct(alice.address, 101, 50, 50, 50, "x")).to.be.revertedWithCustomError(
+      ore,
+      "InvalidScores",
+    );
+  });
+
+  it("D5: soulbound applies to the owner too", async () => {
+    await ore.mint(owner.address, 10n * ONE);
+    await expect(ore.transfer(alice.address, ONE)).to.be.revertedWithCustomError(ore, "Soulbound");
+  });
+
+  it("D5: enableTransfers is owner-gated and one-way", async () => {
+    await ore.mint(alice.address, 10n * ONE);
+    await expect(ore.connect(alice).enableTransfers()).to.be.revertedWithCustomError(ore, "NotOwner");
+
+    await ore.enableTransfers();
+    expect(await ore.transfersEnabled()).to.equal(true);
+    await ore.connect(alice).transfer(bob.address, ONE);
+    expect(await ore.balanceOf(bob.address)).to.equal(ONE);
+
+    // no re-lock path exists
+    expect(ore.interface.fragments.some((f) => f.name === "disableTransfers")).to.equal(false);
+  });
+
+  it("D6: approve reverts while locked, so no unusable allowance is observable", async () => {
+    await expect(ore.connect(alice).approve(bob.address, ONE)).to.be.revertedWithCustomError(ore, "Soulbound");
+    await ore.enableTransfers();
+    await ore.connect(alice).approve(bob.address, ONE);
+    expect(await ore.allowance(alice.address, bob.address)).to.equal(ONE);
+  });
+
+  it("D7: paginated history returns an empty page instead of reverting when empty", async () => {
+    expect(await ore.getByproductHistoryLength()).to.equal(0n);
+    expect(await ore.getByproductHistory(0, 10)).to.deep.equal([]);
+    await expect(ore.getByproductHistory(0, 0)).to.be.revertedWithCustomError(ore, "InvalidPage");
+    await expect(ore.getByproductHistory(0, 101)).to.be.revertedWithCustomError(ore, "InvalidPage");
+  });
+
+  it("refinement and minting are owner-only", async () => {
+    await expect(
+      ore.connect(alice).refineByproduct(alice.address, 50, 50, 50, 50, "x"),
+    ).to.be.revertedWithCustomError(ore, "NotOwner");
+    await expect(ore.connect(alice).mint(alice.address, ONE)).to.be.revertedWithCustomError(ore, "NotOwner");
+  });
+
+  it("the running total matches the sum of recorded grades", async () => {
+    await ore.refineByproduct(alice.address, 40, 40, 40, 40, "a");
+    await ore.refineByproduct(bob.address, 60, 60, 60, 60, "b");
+    const expected = (40n ** 4n) / 100n + (60n ** 4n) / 100n;
+    expect(await ore.getTotalByproductRefined()).to.equal(expected);
+  });
+});
+
+describe("KetherGateRegistry", () => {
+  let reg, owner, alice, bob;
+
+  beforeEach(async () => {
+    [owner, alice, bob] = await ethers.getSigners();
+    const Reg = await ethers.getContractFactory("KetherGateRegistry");
+    reg = await Reg.deploy([owner.address, alice.address, bob.address], 2);
+  });
+
+  const register = (who, name) =>
+    reg.connect(who).registerIdentity(name, "Nexinus RI Systems", "operator", ["probe"]);
+
+  it("K1: case variants collide instead of registering separately", async () => {
+    await register(alice, "NEXINUS");
+    await expect(register(bob, "nexinus")).to.be.revertedWithCustomError(reg, "NameTaken");
+    await expect(register(bob, "NeXiNuS")).to.be.revertedWithCustomError(reg, "NameTaken");
+  });
+
+  it("K1: whitespace and non-ASCII homoglyphs are rejected outright", async () => {
+    await expect(register(alice, "NEXINUS ")).to.be.revertedWithCustomError(reg, "NameInvalidCharacter");
+    await expect(register(alice, " nexinus")).to.be.revertedWithCustomError(reg, "NameInvalidCharacter");
+    // Cyrillic 'е' (U+0435) in place of ASCII 'e'
+    await expect(register(alice, "n\u0435xinus")).to.be.revertedWithCustomError(reg, "NameInvalidCharacter");
+  });
+
+  it("K1: names are length-bounded", async () => {
+    await expect(register(alice, "ab")).to.be.revertedWithCustomError(reg, "NameTooShort");
+    await expect(register(alice, "a".repeat(33))).to.be.revertedWithCustomError(reg, "NameTooLong");
+  });
+
+  it("K1: normalizeName folds case deterministically", async () => {
+    expect(await reg.normalizeName("NEXINUS")).to.equal(await reg.normalizeName("nexinus"));
+    expect(await reg.normalizeName("nexinus")).to.not.equal(await reg.normalizeName("nexinus1"));
+  });
+
+  it("K2: entity reads are paginated and bounded", async () => {
+    await register(alice, "alpha-node");
+    await register(bob, "beta_node");
+    expect(await reg.getRegisteredEntitiesCount()).to.equal(2n);
+    expect(await reg.getRegisteredEntities(0, 1)).to.deep.equal([alice.address]);
+    expect(await reg.getRegisteredEntities(5, 10)).to.deep.equal([]);
+    await expect(reg.getRegisteredEntities(0, 101)).to.be.revertedWithCustomError(reg, "InvalidPage");
+    // the unbounded full-array getter must not exist
+    expect(reg.interface.fragments.some((f) => f.name === "getRegisteredEntities" && f.inputs.length === 0)).to.equal(
+      false,
+    );
+  });
+
+  it("K2: capability lists and text fields are bounded", async () => {
+    const many = Array.from({ length: 17 }, (_, i) => `c${i}`);
+    await expect(
+      reg.connect(alice).registerIdentity("alpha-node", "org", "role", many),
+    ).to.be.revertedWithCustomError(reg, "TooManyCapabilities");
+    await expect(
+      reg.connect(alice).registerIdentity("alpha-node", "o".repeat(129), "role", []),
+    ).to.be.revertedWithCustomError(reg, "TextTooLong");
+  });
+
+  it("K3: an identity can be deregistered and the name reused", async () => {
+    await register(alice, "alpha-node");
+    await reg.connect(alice).deregisterIdentity();
+    expect(await reg.getRegisteredEntitiesCount()).to.equal(0n);
+    expect(await reg.isNameAvailable("alpha-node")).to.equal(true);
+    await register(bob, "ALPHA-NODE");
+    expect(await reg.getRegisteredEntitiesCount()).to.equal(1n);
+  });
+
+  it("K3: swap-and-pop keeps the index consistent for the moved entity", async () => {
+    await register(alice, "alpha-node");
+    await register(bob, "beta-node");
+    await reg.connect(alice).deregisterIdentity();
+    expect(await reg.getRegisteredEntities(0, 10)).to.deep.equal([bob.address]);
+    await reg.connect(bob).deregisterIdentity();
+    expect(await reg.getRegisteredEntitiesCount()).to.equal(0n);
+  });
+
+  it("K3: an identity can be updated, which clears any prior anchor claim", async () => {
+    await register(alice, "alpha-node");
+    await reg.attestClaim(alice.address, ethers.id("manifesto"), 959472);
+    expect((await reg.getIdentity(alice.address)).attested).to.equal(true);
+
+    await reg.connect(alice).updateIdentity("New Org", "auditor", ["verify"]);
+    const id = await reg.getIdentity(alice.address);
+    expect(id.attested).to.equal(false);
+    expect(id.claimedBitcoinBlockHeight).to.equal(0n);
+    expect(id.organization).to.equal("New Org");
+  });
+
+  it("K4: the anchor record is named as a claim, not a verification", async () => {
+    const names = reg.interface.fragments.filter((f) => f.type === "function").map((f) => f.name);
+    expect(names).to.include("attestClaim");
+    expect(names).to.not.include("verifyIdentity");
+    await register(alice, "alpha-node");
+    await reg.attestClaim(alice.address, ethers.id("manifesto"), 959472);
+    expect(await reg.claimedAttestations(ethers.id("manifesto"))).to.equal(959472n);
+  });
+
+  it("K4: only the owner can record a claim, and only for a registered entity", async () => {
+    await register(alice, "alpha-node");
+    await expect(
+      reg.connect(bob).attestClaim(alice.address, ethers.id("m"), 1),
+    ).to.be.revertedWithCustomError(reg, "NotOwner");
+    await expect(reg.attestClaim(bob.address, ethers.id("m"), 1)).to.be.revertedWithCustomError(
+      reg,
+      "NotRegistered",
+    );
+  });
+
+  it("K5: re-anchoring a hash to a different height reverts instead of overwriting", async () => {
+    await register(alice, "alpha-node");
+    await register(bob, "beta-node");
+    const h = ethers.id("manifesto");
+    await reg.attestClaim(alice.address, h, 959472);
+    await expect(reg.attestClaim(bob.address, h, 111111)).to.be.revertedWithCustomError(
+      reg,
+      "ConflictingAttestation",
+    );
+    // same height is idempotent
+    await reg.attestClaim(bob.address, h, 959472);
+    expect(await reg.claimedAttestations(h)).to.equal(959472n);
+  });
+
+  it("K6: the threshold is enforced for registry governance too", async () => {
+    const data = reg.interface.encodeFunctionData("setThreshold", [3]);
+    await reg.propose(data);
+    await expect(reg.executeProposal(0)).to.be.revertedWithCustomError(reg, "ThresholdNotMet");
+    await reg.connect(alice).approveProposal(0);
+    await reg.executeProposal(0);
+    expect(await reg.threshold()).to.equal(3n);
+  });
+
+  it("one address may hold only one identity", async () => {
+    await register(alice, "alpha-node");
+    await expect(register(alice, "other-node")).to.be.revertedWithCustomError(reg, "AlreadyRegistered");
+  });
+
+  it("stance commitment requires registration", async () => {
+    await expect(
+      reg.connect(alice).commitSovereignStance(true, true, true, true, true),
+    ).to.be.revertedWithCustomError(reg, "NotRegistered");
+
+    await register(alice, "alpha-node");
+    await reg.connect(alice).commitSovereignStance(true, true, true, true, true);
+    const stance = await reg.getSovereignStance(alice.address);
+    expect(stance.zeroTelemetry).to.equal(true);
+    expect(stance.committedAt).to.be.greaterThan(0n);
+  });
+
+  it("lookup by name is case-insensitive and reverts when unknown", async () => {
+    await register(alice, "alpha-node");
+    expect((await reg.getIdentityByName("ALPHA-NODE")).entityAddress).to.equal(alice.address);
+    await expect(reg.getIdentityByName("no-such-node")).to.be.revertedWithCustomError(reg, "NotRegistered");
+  });
+});
+
+==============================================================================
+FILE   : scripts/deploy-blades.js
+SHA256 : 62f5c441f206bd885fa3b98eb542f191fda477ad93eb93161008df7bca6a176f
+==============================================================================
+// Deploy DigitalOre (DOU) and KetherGateRegistry with a real M-of-N signer set.
+//
+// Both constructors take (address[] signers, uint256 threshold). The threshold
+// is load bearing: governed parameter changes are reachable only through
+// propose -> approveProposal x threshold -> executeProposal.
+//
+// Usage (from /contracts):
+//   GOVERNANCE_SIGNERS=0xaaa,0xbbb,0xccc GOVERNANCE_THRESHOLD=2 \
+//     npx hardhat run scripts/deploy-blades.js --network baseSepolia
+//
+// Ownership (mint / refine / attest) starts on the deployer and should be
+// handed to the Safe with the two-step flow:
+//   transferOwnership(safe)  then  safe calls acceptOwnership()
+
+const { ethers } = require("hardhat");
+const fs = require("fs");
+const path = require("path");
+
+function readSigners(deployer) {
+  const raw = (process.env.GOVERNANCE_SIGNERS || "").trim();
+  if (!raw) {
+    console.warn("GOVERNANCE_SIGNERS not set — falling back to deployer-only, threshold 1.");
+    console.warn("This is acceptable for a local dry run ONLY. Never for a public deploy.");
+    return { signers: [deployer], threshold: 1 };
+  }
+  const signers = raw.split(",").map((s) => ethers.getAddress(s.trim()));
+  const threshold = Number(process.env.GOVERNANCE_THRESHOLD || 2);
+  if (!Number.isInteger(threshold) || threshold < 1 || threshold > signers.length) {
+    throw new Error(`GOVERNANCE_THRESHOLD must be an integer in 1..${signers.length}`);
+  }
+  if (new Set(signers).size !== signers.length) throw new Error("duplicate signer address");
+  return { signers, threshold };
+}
+
+async function main() {
+  const [deployer] = await ethers.getSigners();
+  const { signers, threshold } = readSigners(deployer.address);
+  const net = await ethers.provider.getNetwork();
+
+  console.log("network   :", net.name, `(chainId ${net.chainId})`);
+  console.log("deployer  :", deployer.address);
+  console.log("governance:", `${threshold}-of-${signers.length}`, signers.join(", "), "\n");
+
+  const Ore = await ethers.getContractFactory("DigitalOre");
+  const ore = await Ore.deploy(signers, threshold);
+  await ore.waitForDeployment();
+  const oreAddr = await ore.getAddress();
+  console.log("DigitalOre         :", oreAddr);
+
+  const Reg = await ethers.getContractFactory("KetherGateRegistry");
+  const reg = await Reg.deploy(signers, threshold);
+  await reg.waitForDeployment();
+  const regAddr = await reg.getAddress();
+  console.log("KetherGateRegistry :", regAddr);
+
+  // Post-deploy invariants. Any failure here is a hard stop.
+  const checks = [
+    ["DOU transfers locked at deploy", (await ore.transfersEnabled()) === false],
+    ["DOU supply is zero at deploy", (await ore.totalSupply()) === 0n],
+    ["DOU threshold recorded", (await ore.threshold()) === BigInt(threshold)],
+    ["DOU owner is deployer", (await ore.owner()) === deployer.address],
+    ["DOU pendingOwner empty", (await ore.pendingOwner()) === ethers.ZeroAddress],
+    ["Registry threshold recorded", (await reg.threshold()) === BigInt(threshold)],
+    ["Registry empty at deploy", (await reg.getRegisteredEntitiesCount()) === 0n],
+  ];
+
+  console.log("");
+  let failed = 0;
+  for (const [label, ok] of checks) {
+    console.log(`${ok ? "PASS " : "FAIL "} ${label}`);
+    if (!ok) failed++;
+  }
+  if (failed) throw new Error(`${failed} post-deploy check(s) failed`);
+
+  const out = {
+    chainId: Number(net.chainId),
+    deployer: deployer.address,
+    governance: { signers, threshold },
+    digitalOre: oreAddr,
+    ketherGateRegistry: regAddr,
+    deployedAt: new Date().toISOString(),
+  };
+  const file = path.join(__dirname, "..", `deployed-blades-${net.chainId}.json`);
+  fs.writeFileSync(file, JSON.stringify(out, null, 2) + "\n");
+  console.log(`\nWrote ${file}`);
+  console.log("\nNext: transferOwnership(<safe>) then have the Safe call acceptOwnership().");
+}
+
+main().catch((e) => {
+  console.error(e);
+  process.exitCode = 1;
+});
+
+==============================================================================
+FILE   : hardhat.config.cjs
+SHA256 : b924d8d96ebf020950804f687658b5b28a19dd28b98ac7b7534fc45eccbb3805
+==============================================================================
+// Hardhat config for Truth Coin (TRC) — Base Sepolia testnet deploy.
+// Usage (from /contracts):
+//   npm install
+//   cp .env.example .env      # fill in PRIVATE_KEY and (optionally) BASESCAN_API_KEY
+//   npx hardhat compile
+//   npx hardhat run scripts/deploy.js --network baseSepolia
+//
+// The deploy script prints the deployed address AND writes it to
+// contracts/deployed.json so you can paste it into
+// src/data/truth-coin-contract.ts.
+
+require("@nomicfoundation/hardhat-toolbox");
+require("dotenv").config();
+
+const PRIVATE_KEY = process.env.PRIVATE_KEY || "";
+const BASESCAN_API_KEY = process.env.BASESCAN_API_KEY || "";
+
+module.exports = {
+  solidity: {
+    version: "0.8.24",
+    settings: { optimizer: { enabled: true, runs: 200 } },
+  },
+  paths: {
+    sources: "./src",      // TruthCoin.sol lives at contracts/src/TruthCoin.sol
+    artifacts: "./artifacts",
+    cache: "./cache",
+    tests: "./test",
+  },
+  networks: {
+    baseSepolia: {
+      url: process.env.BASE_SEPOLIA_RPC_URL || "https://sepolia.base.org",
+      chainId: 84532,
+      accounts: PRIVATE_KEY ? [PRIVATE_KEY] : [],
+    },
+    sepolia: {
+      url: process.env.SEPOLIA_RPC_URL || "https://ethereum-sepolia-rpc.publicnode.com",
+      chainId: 11155111,
+      accounts: PRIVATE_KEY ? [PRIVATE_KEY] : [],
+    },
+  },
+  etherscan: {
+    apiKey: {
+      baseSepolia: BASESCAN_API_KEY,
+      sepolia: BASESCAN_API_KEY,
+    },
+    customChains: [
+      {
+        network: "baseSepolia",
+        chainId: 84532,
+        urls: {
+          apiURL: "https://api-sepolia.basescan.org/api",
+          browserURL: "https://sepolia.basescan.org",
+        },
+      },
+    ],
+  },
+};
+
+==============================================================================
+FILE   : package.json
+SHA256 : 9d4b79eb10d102ce24918ac896348be4b79821d4aba2ad137a43f16a4448c1cd
+==============================================================================
+{
+  "name": "truth-coin-contracts",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Hardhat scaffold to deploy TruthCoin.sol to Base Sepolia.",
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "deploy:local": "hardhat run scripts/deploy-local.js",
+    "preflight": "hardhat run scripts/preflight.js",
+    "deploy:base-sepolia": "hardhat run scripts/deploy.js --network baseSepolia",
+    "deploy:sepolia": "hardhat run scripts/deploy.js --network sepolia",
+    "verify:base-sepolia": "hardhat verify --network baseSepolia",
+    "readout": "hardhat run scripts/readout.js --network baseSepolia",
+    "safe:transfer": "node scripts/prepare-safe-transfer.js",
+    "audit:bundle": "node scripts/audit-bundle.js",
+    "deploy:blades": "hardhat run scripts/deploy-blades.js",
+    "deploy:blades:base-sepolia": "hardhat run scripts/deploy-blades.js --network baseSepolia"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "@openzeppelin/contracts": "^5.6.1",
+    "dotenv": "^16.4.5",
+    "hardhat": "^2.22.10"
+  }
+}
+
+==============================================================================
+BUNDLE SHA256 (of everything above this line):
+a007e822e2f678d54b652d41f5835130c24047879311f9022b37a9e2b7750c66
+Stamp this with OpenTimestamps before sending:
+  ots stamp truthcoin-audit-bundle-v2.txt
+==============================================================================
