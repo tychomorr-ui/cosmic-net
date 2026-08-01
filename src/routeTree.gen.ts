@@ -15,6 +15,9 @@ import { Route as TruthCoinRouteImport } from './routes/truth-coin'
 import { Route as SudoCoinRouteImport } from './routes/sudo-coin'
 import { Route as StatusRouteImport } from './routes/status'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as SitemapDocsDotxmlRouteImport } from './routes/sitemap-docs[.]xml'
+import { Route as SitemapCoreDotxmlRouteImport } from './routes/sitemap-core[.]xml'
+import { Route as SitemapBladesDotxmlRouteImport } from './routes/sitemap-blades[.]xml'
 import { Route as SeventhDimensionRouteImport } from './routes/seventh-dimension'
 import { Route as SamCommandRouteImport } from './routes/sam-command'
 import { Route as ReflectiveIntelRouteImport } from './routes/reflective-intel'
@@ -73,6 +76,21 @@ const StatusRoute = StatusRouteImport.update({
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDocsDotxmlRoute = SitemapDocsDotxmlRouteImport.update({
+  id: '/sitemap-docs.xml',
+  path: '/sitemap-docs.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapCoreDotxmlRoute = SitemapCoreDotxmlRouteImport.update({
+  id: '/sitemap-core.xml',
+  path: '/sitemap-core.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapBladesDotxmlRoute = SitemapBladesDotxmlRouteImport.update({
+  id: '/sitemap-blades.xml',
+  path: '/sitemap-blades.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SeventhDimensionRoute = SeventhDimensionRouteImport.update({
@@ -245,6 +263,9 @@ export interface FileRoutesByFullPath {
   '/reflective-intel': typeof ReflectiveIntelRoute
   '/sam-command': typeof SamCommandRoute
   '/seventh-dimension': typeof SeventhDimensionRoute
+  '/sitemap-blades.xml': typeof SitemapBladesDotxmlRoute
+  '/sitemap-core.xml': typeof SitemapCoreDotxmlRoute
+  '/sitemap-docs.xml': typeof SitemapDocsDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/status': typeof StatusRoute
   '/sudo-coin': typeof SudoCoinRoute
@@ -281,6 +302,9 @@ export interface FileRoutesByTo {
   '/reflective-intel': typeof ReflectiveIntelRoute
   '/sam-command': typeof SamCommandRoute
   '/seventh-dimension': typeof SeventhDimensionRoute
+  '/sitemap-blades.xml': typeof SitemapBladesDotxmlRoute
+  '/sitemap-core.xml': typeof SitemapCoreDotxmlRoute
+  '/sitemap-docs.xml': typeof SitemapDocsDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/status': typeof StatusRoute
   '/sudo-coin': typeof SudoCoinRoute
@@ -319,6 +343,9 @@ export interface FileRoutesById {
   '/reflective-intel': typeof ReflectiveIntelRoute
   '/sam-command': typeof SamCommandRoute
   '/seventh-dimension': typeof SeventhDimensionRoute
+  '/sitemap-blades.xml': typeof SitemapBladesDotxmlRoute
+  '/sitemap-core.xml': typeof SitemapCoreDotxmlRoute
+  '/sitemap-docs.xml': typeof SitemapDocsDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/status': typeof StatusRoute
   '/sudo-coin': typeof SudoCoinRoute
@@ -357,6 +384,9 @@ export interface FileRouteTypes {
     | '/reflective-intel'
     | '/sam-command'
     | '/seventh-dimension'
+    | '/sitemap-blades.xml'
+    | '/sitemap-core.xml'
+    | '/sitemap-docs.xml'
     | '/sitemap.xml'
     | '/status'
     | '/sudo-coin'
@@ -393,6 +423,9 @@ export interface FileRouteTypes {
     | '/reflective-intel'
     | '/sam-command'
     | '/seventh-dimension'
+    | '/sitemap-blades.xml'
+    | '/sitemap-core.xml'
+    | '/sitemap-docs.xml'
     | '/sitemap.xml'
     | '/status'
     | '/sudo-coin'
@@ -430,6 +463,9 @@ export interface FileRouteTypes {
     | '/reflective-intel'
     | '/sam-command'
     | '/seventh-dimension'
+    | '/sitemap-blades.xml'
+    | '/sitemap-core.xml'
+    | '/sitemap-docs.xml'
     | '/sitemap.xml'
     | '/status'
     | '/sudo-coin'
@@ -468,6 +504,9 @@ export interface RootRouteChildren {
   ReflectiveIntelRoute: typeof ReflectiveIntelRoute
   SamCommandRoute: typeof SamCommandRoute
   SeventhDimensionRoute: typeof SeventhDimensionRoute
+  SitemapBladesDotxmlRoute: typeof SitemapBladesDotxmlRoute
+  SitemapCoreDotxmlRoute: typeof SitemapCoreDotxmlRoute
+  SitemapDocsDotxmlRoute: typeof SitemapDocsDotxmlRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   StatusRoute: typeof StatusRoute
   SudoCoinRoute: typeof SudoCoinRoute
@@ -525,6 +564,27 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-docs.xml': {
+      id: '/sitemap-docs.xml'
+      path: '/sitemap-docs.xml'
+      fullPath: '/sitemap-docs.xml'
+      preLoaderRoute: typeof SitemapDocsDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-core.xml': {
+      id: '/sitemap-core.xml'
+      path: '/sitemap-core.xml'
+      fullPath: '/sitemap-core.xml'
+      preLoaderRoute: typeof SitemapCoreDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-blades.xml': {
+      id: '/sitemap-blades.xml'
+      path: '/sitemap-blades.xml'
+      fullPath: '/sitemap-blades.xml'
+      preLoaderRoute: typeof SitemapBladesDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/seventh-dimension': {
@@ -766,6 +826,9 @@ const rootRouteChildren: RootRouteChildren = {
   ReflectiveIntelRoute: ReflectiveIntelRoute,
   SamCommandRoute: SamCommandRoute,
   SeventhDimensionRoute: SeventhDimensionRoute,
+  SitemapBladesDotxmlRoute: SitemapBladesDotxmlRoute,
+  SitemapCoreDotxmlRoute: SitemapCoreDotxmlRoute,
+  SitemapDocsDotxmlRoute: SitemapDocsDotxmlRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   StatusRoute: StatusRoute,
   SudoCoinRoute: SudoCoinRoute,
