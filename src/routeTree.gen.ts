@@ -48,6 +48,7 @@ import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as ApiPublicHooksReprobeRouteImport } from './routes/api/public/hooks/reprobe'
 import { Route as ApiPublicHooksNexinusRouteImport } from './routes/api/public/hooks/nexinus'
+import { Route as ApiPublicHooksNexinusStatusRouteImport } from './routes/api/public/hooks/nexinus/status'
 import { Route as ApiPublicHooksNexinusRegisterRouteImport } from './routes/api/public/hooks/nexinus/register'
 
 const VerifyRoute = VerifyRouteImport.update({
@@ -248,6 +249,12 @@ const ApiPublicHooksNexinusRoute = ApiPublicHooksNexinusRouteImport.update({
   path: '/api/public/hooks/nexinus',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicHooksNexinusStatusRoute =
+  ApiPublicHooksNexinusStatusRouteImport.update({
+    id: '/status',
+    path: '/status',
+    getParentRoute: () => ApiPublicHooksNexinusRoute,
+  } as any)
 const ApiPublicHooksNexinusRegisterRoute =
   ApiPublicHooksNexinusRegisterRouteImport.update({
     id: '/register',
@@ -295,6 +302,7 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/reprobe': typeof ApiPublicHooksReprobeRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/api/public/hooks/nexinus/register': typeof ApiPublicHooksNexinusRegisterRoute
+  '/api/public/hooks/nexinus/status': typeof ApiPublicHooksNexinusStatusRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -336,6 +344,7 @@ export interface FileRoutesByTo {
   '/api/public/hooks/reprobe': typeof ApiPublicHooksReprobeRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/api/public/hooks/nexinus/register': typeof ApiPublicHooksNexinusRegisterRoute
+  '/api/public/hooks/nexinus/status': typeof ApiPublicHooksNexinusStatusRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -379,6 +388,7 @@ export interface FileRoutesById {
   '/api/public/hooks/reprobe': typeof ApiPublicHooksReprobeRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/api/public/hooks/nexinus/register': typeof ApiPublicHooksNexinusRegisterRoute
+  '/api/public/hooks/nexinus/status': typeof ApiPublicHooksNexinusStatusRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -422,6 +432,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/reprobe'
     | '/api/public/payments/webhook'
     | '/api/public/hooks/nexinus/register'
+    | '/api/public/hooks/nexinus/status'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -463,6 +474,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/reprobe'
     | '/api/public/payments/webhook'
     | '/api/public/hooks/nexinus/register'
+    | '/api/public/hooks/nexinus/status'
   id:
     | '__root__'
     | '/'
@@ -505,6 +517,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/reprobe'
     | '/api/public/payments/webhook'
     | '/api/public/hooks/nexinus/register'
+    | '/api/public/hooks/nexinus/status'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -823,6 +836,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksNexinusRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/nexinus/status': {
+      id: '/api/public/hooks/nexinus/status'
+      path: '/status'
+      fullPath: '/api/public/hooks/nexinus/status'
+      preLoaderRoute: typeof ApiPublicHooksNexinusStatusRouteImport
+      parentRoute: typeof ApiPublicHooksNexinusRoute
+    }
     '/api/public/hooks/nexinus/register': {
       id: '/api/public/hooks/nexinus/register'
       path: '/register'
@@ -846,10 +866,12 @@ const AuthenticatedRouteRouteWithChildren =
 
 interface ApiPublicHooksNexinusRouteChildren {
   ApiPublicHooksNexinusRegisterRoute: typeof ApiPublicHooksNexinusRegisterRoute
+  ApiPublicHooksNexinusStatusRoute: typeof ApiPublicHooksNexinusStatusRoute
 }
 
 const ApiPublicHooksNexinusRouteChildren: ApiPublicHooksNexinusRouteChildren = {
   ApiPublicHooksNexinusRegisterRoute: ApiPublicHooksNexinusRegisterRoute,
+  ApiPublicHooksNexinusStatusRoute: ApiPublicHooksNexinusStatusRoute,
 }
 
 const ApiPublicHooksNexinusRouteWithChildren =
