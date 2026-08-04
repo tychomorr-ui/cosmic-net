@@ -48,6 +48,7 @@ import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as ApiPublicHooksReprobeRouteImport } from './routes/api/public/hooks/reprobe'
 import { Route as ApiPublicHooksNexinusRouteImport } from './routes/api/public/hooks/nexinus'
+import { Route as ApiPublicHooksNexinusRegisterRouteImport } from './routes/api/public/hooks/nexinus/register'
 
 const VerifyRoute = VerifyRouteImport.update({
   id: '/verify',
@@ -247,6 +248,12 @@ const ApiPublicHooksNexinusRoute = ApiPublicHooksNexinusRouteImport.update({
   path: '/api/public/hooks/nexinus',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicHooksNexinusRegisterRoute =
+  ApiPublicHooksNexinusRegisterRouteImport.update({
+    id: '/register',
+    path: '/register',
+    getParentRoute: () => ApiPublicHooksNexinusRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -284,9 +291,10 @@ export interface FileRoutesByFullPath {
   '/checkout/return': typeof CheckoutReturnRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
-  '/api/public/hooks/nexinus': typeof ApiPublicHooksNexinusRoute
+  '/api/public/hooks/nexinus': typeof ApiPublicHooksNexinusRouteWithChildren
   '/api/public/hooks/reprobe': typeof ApiPublicHooksReprobeRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
+  '/api/public/hooks/nexinus/register': typeof ApiPublicHooksNexinusRegisterRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -324,9 +332,10 @@ export interface FileRoutesByTo {
   '/checkout/return': typeof CheckoutReturnRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
-  '/api/public/hooks/nexinus': typeof ApiPublicHooksNexinusRoute
+  '/api/public/hooks/nexinus': typeof ApiPublicHooksNexinusRouteWithChildren
   '/api/public/hooks/reprobe': typeof ApiPublicHooksReprobeRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
+  '/api/public/hooks/nexinus/register': typeof ApiPublicHooksNexinusRegisterRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -366,9 +375,10 @@ export interface FileRoutesById {
   '/checkout/return': typeof CheckoutReturnRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
-  '/api/public/hooks/nexinus': typeof ApiPublicHooksNexinusRoute
+  '/api/public/hooks/nexinus': typeof ApiPublicHooksNexinusRouteWithChildren
   '/api/public/hooks/reprobe': typeof ApiPublicHooksReprobeRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
+  '/api/public/hooks/nexinus/register': typeof ApiPublicHooksNexinusRegisterRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -411,6 +421,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/nexinus'
     | '/api/public/hooks/reprobe'
     | '/api/public/payments/webhook'
+    | '/api/public/hooks/nexinus/register'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -451,6 +462,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/nexinus'
     | '/api/public/hooks/reprobe'
     | '/api/public/payments/webhook'
+    | '/api/public/hooks/nexinus/register'
   id:
     | '__root__'
     | '/'
@@ -492,6 +504,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/nexinus'
     | '/api/public/hooks/reprobe'
     | '/api/public/payments/webhook'
+    | '/api/public/hooks/nexinus/register'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -530,7 +543,7 @@ export interface RootRouteChildren {
   CheckoutReturnRoute: typeof CheckoutReturnRoute
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
-  ApiPublicHooksNexinusRoute: typeof ApiPublicHooksNexinusRoute
+  ApiPublicHooksNexinusRoute: typeof ApiPublicHooksNexinusRouteWithChildren
   ApiPublicHooksReprobeRoute: typeof ApiPublicHooksReprobeRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
 }
@@ -810,6 +823,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksNexinusRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/nexinus/register': {
+      id: '/api/public/hooks/nexinus/register'
+      path: '/register'
+      fullPath: '/api/public/hooks/nexinus/register'
+      preLoaderRoute: typeof ApiPublicHooksNexinusRegisterRouteImport
+      parentRoute: typeof ApiPublicHooksNexinusRoute
+    }
   }
 }
 
@@ -823,6 +843,19 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
+interface ApiPublicHooksNexinusRouteChildren {
+  ApiPublicHooksNexinusRegisterRoute: typeof ApiPublicHooksNexinusRegisterRoute
+}
+
+const ApiPublicHooksNexinusRouteChildren: ApiPublicHooksNexinusRouteChildren = {
+  ApiPublicHooksNexinusRegisterRoute: ApiPublicHooksNexinusRegisterRoute,
+}
+
+const ApiPublicHooksNexinusRouteWithChildren =
+  ApiPublicHooksNexinusRoute._addFileChildren(
+    ApiPublicHooksNexinusRouteChildren,
+  )
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -861,7 +894,7 @@ const rootRouteChildren: RootRouteChildren = {
   CheckoutReturnRoute: CheckoutReturnRoute,
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
-  ApiPublicHooksNexinusRoute: ApiPublicHooksNexinusRoute,
+  ApiPublicHooksNexinusRoute: ApiPublicHooksNexinusRouteWithChildren,
   ApiPublicHooksReprobeRoute: ApiPublicHooksReprobeRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
 }
