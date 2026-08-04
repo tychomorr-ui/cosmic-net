@@ -47,6 +47,7 @@ import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as ApiPublicHooksReprobeRouteImport } from './routes/api/public/hooks/reprobe'
+import { Route as ApiPublicHooksNexinusRouteImport } from './routes/api/public/hooks/nexinus'
 
 const VerifyRoute = VerifyRouteImport.update({
   id: '/verify',
@@ -241,6 +242,11 @@ const ApiPublicHooksReprobeRoute = ApiPublicHooksReprobeRouteImport.update({
   path: '/api/public/hooks/reprobe',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicHooksNexinusRoute = ApiPublicHooksNexinusRouteImport.update({
+  id: '/api/public/hooks/nexinus',
+  path: '/api/public/hooks/nexinus',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -278,6 +284,7 @@ export interface FileRoutesByFullPath {
   '/checkout/return': typeof CheckoutReturnRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
+  '/api/public/hooks/nexinus': typeof ApiPublicHooksNexinusRoute
   '/api/public/hooks/reprobe': typeof ApiPublicHooksReprobeRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
@@ -317,6 +324,7 @@ export interface FileRoutesByTo {
   '/checkout/return': typeof CheckoutReturnRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
+  '/api/public/hooks/nexinus': typeof ApiPublicHooksNexinusRoute
   '/api/public/hooks/reprobe': typeof ApiPublicHooksReprobeRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
@@ -358,6 +366,7 @@ export interface FileRoutesById {
   '/checkout/return': typeof CheckoutReturnRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
+  '/api/public/hooks/nexinus': typeof ApiPublicHooksNexinusRoute
   '/api/public/hooks/reprobe': typeof ApiPublicHooksReprobeRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
@@ -399,6 +408,7 @@ export interface FileRouteTypes {
     | '/checkout/return'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
+    | '/api/public/hooks/nexinus'
     | '/api/public/hooks/reprobe'
     | '/api/public/payments/webhook'
   fileRoutesByTo: FileRoutesByTo
@@ -438,6 +448,7 @@ export interface FileRouteTypes {
     | '/checkout/return'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
+    | '/api/public/hooks/nexinus'
     | '/api/public/hooks/reprobe'
     | '/api/public/payments/webhook'
   id:
@@ -478,6 +489,7 @@ export interface FileRouteTypes {
     | '/checkout/return'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
+    | '/api/public/hooks/nexinus'
     | '/api/public/hooks/reprobe'
     | '/api/public/payments/webhook'
   fileRoutesById: FileRoutesById
@@ -518,6 +530,7 @@ export interface RootRouteChildren {
   CheckoutReturnRoute: typeof CheckoutReturnRoute
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
+  ApiPublicHooksNexinusRoute: typeof ApiPublicHooksNexinusRoute
   ApiPublicHooksReprobeRoute: typeof ApiPublicHooksReprobeRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
 }
@@ -790,6 +803,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksReprobeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/nexinus': {
+      id: '/api/public/hooks/nexinus'
+      path: '/api/public/hooks/nexinus'
+      fullPath: '/api/public/hooks/nexinus'
+      preLoaderRoute: typeof ApiPublicHooksNexinusRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -841,6 +861,7 @@ const rootRouteChildren: RootRouteChildren = {
   CheckoutReturnRoute: CheckoutReturnRoute,
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
+  ApiPublicHooksNexinusRoute: ApiPublicHooksNexinusRoute,
   ApiPublicHooksReprobeRoute: ApiPublicHooksReprobeRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
 }
