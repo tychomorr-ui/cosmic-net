@@ -14,6 +14,72 @@ export type Database = {
   }
   public: {
     Tables: {
+      federation_events: {
+        Row: {
+          emitted_at: string | null
+          event_id: string
+          event_type: string
+          id: string
+          node_id: string | null
+          payload: Json
+          reason: string | null
+          received_at: string
+          state: string
+        }
+        Insert: {
+          emitted_at?: string | null
+          event_id: string
+          event_type: string
+          id?: string
+          node_id?: string | null
+          payload: Json
+          reason?: string | null
+          received_at?: string
+          state?: string
+        }
+        Update: {
+          emitted_at?: string | null
+          event_id?: string
+          event_type?: string
+          id?: string
+          node_id?: string | null
+          payload?: Json
+          reason?: string | null
+          received_at?: string
+          state?: string
+        }
+        Relationships: []
+      }
+      federation_peers_registry: {
+        Row: {
+          claims: Json
+          coupled: boolean
+          ed25519_pub: string | null
+          last_seen_at: string | null
+          node_id: string
+          registered_at: string
+          webhook_url: string
+        }
+        Insert: {
+          claims?: Json
+          coupled?: boolean
+          ed25519_pub?: string | null
+          last_seen_at?: string | null
+          node_id: string
+          registered_at?: string
+          webhook_url: string
+        }
+        Update: {
+          claims?: Json
+          coupled?: boolean
+          ed25519_pub?: string | null
+          last_seen_at?: string | null
+          node_id?: string
+          registered_at?: string
+          webhook_url?: string
+        }
+        Relationships: []
+      }
       node_probes: {
         Row: {
           created_at: string
