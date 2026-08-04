@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { FederationPeers } from "@/components/audit/FederationPeers";
+import { FederationInbox } from "@/components/audit/FederationInbox";
 
 export const Route = createFileRoute("/mesh")({
   head: () => ({
@@ -235,6 +236,8 @@ qrencode -t ansiutf8 < wg0-phone.conf`}
       </section>
 
       <FederationPeers />
+
+      <FederationInbox />
 
 
       <section className="rounded border border-border bg-card/40 p-4">
