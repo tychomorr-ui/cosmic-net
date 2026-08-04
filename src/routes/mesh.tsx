@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
+import { FederationPeers } from "@/components/audit/FederationPeers";
 
 export const Route = createFileRoute("/mesh")({
   head: () => ({
