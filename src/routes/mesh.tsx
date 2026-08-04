@@ -233,6 +233,9 @@ qrencode -t ansiutf8 < wg0-phone.conf`}
         </div>
       </section>
 
+      <FederationPeers />
+
+
       <section className="rounded border border-border bg-card/40 p-4">
         <div className="text-[0.65rem] uppercase tracking-[0.22em] text-muted-foreground">
           what this is not — yet
