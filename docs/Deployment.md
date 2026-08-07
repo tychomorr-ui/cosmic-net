@@ -28,9 +28,21 @@ node scripts/pin-ipfs.mjs      # requires Kubo `ipfs` on PATH
 # → bafy…cid
 ```
 
-There is intentionally no managed pinning service. Operators who do not trust
-the hosted build should load the pinned CID and compare it against the CID
-published in the Audit Center.
+### 2b. Pinata mirror (convenience only)
+
+```bash
+bun run build
+PINATA_JWT=… bun run pin:pinata   # or PINATA_API_KEY + PINATA_API_SECRET
+```
+
+Pinata is a **managed mirror, not a trust root**. It uploads `dist/client`
+with `cidVersion: 1` and writes `public/build-receipt.json`. The same build
+pinned through your own Kubo node must yield the *same* CIDv1 — if the two
+disagree, trust neither and rebuild.
+
+Operators who do not trust the hosted build should load the pinned CID and
+compare it against the CID published in the Audit Center.
+
 
 ## 3. Mesh nodes (ARCHANGEL daemon)
 

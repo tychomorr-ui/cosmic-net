@@ -1,0 +1,11 @@
+{
+  "cid": "bafybeidjbgsbxbbdntbgcxria32n2v5m2mpnx6krccg7kht6cksmfmgaxy",
+  "dir": "/dev-server/dist/client",
+  "files": 102,
+  "bytes": 2241939,
+  "pin_size": 2249958,
+  "pinned_at": "2026-08-07T22:36:27.616Z",
+  "generated_at": "2026-08-07T22:36:27.925Z",
+  "tool": "scripts/pin-pinata.mjs",
+  "service": "pinata (managed mirror — not a trust root)"
+}
