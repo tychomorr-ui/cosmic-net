@@ -9,7 +9,9 @@
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
     "lint": "eslint .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "pin:pinata": "node scripts/pin-pinata.mjs",
+    "pin:ipfs": "node scripts/pin-ipfs.mjs"
   },
   "dependencies": {
     "@fontsource/jetbrains-mono": "^5.2.8",
