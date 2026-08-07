@@ -24,7 +24,7 @@ if (!JWT && !(API_KEY && API_SECRET)) {
   process.exit(2);
 }
 
-const candidates = [process.argv[2], ".output/public", "dist"].filter(Boolean);
+const candidates = [process.argv[2], ".output/public", "dist/client", "dist"].filter(Boolean);
 const dir = candidates.find((d) => existsSync(d));
 if (!dir) {
   console.error("pin-pinata: no build output found. Run `bun run build` first.");
