@@ -22,26 +22,55 @@ Live: <https://universaltruth.life> (also `cosmictruth.lovable.app`).
 
 ## 2. Sovereign deploy (IPFS)
 
+`bun run build` emits a Cloudflare Worker plus `dist/client` assets — there is
+no `index.html`, so the build output alone is NOT servable from IPFS. Build a
+static snapshot first:
+
 ```bash
 bun run build
-node scripts/pin-ipfs.mjs      # requires Kubo `ipfs` on PATH
-# → bafy…cid
+bun run static                      # crawls https://universaltruth.life → dist/ipfs
+node scripts/pin-ipfs.mjs dist/ipfs # your own Kubo node → bafy…cid
 ```
 
 ### 2b. Pinata mirror (convenience only)
 
 ```bash
-bun run build
-PINATA_JWT=… bun run pin:pinata   # or PINATA_API_KEY + PINATA_API_SECRET
+PINATA_JWT=… bun run pin:pinata dist/ipfs
 ```
 
-Pinata is a **managed mirror, not a trust root**. It uploads `dist/client`
-with `cidVersion: 1` and writes `public/build-receipt.json`. The same build
+Pinata is a **managed mirror, not a trust root**. It uploads with
+`cidVersion: 1` and writes `public/build-receipt.json`. The same directory
 pinned through your own Kubo node must yield the *same* CIDv1 — if the two
 disagree, trust neither and rebuild.
 
+### 2c. Making the CID a durable address
+
+A raw CID changes on every build. Give it a stable name:
+
+```bash
+ipfs key gen truth                                   # once
+ipfs name publish --key=truth /ipfs/<cid>            # IPNS
+# or DNSLink: TXT _dnslink.ipfs.universaltruth.life = "dnslink=/ipfs/<cid>"
+# or map an ENS contenthash → ipfs://<cid> from your wallet
+```
+
+Load through a **subdomain** gateway (`https://<cid>.ipfs.dweb.link/`) or a
+DNSLink root. Path gateways (`…/ipfs/<cid>/`) 404 the assets because the HTML
+references absolute `/assets/...` paths.
+
+### What the IPFS mirror does and does not do
+
+Works: every public page, client-side verification (CID re-derivation,
+Bitcoin anchor depth via mempool.space, signed node `/status` probes,
+database reads).
+
+Does not work: server functions, `/api/*` routes, `/mcp`, auth, Stripe. Those
+need a server. IPFS serves bytes only — the mirror is a censorship-resistant
+read surface, not a second backend.
+
 Operators who do not trust the hosted build should load the pinned CID and
 compare it against the CID published in the Audit Center.
+
 
 
 ## 3. Mesh nodes (ARCHANGEL daemon)
