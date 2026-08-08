@@ -43,16 +43,49 @@ Pinata is a **managed mirror, not a trust root**. It uploads with
 pinned through your own Kubo node must yield the *same* CIDv1 — if the two
 disagree, trust neither and rebuild.
 
-### 2c. Making the CID a durable address
+### 2c. DNSLink — giving the CID a stable address
 
-A raw CID changes on every build. Give it a stable name:
+A raw CID changes on every build. DNSLink maps a domain to the current one.
+
+Current snapshot:
+
+```
+bafybeicjixsytlbbqvbnsh3uhk7lbtuxnt3atuanroow3urbyntgyslbda
+```
+
+Add this TXT record at the registrar for `universaltruth.life`:
+
+| Field | Value |
+| --- | --- |
+| Type | `TXT` |
+| Name / Host | `_dnslink.ipfs` |
+| Value | `dnslink=/ipfs/bafybeicjixsytlbbqvbnsh3uhk7lbtuxnt3atuanroow3urbyntgyslbda` |
+| TTL | `300` |
+
+That serves the snapshot at `https://ipfs.universaltruth.life/` through any
+DNSLink-aware gateway. **Use the `ipfs.` subdomain, not the apex** — the apex
+`_dnslink.universaltruth.life` would divert the main site away from the Worker
+and break payments, `/mcp`, and auth.
+
+Verify after propagation:
 
 ```bash
-ipfs key gen truth                                   # once
-ipfs name publish --key=truth /ipfs/<cid>            # IPNS
-# or DNSLink: TXT _dnslink.ipfs.universaltruth.life = "dnslink=/ipfs/<cid>"
-# or map an ENS contenthash → ipfs://<cid> from your wallet
+dig +short TXT _dnslink.ipfs.universaltruth.life
+curl -sI https://ipfs.universaltruth.life/ | head -1
 ```
+
+Each release: re-run `bun run static`, re-pin, and update the TXT value to the
+new CID.
+
+#### On IPNS
+
+IPNS would remove the per-release DNS edit, but it needs a **long-lived node
+republishing the record to the DHT** — records expire in ~24h. Hosted signing
+services (w3name and similar) store a signed record without announcing it to
+the DHT, so public gateways return `500` for those names; this was tested, not
+assumed. Until a mesh node runs `ipfs name publish` on a cron, DNSLink to an
+immutable CID is the honest option: it works on every gateway today and cannot
+silently go stale — a wrong CID is visibly wrong.
 
 Load through a **subdomain** gateway (`https://<cid>.ipfs.dweb.link/`) or a
 DNSLink root. Path gateways (`…/ipfs/<cid>/`) 404 the assets because the HTML
