@@ -12,8 +12,7 @@
     "format": "prettier --write .",
     "static": "bun scripts/build-static.mjs",
     "pin:pinata": "node scripts/pin-pinata.mjs",
-    "pin:ipfs": "node scripts/pin-ipfs.mjs",
-    "ipns": "bun run scripts/publish-ipns.mjs"
+    "pin:ipfs": "node scripts/pin-ipfs.mjs"
   },
   "dependencies": {
     "@fontsource/jetbrains-mono": "^5.2.8",
@@ -83,7 +82,6 @@
     "vaul": "^1.1.2",
     "viem": "^2.54.3",
     "vite-tsconfig-paths": "^6.0.2",
-    "w3name": "^1.1.3",
     "zod": "^4.4.3"
   },
   "devDependencies": {
