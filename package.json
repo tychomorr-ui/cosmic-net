@@ -12,7 +12,8 @@
     "format": "prettier --write .",
     "static": "bun scripts/build-static.mjs",
     "pin:pinata": "node scripts/pin-pinata.mjs",
-    "pin:ipfs": "node scripts/pin-ipfs.mjs"
+    "pin:ipfs": "node scripts/pin-ipfs.mjs",
+    "ipns": "bun run scripts/publish-ipns.mjs"
   },
   "dependencies": {
     "@fontsource/jetbrains-mono": "^5.2.8",
