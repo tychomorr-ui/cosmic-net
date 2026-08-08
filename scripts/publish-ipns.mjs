@@ -55,5 +55,5 @@ console.log(JSON.stringify(
 
 if (created) {
   console.error("\n--- NEW SIGNING KEY (store as IPNS_SIGNING_KEY, shown once) ---");
-  console.error(Buffer.from(name.key.bytes).toString("base64"));
+  console.error(Buffer.from(name.key.raw).toString("base64"));
 }
