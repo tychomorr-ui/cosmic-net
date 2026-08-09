@@ -104,6 +104,51 @@ read surface, not a second backend.
 Operators who do not trust the hosted build should load the pinned CID and
 compare it against the CID published in the Audit Center.
 
+## 2d. Sovereign self-host (AWS Lightsail, Oregon)
+
+The full SSR app — server functions, `/mcp`, webhooks, auth, Stripe — running on
+hardware you control instead of the Lovable/Cloudflare edge.
+
+Target: `34.216.185.65` (us-west-2), Ubuntu 22.04/24.04, host `universaltruth.life`.
+
+```bash
+# on the instance
+sudo apt-get update && sudo apt-get install -y git rsync
+git clone <your-repo-url> ~/nexinus && cd ~/nexinus
+sudo bash scripts/deploy-lightsail.sh          # first run creates /etc/nexinus/app.env
+sudo nano /etc/nexinus/app.env                 # paste secrets
+sudo bash scripts/deploy-lightsail.sh          # re-run to build with them
+```
+
+The script installs Node 22, bun and Caddy, builds with `NITRO_PRESET=node`
+(Node output, not the Cloudflare Worker), runs it as systemd unit `nexinus-app`
+on `127.0.0.1:3000`, and puts Caddy in front for automatic Let's Encrypt TLS.
+Re-run it after every `git pull`; it is idempotent.
+
+Prerequisites on the AWS side:
+
+| Item | Value |
+| --- | --- |
+| Static IP attached | `34.216.185.65` |
+| Lightsail firewall | allow TCP `22`, `80`, `443` |
+| DNS `A` record | `universaltruth.life` and `www` → `34.216.185.65` |
+
+Secrets live only in `/etc/nexinus/app.env` (mode `0640`, root:nexinus) — never
+in the repo. `VITE_*` values are read at build time so the client bundle points
+at the same backend; everything else is read by the server at runtime.
+
+Operations:
+
+```bash
+journalctl -u nexinus-app -f      # logs
+sudo systemctl restart nexinus-app
+sudo systemctl status caddy
+```
+
+Honest caveats: the database is still hosted Postgres (Supabase) and Stripe is
+still Stripe — self-hosting the app moves the *runtime* under your control, not
+those two dependencies. Cut DNS over to the instance only after the self-test
+passes, and keep the Lovable deployment reachable until then.
 
 
 ## 3. Mesh nodes (ARCHANGEL daemon)
