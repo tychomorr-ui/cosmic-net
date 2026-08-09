@@ -7,12 +7,17 @@
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 import { mcpPlugin } from "@lovable.dev/mcp-js/stacks/tanstack/vite";
 
+// Self-host escape hatch: `NITRO_PRESET=node bun run build` targets a plain Node
+// server (AWS Lightsail etc). Unset = Lovable's default Cloudflare Worker target.
+const selfHostPreset = process.env["NITRO_PRESET"];
+
 export default defineConfig({
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
     // nitro/vite builds from this
     server: { entry: "server" },
   },
+  ...(selfHostPreset ? { nitro: { preset: selfHostPreset } } : {}),
   vite: {
     plugins: [mcpPlugin()],
   },
