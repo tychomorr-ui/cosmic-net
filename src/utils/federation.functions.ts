@@ -1,5 +1,13 @@
 import { createServerFn } from "@tanstack/react-start";
-import { createClient } from "@supabase/supabase-js";
+
+/** Peer webhook URLs are credentials-adjacent: expose host only. */
+function hostOnly(url: string): string {
+  try {
+    return new URL(url).host;
+  } catch {
+    return "invalid-url";
+  }
+}
 
 export type FederationEventRow = {
   event_id: string;
