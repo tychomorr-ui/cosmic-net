@@ -1,5 +1,13 @@
 import { createServerFn } from "@tanstack/react-start";
-import { createClient } from "@supabase/supabase-js";
+
+/** Peer webhook URLs are credentials-adjacent: expose host only. */
+function hostOnly(url: string): string {
+  try {
+    return new URL(url).host;
+  } catch {
+    return "invalid-url";
+  }
+}
 
 export type FederationEventRow = {
   event_id: string;
@@ -22,13 +30,14 @@ export type FederationInboxData = {
   }[];
 };
 
-/** Public, metadata-only read of the quarantined inbound federation log. */
+/** Public, metadata-only read of the quarantined inbound federation log.
+ *  The underlying tables are not readable by anon/authenticated roles; this
+ *  server function is the only public surface and returns sanitized metadata. */
 export const federationInbox = createServerFn({ method: "GET" }).handler(
   async (): Promise<FederationInboxData> => {
-    const key = process.env["SUPABASE_PUBLISHABLE_KEY"]!;
-    const supabase = createClient(process.env["SUPABASE_URL"]!, key, {
-      auth: { persistSession: false },
-    });
+    const { supabaseAdmin: supabase } = await import(
+      "@/integrations/supabase/client.server"
+    );
     const [{ data: events }, { data: registry }] = await Promise.all([
       supabase
         .from("federation_events")
@@ -44,7 +53,12 @@ export const federationInbox = createServerFn({ method: "GET" }).handler(
     return {
       secretConfigured: Boolean(process.env["NEXINUS_WEBHOOK_SECRET"]),
       events: (events ?? []) as FederationEventRow[],
-      registry: (registry ?? []) as FederationInboxData["registry"],
+      registry: (registry ?? []).map((r) => ({
+        node_id: r.node_id,
+        webhook_url: hostOnly(r.webhook_url),
+        coupled: r.coupled,
+        last_seen_at: r.last_seen_at,
+      })),
     };
   },
 );

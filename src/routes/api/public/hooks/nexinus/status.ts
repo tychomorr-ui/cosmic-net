@@ -5,7 +5,6 @@
 // Metadata only — never the event payloads.
 
 import { createFileRoute } from "@tanstack/react-router";
-import { createClient } from "@supabase/supabase-js";
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",
@@ -13,16 +12,25 @@ const CORS = {
   "Access-Control-Allow-Headers": "Content-Type",
 };
 
+function hostOnly(url: string): string {
+  try {
+    return new URL(url).host;
+  } catch {
+    return "invalid-url";
+  }
+}
+
 export const Route = createFileRoute("/api/public/hooks/nexinus/status")({
   server: {
     handlers: {
       OPTIONS: async () => new Response(null, { status: 204, headers: CORS }),
 
       GET: async () => {
-        const supabase = createClient(
-          process.env["SUPABASE_URL"]!,
-          process.env["SUPABASE_PUBLISHABLE_KEY"]!,
-          { auth: { persistSession: false } },
+        // The federation tables are closed to anon/authenticated roles. This
+        // handler is the only public surface and emits sanitized metadata:
+        // no Ed25519 keys, no peer claims, no event payloads, host-only URLs.
+        const { supabaseAdmin: supabase } = await import(
+          "@/integrations/supabase/client.server"
         );
         const [{ data: peers }, { data: events }] = await Promise.all([
           supabase
@@ -40,12 +48,20 @@ export const Route = createFileRoute("/api/public/hooks/nexinus/status")({
           byType[e.event_type] = (byType[e.event_type] ?? 0) + 1;
         }
 
+        const registry = (peers ?? []).map((p) => ({
+          node_id: p.node_id,
+          webhook_host: hostOnly(p.webhook_url),
+          coupled: p.coupled,
+          last_seen_at: p.last_seen_at,
+          registered_at: p.registered_at,
+        }));
+
         return new Response(
           JSON.stringify({
             secret_configured: Boolean(process.env["NEXINUS_WEBHOOK_SECRET"]),
             inbound_endpoint: "/api/public/hooks/nexinus",
-            registry: peers ?? [],
-            coupled_peers: (peers ?? []).filter((p) => p.coupled).length,
+            registry,
+            coupled_peers: registry.filter((p) => p.coupled).length,
             events_recent: events?.length ?? 0,
             events_by_type: byType,
             all_events_quarantined: (events ?? []).every(
