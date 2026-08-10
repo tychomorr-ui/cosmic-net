@@ -22,13 +22,14 @@ export type FederationInboxData = {
   }[];
 };
 
-/** Public, metadata-only read of the quarantined inbound federation log. */
+/** Public, metadata-only read of the quarantined inbound federation log.
+ *  The underlying tables are not readable by anon/authenticated roles; this
+ *  server function is the only public surface and returns sanitized metadata. */
 export const federationInbox = createServerFn({ method: "GET" }).handler(
   async (): Promise<FederationInboxData> => {
-    const key = process.env["SUPABASE_PUBLISHABLE_KEY"]!;
-    const supabase = createClient(process.env["SUPABASE_URL"]!, key, {
-      auth: { persistSession: false },
-    });
+    const { supabaseAdmin: supabase } = await import(
+      "@/integrations/supabase/client.server"
+    );
     const [{ data: events }, { data: registry }] = await Promise.all([
       supabase
         .from("federation_events")
