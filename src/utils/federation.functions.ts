@@ -53,7 +53,12 @@ export const federationInbox = createServerFn({ method: "GET" }).handler(
     return {
       secretConfigured: Boolean(process.env["NEXINUS_WEBHOOK_SECRET"]),
       events: (events ?? []) as FederationEventRow[],
-      registry: (registry ?? []) as FederationInboxData["registry"],
+      registry: (registry ?? []).map((r) => ({
+        node_id: r.node_id,
+        webhook_url: hostOnly(r.webhook_url),
+        coupled: r.coupled,
+        last_seen_at: r.last_seen_at,
+      })),
     };
   },
 );
