@@ -44,8 +44,8 @@ export type BladeReadiness = {
 // MUST NOT be reported as bound to a node they don't actually verify.
 const BLADE_NODE_BINDING: Record<string, string> = {
   "04": "resonate-earth",     // Network NEBULA samm mist-flow vertex
-  "07": "xinus-monarch",      // TERMINUS · ops surface against monarch
-  "13": "xinus-valkyrie",     // PROOF FULCRUM · operator stamp / fleet witness
+  "07": "root-gate",          // TERMINUS · ops surface against the control plane
+  "13": "tesseract-a",        // PROOF FULCRUM · operator stamp / fleet witness
 };
 
 type OpsEntry = {

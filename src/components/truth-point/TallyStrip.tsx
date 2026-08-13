@@ -3,12 +3,12 @@ import { useProbeStatus } from "@/lib/probe-store";
 
 export function TallyStrip() {
   // Subscribe to all probe-capable nodes at top level (hooks rule).
-  const monarch = useProbeStatus("xinus-monarch");
-  const valkyrie = useProbeStatus("xinus-valkyrie");
+  const rootGate = useProbeStatus("root-gate");
+  const ketherGate = useProbeStatus("kether-gate");
 
   const promoted =
-    (monarch.state === "measured" ? 1 : 0) +
-    (valkyrie.state === "measured" ? 1 : 0);
+    (rootGate.state === "measured" ? 1 : 0) +
+    (ketherGate.state === "measured" ? 1 : 0);
 
   const declaredMeasured = NODES.filter((n) => n.tier === "measured").length;
   const attested = NODES.filter((n) => n.tier === "attested").length;

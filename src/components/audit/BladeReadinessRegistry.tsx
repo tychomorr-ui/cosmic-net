@@ -19,7 +19,7 @@ const STATE_STYLE: Record<ReadinessState, string> = {
   PURGED:    "border-destructive/50 text-destructive",
 };
 
-const BOUND_NODE_IDS = ["resonate-earth", "xinus-monarch", "xinus-valkyrie"];
+const BOUND_NODE_IDS = ["resonate-earth", "root-gate", "tesseract-a"];
 
 function toFacts(nodeId: string, s: ProbeStatus): ProbeFacts {
   const map: Record<ProbeStatus["state"], ProbeFacts["state"]> = {
