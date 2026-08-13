@@ -27,6 +27,11 @@ export type SovereignNode = {
   cluster_id?: ClusterId;
   cluster_role?: "anchor" | "vertex";
   probe?: Probe;
+  /** Operator-held host (IPv4). Probed server-side for real reachability. */
+  host?: string;
+  ipv6?: string;
+  /** Declared machine size, as reported by the hosting console. */
+  spec?: string;
 };
 
 // Default public IPFS gateways used when a node's probe/fallback doesn't list its own.
@@ -36,129 +41,134 @@ export const DEFAULT_IPFS_GATEWAYS = [
   "https://dweb.link/ipfs/",
 ];
 
+// Real operator-owned fleet (AWS Lightsail, five running instances) plus the
+// Resonate-Earth witness. Reachability is measured server-side against the
+// host addresses below; LIVE still requires an ARCHANGEL/v0 signed status.
 export const NODES: SovereignNode[] = [
   // ============ CLUSTER ALPHA ============
   {
-    id: "xinus-monarch",
-    name: "Xinus-Monarch",
-    provider: "xinus.one",
-    region: "Public reachable host",
-    role: "Alpha anchor · HTTPS signed-status gateway",
+    id: "root-gate",
+    name: "Root-Gate",
+    provider: "AWS Lightsail",
+    region: "Oregon (us-west-2) · Zone A",
+    role: "Alpha anchor · sovereign control plane",
     tier: "attested",
-    declared: "ATTESTED · health probe in this card",
+    declared: "ATTESTED · host reachability measured server-side",
     cluster_id: "alpha",
     cluster_role: "anchor",
+    host: "34.223.165.42",
+    ipv6: "2600:1f14:159c:7600:39e5:ec3d:dc2d:b7c9",
+    spec: "16 GB RAM · 4 vCPU · 320 GB SSD",
     facts: [
-      "Exposes an ARCHANGEL/v0 signed status surface at monarch.xinus.one/health.",
-      "Promotes to MEASURED · LIVE on signature verification against the operator pubkey.",
+      "Running instance in Oregon, Zone A, owned outright by the operator.",
+      "Largest node in the fleet; intended host for the control plane and the signed-status daemon.",
     ],
     truth:
-      "Monarch is the one node a browser can directly verify. The card couples local CID derivation against the node's signed /health payload, verified with the published ed25519 pubkey.",
-    probe: {
-      kind: "signed-status",
-      url: "https://monarch.xinus.one/health",
-      edPubHex: "39436f5ab3af4b2e9db4dc0ea3a9cff9060f0167d8537174e5cc332a722b12c4",
-    },
+      "Root-Gate is real hardware the operator controls, and its reachability is probed from the server every 60 seconds. It is not LIVE until it serves an ARCHANGEL/v0 signed /status whose payload CID re-derives locally.",
   },
   {
-    id: "xinus-valkyrie",
-    name: "Valkyrie",
-    provider: "nexinus.net",
-    region: "5.78.148.244",
-    role: "Alpha vertex · registered relay",
+    id: "tesseract-terminus",
+    name: "Tesseract-Terminus",
+    provider: "AWS Lightsail",
+    region: "Oregon (us-west-2) · Zone A",
+    role: "Alpha vertex · application terminus",
     tier: "attested",
-    declared: "ATTESTED · reachability probe in this card",
+    declared: "ATTESTED · host reachability measured server-side",
     cluster_id: "alpha",
     cluster_role: "vertex",
+    host: "34.216.185.65",
+    ipv6: "2600:1f14:159c:7600:f0a5:5158:452a:5860",
+    spec: "8 GB RAM · 2 vCPU · 160 GB SSD",
     facts: [
-      "Registered in the fleet manifest as valkyrie.nexinus.net (5.78.148.244).",
-      "Does not currently expose a CORS-readable health JSON.",
+      "Running instance in Oregon, Zone A.",
+      "Target of scripts/deploy-lightsail.sh — self-hosted SSR build behind Caddy TLS.",
     ],
     truth:
-      "Valkyrie is probed with an opaque HEAD request against valkyrie.nexinus.net. Opaque success means the origin answered; it does not prove application health, only that the host is reachable from the browser's network path.",
-    probe: {
-      kind: "signed-status",
-      url: "https://valkyrie.nexinus.net/health",
-      edPubHex: "a61910dffc0bf0e052019af2ed1db68c411131455bd03d789d1424189be0e15f",
-    },
+      "Terminus is the self-host target for this application. Reachability is measured; coupling requires the signed-status surface on the same host.",
   },
   {
-    id: "helsinki-vertex",
-    name: "Helsinki Vertex",
-    provider: "Doctrine placeholder",
-    region: "Helsinki",
-    role: "Alpha vertex · IPFS-gated (pending CID)",
-    tier: "doctrine",
-    declared: "DOCTRINE · awaiting IPFS pin",
+    id: "xinus-clarity",
+    name: "XinUS-Clarity",
+    provider: "AWS Lightsail",
+    region: "Ireland (eu-west-1) · Zone A",
+    role: "Alpha vertex · European compute",
+    tier: "attested",
+    declared: "ATTESTED · host reachability measured server-side",
     cluster_id: "alpha",
     cluster_role: "vertex",
+    host: "52.214.4.184",
+    ipv6: "2a05:d018:1aa0:a900:af85:774d:c29f:79ac",
+    spec: "8 GB RAM · 4 vCPU · 320 GB SSD · compute-optimized",
     facts: [
-      "Reserved vertex for the Alpha triangle.",
-      "Activates when an operator pins a signed status JSON to IPFS and its CID is written into this manifest.",
+      "Running compute-optimized instance in Ireland, Zone A.",
+      "Provides EU-side jurisdictional separation from the Oregon pair.",
     ],
     truth:
-      "Helsinki Vertex describes a topology intent. Promotion to LIVE requires a real IPFS CID resolving to an ARCHANGEL/v0 signed envelope; no probe runs until then.",
+      "Clarity is a running operator-owned host in the EU. Its reachability is measured server-side; nothing about workload health is claimed until it signs a status payload.",
   },
 
   // ============ CLUSTER BETA ============
+  {
+    id: "kether-gate",
+    name: "Kether-Gate",
+    provider: "AWS Lightsail",
+    region: "Singapore (ap-southeast-1) · Zone A",
+    role: "Beta anchor · APAC gateway",
+    tier: "attested",
+    declared: "ATTESTED · host reachability measured server-side",
+    cluster_id: "beta",
+    cluster_role: "anchor",
+    host: "18.138.160.99",
+    ipv6: "2406:da18:5e4:a500:81a9:1562:c58f:fb29",
+    spec: "8 GB RAM · 2 vCPU · 160 GB SSD",
+    facts: [
+      "Running instance in Singapore, Zone A.",
+      "Carries the KetherGate registry role for the APAC path.",
+    ],
+    truth:
+      "Kether-Gate is a real running host in Singapore. Reachability is measured from the server; gateway function is asserted by the operator and is not verified here until it signs a status payload.",
+  },
+  {
+    id: "tesseract-a",
+    name: "Tesseract-A",
+    provider: "AWS Lightsail",
+    region: "Frankfurt (eu-central-1) · Zone A",
+    role: "Beta vertex · ed25519 signing surface",
+    tier: "attested",
+    declared: "ATTESTED · host reachability measured server-side",
+    cluster_id: "beta",
+    cluster_role: "vertex",
+    host: "35.156.127.49",
+    ipv6: "2a05:d014:a47:d800:e206:ee7b:aca6:2932",
+    spec: "8 GB RAM · 2 vCPU · 160 GB SSD",
+    facts: [
+      "Running instance in Frankfurt, Zone A.",
+      "Holds the operator key intended for fleet liveness stamps.",
+    ],
+    truth:
+      "Tesseract-A is a running Lightsail host in Frankfurt. Its reachability is measured; the signing role is an operator claim until a signed receipt verifies against the published pubkey.",
+  },
   {
     id: "resonate-earth",
     name: "Resonate-Earth",
     provider: "resonate-earth.live",
     region: "Public reachable host",
-    role: "Beta anchor · Schumann-resonance witness",
+    role: "Beta vertex · Schumann-resonance witness",
     tier: "attested",
-    declared: "ATTESTED · IPFS-gated resolution",
+    declared: "ATTESTED · HTTPS reachability",
     cluster_id: "beta",
-    cluster_role: "anchor",
+    cluster_role: "vertex",
     facts: [
       "Sovereign witness surface for Earth's electromagnetic substrate.",
-      "Configured to resolve its signed status via IPFS content-addressed payload rather than a REST /health.",
-      "Falls back to opaque HEAD only if IPFS resolution fails.",
+      "No signed /status yet; probed by opaque HEAD only.",
       "Bound to the 7D unity CID — any change here re-hashes the unification certificate.",
     ],
     truth:
-      "Resonate-Earth couples the bitcoin substrate (work / pressure / density) to the planetary substrate (resonance / coherence). Its signed status envelope is expected to live at a pinned IPFS CID; the browser resolves through public gateways with signature verification against the node pubkey.",
+      "Resonate-Earth couples the bitcoin substrate (work / pressure / density) to the planetary substrate (resonance / coherence). It answers over HTTPS, which is reachability — not coupling.",
     probe: {
       kind: "no-cors-head",
       url: "https://resonate-earth.live/",
-      // Once operator pins the signed envelope to IPFS, set cid+edPubHex here to promote to LIVE.
-      // ipfsFallback: { cid: "bafy…", edPubHex: "…" },
     },
-  },
-  {
-    id: "tesseract-a",
-    name: "Tesseract-A",
-    provider: "Local sovereign hardware",
-    region: "Operator-held",
-    role: "Beta vertex · ed25519 signing surface",
-    tier: "attested",
-    declared: "ATTESTED · UNVERIFIED",
-    cluster_id: "beta",
-    cluster_role: "vertex",
-    facts: [
-      "Holds the operator key for fleet liveness stamps.",
-      "Not directly reachable from the public web by design; participates via signed receipts.",
-    ],
-    truth:
-      "Tesseract-A is held in operator custody. Its existence is asserted by signed receipts surfaced elsewhere in the fleet, not by a public endpoint here.",
-  },
-  {
-    id: "beta-ipfs-vertex",
-    name: "Beta IPFS Vertex",
-    provider: "IPFS-native",
-    region: "Content-addressed",
-    role: "Beta vertex · IPFS-gated (pending CID)",
-    tier: "doctrine",
-    declared: "DOCTRINE · awaiting IPFS pin",
-    cluster_id: "beta",
-    cluster_role: "vertex",
-    facts: [
-      "Reserved vertex for the Beta triangle.",
-      "Activates once a signed-status JSON is pinned; the browser will resolve it via IPFS gateway.",
-    ],
-    truth:
-      "Beta IPFS Vertex has no HTTPS surface by design. Its liveness depends entirely on a content-addressed signed envelope; no CID pinned means no probe attempted.",
   },
 ];
 
