@@ -1,12 +1,12 @@
 const ITEMS = [
-  ["Archangel", "Doctrine · Sensor API Standby"],
-  ["Travel Guardian", "Measured route receipts only"],
-  ["KetherGate", "Active gateway by probe"],
-  ["Valkyrie", "Registered · Health pending"],
-  ["Helsinki · Singapore · Falkenstein", "Topology claim · Standby"],
+  ["Root-Gate", "Oregon · 16 GB · control plane"],
+  ["Tesseract-Terminus", "Oregon · SSR self-host target"],
+  ["XinUS-Clarity", "Ireland · compute-optimized"],
+  ["Kether-Gate", "Singapore · APAC gateway"],
+  ["Tesseract-A", "Frankfurt · signing surface"],
+  ["Resonate-Earth", "Witness · HTTPS reachable"],
+  ["Coupling", "LIVE requires ARCHANGEL/v0 signed status"],
   ["Recursion Depth", "Δ 7 · Local"],
-  ["Xinus MonarchOS", "Telemetry-gated"],
-  ["Nebulous Mesh", "Health endpoints pending"],
 ] as const;
 
 function Row() {
