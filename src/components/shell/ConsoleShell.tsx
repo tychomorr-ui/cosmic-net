@@ -128,17 +128,17 @@ export function ConsoleShell({ children }: { children: ReactNode }) {
           </Link>
 
           <div className="hidden items-center gap-6 border-r border-border px-5 text-[11px] md:flex">
-            <div title="nexinus.net · 5.223.65.20 · SSL valid">
-              <div className="text-muted-foreground">TESSERACT-A</div>
-              <div className="phosphor-soft tracking-wider text-primary">nexinus.net</div>
+            <div title="Root-Gate · 34.223.165.42 · Oregon (us-west-2) Zone A">
+              <div className="text-muted-foreground">ROOT-GATE</div>
+              <div className="phosphor-soft tracking-wider text-primary">34.223.165.42</div>
             </div>
-            <div title="valkyrie.nexinus.net · 5.78.148.244 · SSL valid">
-              <div className="text-muted-foreground">VALKYRIE</div>
-              <div className="phosphor-soft text-primary">dark mirror</div>
+            <div title="Tesseract-Terminus · 34.216.185.65 · Oregon (us-west-2) Zone A">
+              <div className="text-muted-foreground">TERMINUS</div>
+              <div className="phosphor-soft text-primary">34.216.185.65</div>
             </div>
-            <div title="kether.nexinus.net · SSL pending">
+            <div title="Kether-Gate · 18.138.160.99 · Singapore (ap-southeast-1) Zone A">
               <div className="text-muted-foreground">KETHER-GATE</div>
-              <div className="phosphor-soft text-primary/70">ssl · pending</div>
+              <div className="phosphor-soft text-primary/70">18.138.160.99</div>
             </div>
             <div className="flex items-center gap-3" title="day 06:00 → 18:00 · night 18:00 → 06:00">
               <div className={isDay ? "phosphor-glow text-primary" : "text-muted-foreground/40"}>
@@ -248,11 +248,11 @@ export function ConsoleShell({ children }: { children: ReactNode }) {
       {/* Footer */}
       <footer className="relative z-10 flex items-center justify-between border-t border-border bg-background/80 px-4 py-1.5 text-[10px] tracking-widest text-muted-foreground backdrop-blur">
         <div className="flex flex-wrap gap-3">
-          <span><span className="text-primary/70">A</span> nexinus.net · 5.223.65.20</span>
+          <span><span className="text-primary/70">RG</span> Root-Gate · 34.223.165.42</span>
           <span className="opacity-30">/</span>
-          <span><span className="text-primary/70">VK</span> valkyrie.nexinus.net · 5.78.148.244</span>
+          <span><span className="text-primary/70">TT</span> Terminus · 34.216.185.65</span>
           <span className="opacity-30">/</span>
-          <span><span className="text-primary/70">KG</span> kether.nexinus.net</span>
+          <span><span className="text-primary/70">KG</span> Kether-Gate · 18.138.160.99</span>
         </div>
         <div className="hidden lg:block">SOVEREIGN CONSOLE · ZERO TELEMETRY · NO THIRD-PARTY MIDDLEWARE</div>
         <div className="phosphor-soft text-primary">⌬ NEXINUS MESH</div>

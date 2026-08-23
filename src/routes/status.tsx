@@ -134,12 +134,12 @@ function StatusPage() {
         <div className="mt-3 grid gap-3 md:grid-cols-2">
           <TriangleCluster
             clusterId="alpha"
-            title="Cluster Alpha · Xinus-Monarch anchor"
+            title="Cluster Alpha · Root-Gate anchor"
             nodes={NODES.filter((n) => n.cluster_id === "alpha")}
           />
           <TriangleCluster
             clusterId="beta"
-            title="Cluster Beta · Resonate-Earth anchor"
+            title="Cluster Beta · Kether-Gate anchor"
             nodes={NODES.filter((n) => n.cluster_id === "beta")}
           />
         </div>
