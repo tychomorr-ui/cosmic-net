@@ -141,7 +141,7 @@ export function BladeReadinessRegistry() {
         blades render but have no node to verify — they report{" "}
         <span className="text-foreground">RENDERED</span>, not READY. Purged
         blades stay purged; no theater promotion. Re-verify runs the same
-        probes against the three bound nodes (Monarch · Valkyrie · Resonate-Earth)
+        probes against the bound fleet nodes (Root-Gate · Kether-Gate · Resonate-Earth)
         and overlays the results — no server proxy, no telemetry.
       </p>
 

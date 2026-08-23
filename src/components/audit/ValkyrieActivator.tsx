@@ -84,7 +84,7 @@ export function ValkyrieActivator() {
         </select>
         <input
           aria-label="signed-status URL"
-          placeholder="https://valkyrie.nexinus.net/status"
+          placeholder="https://34.223.165.42/status"
           value={url}
           onChange={(e) => setUrl(e.target.value)}
           className="border border-border bg-background px-2 py-1 font-mono text-[0.7rem] text-foreground"
