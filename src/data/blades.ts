@@ -1,34 +1,27 @@
-// OMNI-SAM AXIS · 13 canonical blades.
-// Each blade owns a unique route. Standby tiles are honest, not navigational fakes.
+// OMNI-SAM AXIS · canonical blades.
+// Only blades with a real surface are registered. Blades that were purged in
+// the doctrine sweep are deleted outright — no AWAITING placeholders, no
+// tiles that promise a function that does not exist.
 
-export type BladeStatus = "LIVE" | "STANDBY" | "AWAITING";
+export type BladeStatus = "LIVE" | "STANDBY";
 
 export type Blade = {
-  n: string;          // "01" .. "13"
+  n: string;          // registry number (stable, not contiguous after purges)
   glyph: string;      // single-char sigil
   name: string;
   route: string;      // canonical sovereign route
   status: BladeStatus;
   tagline: string;
-  awaiting?: string;  // what would flip it to LIVE
+  blocker?: string;   // for STANDBY: the concrete signal that flips it to LIVE
 };
 
 export const BLADES: Blade[] = [
   { n: "01", glyph: "⊕", name: "Alpha Dashboard",   route: "/",                status: "LIVE",
     tagline: "kether gate console · the axis itself" },
-  { n: "02", glyph: "✕", name: "Forge",             route: "/",                status: "AWAITING",
-    tagline: "purged in doctrine sweep · no honest function re-declared",
-    awaiting: "honest production surface (not theater)" },
   { n: "03", glyph: "◉", name: "Reflective Intel",  route: "/reflective-intel",status: "LIVE",
     tagline: "per-blade telemetry mirror · ledger + probe store" },
   { n: "04", glyph: "✺", name: "Network NEBULA",    route: "/nebula",          status: "LIVE",
     tagline: "samm mist-flow · signed-relay sweep" },
-  { n: "05", glyph: "✕", name: "Payment Nexus",     route: "/",                status: "AWAITING",
-    tagline: "purged · parasitic financial interface, doctrine violation",
-    awaiting: "non-extractive value rail (none designed)" },
-  { n: "06", glyph: "✕", name: "Investigation",     route: "/",                status: "AWAITING",
-    tagline: "purged · telemetry/PII drift, doctrine violation",
-    awaiting: "zero-telemetry inquiry surface" },
   { n: "07", glyph: "▣", name: "TERMINUS",          route: "/ops",             status: "LIVE",
     tagline: "ops ledger · live gateway probes" },
   { n: "08", glyph: "✧", name: "SAM Command",       route: "/sam-command",     status: "LIVE",
@@ -40,9 +33,11 @@ export const BLADES: Blade[] = [
   { n: "11", glyph: "◈", name: "Truth Substrate",   route: "/sudo-coin",       status: "LIVE",
     tagline: "truth-coin substrate · live BTC readout · pistifus-weighted" },
   { n: "12", glyph: "◬", name: "QUANTOTALUS",       route: "/quantotalus",     status: "STANDBY",
-    tagline: "triadaxial spinner · Helsinki · Singapore · Falkenstein",
-    awaiting: "vertex registration manifest" },
+    tagline: "triadaxial spinner · Oregon · Ireland · Singapore",
+    blocker: "vertex registration manifest" },
   { n: "13", glyph: "◇", name: "PROOF FULCRUM",     route: "/proof-fulcrum",   status: "STANDBY",
     tagline: "ed25519 fleet witness · operator stamp",
-    awaiting: "first signed fleet receipt" },
+    blocker: "first signed fleet receipt" },
 ];
+
+export const BLADE_COUNT = BLADES.length;

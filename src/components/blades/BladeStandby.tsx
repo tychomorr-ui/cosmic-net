@@ -22,10 +22,10 @@ export function BladeStandby({ blade, children }: { blade: Blade; children?: Rea
 
       <section className="rounded border border-border bg-card/40 p-6">
         <div className="text-[0.65rem] uppercase tracking-[0.22em] text-muted-foreground">
-          {blade.status === "AWAITING" ? "awaiting feed" : "standby"}
+          standby
         </div>
         <p className="mt-2 text-sm text-foreground">
-          {blade.awaiting ?? "This blade is registered in the axis but holds no operational surface yet."}
+          {blade.blocker ?? "This blade is registered in the axis but holds no operational surface yet."}
         </p>
         <p className="mt-4 text-xs text-muted-foreground">
           No mock data. No vendor middleware. Promotion to LIVE requires a real
@@ -40,11 +40,7 @@ export function BladeStandby({ blade, children }: { blade: Blade; children?: Rea
 
 function StatusBadge({ status }: { status: Blade["status"] }) {
   const cls =
-    status === "LIVE"
-      ? "border-gold text-gold"
-      : status === "AWAITING"
-      ? "border-destructive/60 text-destructive"
-      : "border-border text-muted-foreground";
+    status === "LIVE" ? "border-gold text-gold" : "border-border text-muted-foreground";
   return (
     <span className={`inline-block rounded border px-2 py-0.5 font-mono text-[0.65rem] uppercase tracking-[0.2em] ${cls}`}>
       {status}
