@@ -7,10 +7,10 @@ export default defineTool({
   name: "list_blades",
   title: "List OMNI-SAM AXIS blades",
   description:
-    "List the 13 canonical OMNI-SAM AXIS blades of cMAP with status (LIVE, STANDBY, AWAITING), sovereign route, and tagline. Requires an active cMAP MCP subscription.",
+    "List the registered OMNI-SAM AXIS blades of cMAP with status (LIVE, STANDBY), sovereign route, and tagline. Purged blades are not registered. Requires an active cMAP MCP subscription.",
   inputSchema: {
     status: z
-      .enum(["LIVE", "STANDBY", "AWAITING"])
+      .enum(["LIVE", "STANDBY"])
       .optional()
       .describe("Optional filter by blade status."),
   },

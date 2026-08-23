@@ -199,7 +199,7 @@ export function ConsoleShell({ children }: { children: ReactNode }) {
         <aside className="flex w-60 flex-col overflow-y-auto border-r border-border bg-background/60 backdrop-blur-sm">
           <div className="px-4 pb-2 pt-4">
             <div className="text-[10px] tracking-[0.3em] text-muted-foreground">⟁ OMNI-SAM AXIS</div>
-            <div className="phosphor-soft mt-0.5 text-[10px] tracking-[0.2em] text-primary/70">13 BLADES · MONARCH · ORE · ◬ · ◇</div>
+            <div className="phosphor-soft mt-0.5 text-[10px] tracking-[0.2em] text-primary/70">{BLADE_COUNT} BLADES · MONARCH · ORE · ◬ · ◇</div>
           </div>
           <nav className="space-y-0.5 p-2">
             {NAV.map((item, idx) => {
