@@ -182,7 +182,7 @@ function SudoPage() {
                 ? "⌬ TRUTH MIRROR VALIDATED"
                 : certMirror === "drift"
                   ? `⚠ TRUTH MIRROR DRIFT · ${certHash} ≠ ${certRederived}`
-                  : "○ AWAITING SUBSTRATE SAMPLE"}
+                  : "○ NO SUBSTRATE SAMPLE YET"}
             </div>
           </div>
         </div>

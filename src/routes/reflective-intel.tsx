@@ -132,7 +132,6 @@ function NodeMirror({ id, name, role }: { id: string; name: string; role: string
 function BladeStatusPill({ status }: { status: Blade["status"] }) {
   const cls =
     status === "LIVE" ? "border-gold text-gold"
-    : status === "AWAITING" ? "border-destructive/60 text-destructive"
     : "border-border text-muted-foreground";
   return (
     <span className={`inline-block rounded border px-1.5 py-0.5 font-mono text-[0.6rem] uppercase tracking-[0.18em] ${cls}`}>

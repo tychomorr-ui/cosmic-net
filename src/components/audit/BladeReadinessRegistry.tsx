@@ -140,13 +140,13 @@ export function BladeReadinessRegistry() {
         ARCHANGEL/v0 envelope (signed-status probe, ed25519 verified). UI-only
         blades render but have no node to verify — they report{" "}
         <span className="text-foreground">RENDERED</span>, not READY. Purged
-        blades stay purged; no theater promotion. Re-verify runs the same
+        blades are deleted from the registry, not parked. Re-verify runs the same
         probes against the bound fleet nodes (Root-Gate · Kether-Gate · Resonate-Earth)
         and overlays the results — no server proxy, no telemetry.
       </p>
 
       <div className="grid grid-cols-2 gap-2 font-mono text-[0.65rem] sm:grid-cols-6">
-        {(["READY", "REACHABLE", "RENDERED", "AWAITING", "DOCTRINE", "PURGED"] as const).map((k) => (
+        {(["READY", "REACHABLE", "RENDERED", "DOCTRINE", "PURGED"] as const).map((k) => (
           <div key={k} className={`rounded border px-2 py-1.5 text-center ${STATE_STYLE[k]}`}>
             <div className="uppercase tracking-[0.18em]">{k.toLowerCase()}</div>
             <div className="mt-0.5 font-display text-base">{sum[k]}</div>

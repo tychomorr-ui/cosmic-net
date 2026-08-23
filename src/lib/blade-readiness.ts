@@ -153,8 +153,8 @@ export function computeRegistry(
     }
     return {
       blade,
-      state: "AWAITING" as const,
-      reason: blade.awaiting ?? blade.tagline,
+      state: "DOCTRINE" as const,
+      reason: blade.blocker ?? blade.tagline,
     };
   });
 }

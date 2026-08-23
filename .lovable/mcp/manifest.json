@@ -45,7 +45,7 @@
       {
         "name": "list_blades",
         "title": "List OMNI-SAM AXIS blades",
-        "description": "List the 13 canonical OMNI-SAM AXIS blades of cMAP with status (LIVE, STANDBY, AWAITING), sovereign route, and tagline. Requires an active cMAP MCP subscription.",
+        "description": "List the registered OMNI-SAM AXIS blades of cMAP with status (LIVE, STANDBY), sovereign route, and tagline. Purged blades are not registered. Requires an active cMAP MCP subscription.",
         "annotations": {
           "readOnlyHint": true,
           "idempotentHint": true,
@@ -60,8 +60,7 @@
               "type": "string",
               "enum": [
                 "LIVE",
-                "STANDBY",
-                "AWAITING"
+                "STANDBY"
               ]
             }
           }
