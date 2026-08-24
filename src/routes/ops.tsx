@@ -17,6 +17,7 @@ import { PipelineFlow } from "@/components/audit/PipelineFlow";
 import { InvalidProofMetricsPanel } from "@/components/audit/InvalidProofMetricsPanel";
 import { InvalidProofFallback } from "@/components/audit/InvalidProofFallback";
 import { BladeReadinessRegistry } from "@/components/audit/BladeReadinessRegistry";
+import { FleetHosts } from "@/components/audit/FleetHosts";
 
 export const Route = createFileRoute("/ops")({
   head: () => ({
@@ -138,6 +139,10 @@ function OpsPage() {
             return <GatewayRow key={g.host} host={g.host} url={g.url} status={s} />;
           })}
         </div>
+      </section>
+
+      <section className="mt-8">
+        <FleetHosts />
       </section>
 
       <section className="mt-10">
