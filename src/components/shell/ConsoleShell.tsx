@@ -15,6 +15,7 @@ import {
   FileCheck,
   type LucideIcon,
 } from "lucide-react";
+import { BLADE_COUNT } from "@/data/blades";
 import { NebulaBackdrop } from "./NebulaBackdrop";
 
 type NavItem = {

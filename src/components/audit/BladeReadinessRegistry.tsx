@@ -6,6 +6,7 @@ import {
   type ProbeFacts,
   type ReadinessState,
 } from "@/lib/blade-readiness";
+import { BLADE_COUNT } from "@/data/blades";
 import { NODES } from "@/data/nodes";
 import { probeSignedStatus } from "@/lib/probe-signed";
 import { probeCorsJson, probeOpaqueHead, type ProbeStatus } from "@/lib/probes";
@@ -14,7 +15,7 @@ const STATE_STYLE: Record<ReadinessState, string> = {
   READY:     "border-gold text-gold",
   REACHABLE: "border-gold/40 text-gold/80",
   RENDERED:  "border-border text-foreground",
-  AWAITING:  "border-muted-foreground/40 text-muted-foreground",
+  DOWN:      "border-destructive/40 text-destructive",
   DOCTRINE:  "border-muted-foreground/30 text-muted-foreground",
   PURGED:    "border-destructive/50 text-destructive",
 };
@@ -146,7 +147,7 @@ export function BladeReadinessRegistry() {
       </p>
 
       <div className="grid grid-cols-2 gap-2 font-mono text-[0.65rem] sm:grid-cols-6">
-        {(["READY", "REACHABLE", "RENDERED", "DOCTRINE", "PURGED"] as const).map((k) => (
+        {(["READY", "REACHABLE", "RENDERED", "DOWN", "DOCTRINE", "PURGED"] as const).map((k) => (
           <div key={k} className={`rounded border px-2 py-1.5 text-center ${STATE_STYLE[k]}`}>
             <div className="uppercase tracking-[0.18em]">{k.toLowerCase()}</div>
             <div className="mt-0.5 font-display text-base">{sum[k]}</div>
