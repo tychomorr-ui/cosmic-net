@@ -30,7 +30,9 @@ export function FleetHosts() {
           </h3>
         </div>
         <span className="font-mono text-[0.65rem] uppercase tracking-[0.18em] text-muted-foreground">
-          {isLoading ? "probing…" : `${up} / ${hosts.length} reachable`}
+          {isLoading
+            ? "probing…"
+            : `${up} / ${hosts.length} reachable${isFetching ? " · re-probing" : ""}`}
         </span>
       </div>
       <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
