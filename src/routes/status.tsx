@@ -15,6 +15,7 @@ import {
 } from "@/lib/final-manifest";
 import { PipelineFlow } from "@/components/audit/PipelineFlow";
 import { TriangleCluster } from "@/components/audit/TriangleCluster";
+import { FleetHosts } from "@/components/audit/FleetHosts";
 
 export const Route = createFileRoute("/status")({
   head: () => ({
@@ -143,6 +144,10 @@ function StatusPage() {
             nodes={NODES.filter((n) => n.cluster_id === "beta")}
           />
         </div>
+      </section>
+
+      <section className="mt-8">
+        <FleetHosts />
       </section>
 
       <section className="mt-8">

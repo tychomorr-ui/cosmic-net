@@ -5,14 +5,18 @@ import { probeNodeHosts } from "@/utils/nodes.functions";
 
 export function FleetHosts() {
   const run = useServerFn(probeNodeHosts);
-  const { data, isLoading, isError } = useQuery({
+  const { data, isLoading, isError, isFetching } = useQuery({
     queryKey: ["node-hosts"],
     queryFn: () => run(),
     refetchInterval: 60_000,
+    refetchOnWindowFocus: true,
+    staleTime: 30_000,
   });
   const byId = new Map((data ?? []).map((p) => [p.id, p]));
   const hosts = NODES.filter((n) => n.host);
-  const up = (data ?? []).filter((p) => p.state === "REACHABLE").length;
+  // Count only hosts currently in the roster, so a stale probe id can never
+  // inflate the reachable tally.
+  const up = hosts.filter((n) => byId.get(n.id)?.state === "REACHABLE").length;
 
   return (
     <section className="border border-border bg-card/30 p-6">
@@ -26,7 +30,9 @@ export function FleetHosts() {
           </h3>
         </div>
         <span className="font-mono text-[0.65rem] uppercase tracking-[0.18em] text-muted-foreground">
-          {isLoading ? "probing…" : `${up} / ${hosts.length} reachable`}
+          {isLoading
+            ? "probing…"
+            : `${up} / ${hosts.length} reachable${isFetching ? " · re-probing" : ""}`}
         </span>
       </div>
       <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
