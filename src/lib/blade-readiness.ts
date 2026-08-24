@@ -5,8 +5,8 @@
 //   "READY" is reserved for blades whose underlying node has been verified
 //   as MEASURED (signed-status, ARCHANGEL/v0 envelope, ed25519 sig valid).
 //   UI-only blades (no network surface) are reported as RENDERED — the
-//   surface paints, but there is no node to verify. AWAITING / purged
-//   blades stay AWAITING and carry their declared reason.
+//   surface paints, but there is no node to verify. Purged blades are
+//   deleted from the registry outright — no AWAITING placeholders.
 //
 // No telemetry. Pure read over already-present static data.
 
@@ -18,7 +18,7 @@ export type ReadinessState =
   | "READY"           // node coupled · ARCHANGEL/v0 verified
   | "REACHABLE"       // host answered but unsigned (no envelope)
   | "RENDERED"        // UI surface paints · no node coupling by design
-  | "AWAITING"        // declared but not live
+  | "DOWN"            // bound node did not answer
   | "DOCTRINE"        // intent only, no probe declared
   | "PURGED";         // removed by doctrine sweep
 
@@ -133,7 +133,7 @@ export function computeRegistry(
       if (probe.state === "UNREACHABLE") {
         return {
           blade, node, probe,
-          state: "AWAITING" as const,
+          state: "DOWN" as const,
           reason: `node unreachable · ${probe.detail}`,
         };
       }
@@ -160,7 +160,7 @@ export function computeRegistry(
 }
 
 export function readinessSummary(rows: BladeReadiness[]) {
-  const tally = { READY: 0, REACHABLE: 0, RENDERED: 0, AWAITING: 0, DOCTRINE: 0, PURGED: 0 };
+  const tally = { READY: 0, REACHABLE: 0, RENDERED: 0, DOWN: 0, DOCTRINE: 0, PURGED: 0 };
   for (const r of rows) tally[r.state] += 1;
   return { total: rows.length, ...tally };
 }
