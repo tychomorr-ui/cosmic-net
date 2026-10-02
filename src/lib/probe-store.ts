@@ -111,8 +111,7 @@ async function runOne(id: string) {
     );
     if (fb.state !== "unreachable") status = fb;
   }
-  store.set(id, status);
-  emit();
+  setStatus(id, status);
   pushEvent({
     ts: Date.now(),
     tag: node.name.toUpperCase(),
