@@ -75,6 +75,13 @@ function detailFor(s: ProbeStatus): string {
   }
 }
 
+// Replace the Map with a fresh copy so useSyncExternalStore's Object.is
+// snapshot check sees a new reference and subscribers actually re-render.
+function setStatus(id: string, status: ProbeStatus) {
+  store = new Map(store).set(id, status);
+  emit();
+}
+
 async function runOne(id: string) {
   const node = NODES.find((n) => n.id === id);
   if (!node?.probe) return;
