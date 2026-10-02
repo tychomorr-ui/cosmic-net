@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { BladeLivePill } from "@/components/blades/BladeLivePill";
 import { useEffect, useState } from "react";
 import { BLADES, type Blade } from "@/data/blades";
 import { NODES } from "@/data/nodes";
@@ -82,7 +83,7 @@ function ReflectiveIntel() {
                       {b.glyph} {b.name}
                     </Link>
                   </td>
-                  <td className="py-2 pr-3"><BladeStatusPill status={b.status} /></td>
+                  <td className="py-2 pr-3"><BladeLivePill blade={b} /></td>
                   <td className="py-2 pr-3 text-muted-foreground">{b.route}</td>
                   <td className="py-2 pr-3 text-foreground">
                     {env ? `${new Date(env.ts).toISOString().slice(11, 19)}Z · ${env.lane}` : "—"}
@@ -129,13 +130,3 @@ function NodeMirror({ id, name, role }: { id: string; name: string; role: string
   );
 }
 
-function BladeStatusPill({ status }: { status: Blade["status"] }) {
-  const cls =
-    status === "LIVE" ? "border-gold text-gold"
-    : "border-border text-muted-foreground";
-  return (
-    <span className={`inline-block rounded border px-1.5 py-0.5 font-mono text-[0.6rem] uppercase tracking-[0.18em] ${cls}`}>
-      {status}
-    </span>
-  );
-}
