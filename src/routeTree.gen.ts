@@ -9,185 +9,51 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
-import { Route as AuditRouteImport } from './routes/audit'
-import { Route as AuthRouteImport } from './routes/auth'
-import { Route as DigitalOreRouteImport } from './routes/digital-ore'
-import { Route as DocsRouteImport } from './routes/docs'
-import { Route as FleetRouteImport } from './routes/fleet'
-import { Route as GatewayRouteImport } from './routes/gateway'
-import { Route as LedgerRouteImport } from './routes/ledger'
-import { Route as McpRouteImport } from './routes/mcp'
-import { Route as MeshRouteImport } from './routes/mesh'
-import { Route as NebulaRouteImport } from './routes/nebula'
-import { Route as OpsRouteImport } from './routes/ops'
-import { Route as PamRouteImport } from './routes/pam'
-import { Route as PricingRouteImport } from './routes/pricing'
-import { Route as ProofFulcrumRouteImport } from './routes/proof-fulcrum'
-import { Route as QuantotalusRouteImport } from './routes/quantotalus'
-import { Route as ReclaimRouteImport } from './routes/reclaim'
-import { Route as ReflectiveIntelRouteImport } from './routes/reflective-intel'
-import { Route as SamCommandRouteImport } from './routes/sam-command'
-import { Route as SeventhDimensionRouteImport } from './routes/seventh-dimension'
-import { Route as SitemapBladesDotxmlRouteImport } from './routes/sitemap-blades[.]xml'
-import { Route as SitemapCoreDotxmlRouteImport } from './routes/sitemap-core[.]xml'
-import { Route as SitemapDocsDotxmlRouteImport } from './routes/sitemap-docs[.]xml'
-import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as StatusRouteImport } from './routes/status'
-import { Route as SudoCoinRouteImport } from './routes/sudo-coin'
-import { Route as TruthCoinRouteImport } from './routes/truth-coin'
-import { Route as TruthPointRouteImport } from './routes/truth-point'
 import { Route as VerifyRouteImport } from './routes/verify'
-import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
-import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
-import { Route as AuthenticatedAccountRouteImport } from './routes/_authenticated/account'
+import { Route as TruthPointRouteImport } from './routes/truth-point'
+import { Route as TruthCoinRouteImport } from './routes/truth-coin'
+import { Route as SudoCoinRouteImport } from './routes/sudo-coin'
+import { Route as StatusRouteImport } from './routes/status'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as SitemapDocsDotxmlRouteImport } from './routes/sitemap-docs[.]xml'
+import { Route as SitemapCoreDotxmlRouteImport } from './routes/sitemap-core[.]xml'
+import { Route as SitemapBladesDotxmlRouteImport } from './routes/sitemap-blades[.]xml'
+import { Route as SeventhDimensionRouteImport } from './routes/seventh-dimension'
+import { Route as SamCommandRouteImport } from './routes/sam-command'
+import { Route as ReflectiveIntelRouteImport } from './routes/reflective-intel'
+import { Route as ReclaimRouteImport } from './routes/reclaim'
+import { Route as QuantotalusRouteImport } from './routes/quantotalus'
+import { Route as ProofFulcrumRouteImport } from './routes/proof-fulcrum'
+import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as PamRouteImport } from './routes/pam'
+import { Route as OpsRouteImport } from './routes/ops'
+import { Route as NebulaRouteImport } from './routes/nebula'
+import { Route as MeshRouteImport } from './routes/mesh'
+import { Route as McpRouteImport } from './routes/mcp'
+import { Route as LedgerRouteImport } from './routes/ledger'
+import { Route as GatewayRouteImport } from './routes/gateway'
+import { Route as FleetRouteImport } from './routes/fleet'
+import { Route as DocsRouteImport } from './routes/docs'
+import { Route as DigitalOreRouteImport } from './routes/digital-ore'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuditRouteImport } from './routes/audit'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as IndexRouteImport } from './routes/index'
 import { Route as CheckoutReturnRouteImport } from './routes/checkout.return'
-import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
+import { Route as AuthenticatedAccountRouteImport } from './routes/_authenticated/account'
+import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
+import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
-import { Route as ApiPublicHooksNexinusRouteImport } from './routes/api/public/hooks/nexinus'
-import { Route as ApiPublicHooksReprobeRouteImport } from './routes/api/public/hooks/reprobe'
+import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
-import { Route as ApiPublicHooksNexinusRegisterRouteImport } from './routes/api/public/hooks/nexinus/register'
+import { Route as ApiPublicHooksReprobeRouteImport } from './routes/api/public/hooks/reprobe'
+import { Route as ApiPublicHooksNexinusRouteImport } from './routes/api/public/hooks/nexinus'
 import { Route as ApiPublicHooksNexinusStatusRouteImport } from './routes/api/public/hooks/nexinus/status'
+import { Route as ApiPublicHooksNexinusRegisterRouteImport } from './routes/api/public/hooks/nexinus/register'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
-  id: '/_authenticated',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuditRoute = AuditRouteImport.update({
-  id: '/audit',
-  path: '/audit',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthRoute = AuthRouteImport.update({
-  id: '/auth',
-  path: '/auth',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DigitalOreRoute = DigitalOreRouteImport.update({
-  id: '/digital-ore',
-  path: '/digital-ore',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DocsRoute = DocsRouteImport.update({
-  id: '/docs',
-  path: '/docs',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const FleetRoute = FleetRouteImport.update({
-  id: '/fleet',
-  path: '/fleet',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const GatewayRoute = GatewayRouteImport.update({
-  id: '/gateway',
-  path: '/gateway',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LedgerRoute = LedgerRouteImport.update({
-  id: '/ledger',
-  path: '/ledger',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const McpRoute = McpRouteImport.update({
-  id: '/mcp',
-  path: '/mcp',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MeshRoute = MeshRouteImport.update({
-  id: '/mesh',
-  path: '/mesh',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const NebulaRoute = NebulaRouteImport.update({
-  id: '/nebula',
-  path: '/nebula',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const OpsRoute = OpsRouteImport.update({
-  id: '/ops',
-  path: '/ops',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PamRoute = PamRouteImport.update({
-  id: '/pam',
-  path: '/pam',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PricingRoute = PricingRouteImport.update({
-  id: '/pricing',
-  path: '/pricing',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ProofFulcrumRoute = ProofFulcrumRouteImport.update({
-  id: '/proof-fulcrum',
-  path: '/proof-fulcrum',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const QuantotalusRoute = QuantotalusRouteImport.update({
-  id: '/quantotalus',
-  path: '/quantotalus',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ReclaimRoute = ReclaimRouteImport.update({
-  id: '/reclaim',
-  path: '/reclaim',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ReflectiveIntelRoute = ReflectiveIntelRouteImport.update({
-  id: '/reflective-intel',
-  path: '/reflective-intel',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SamCommandRoute = SamCommandRouteImport.update({
-  id: '/sam-command',
-  path: '/sam-command',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SeventhDimensionRoute = SeventhDimensionRouteImport.update({
-  id: '/seventh-dimension',
-  path: '/seventh-dimension',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SitemapBladesDotxmlRoute = SitemapBladesDotxmlRouteImport.update({
-  id: '/sitemap-blades.xml',
-  path: '/sitemap-blades.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SitemapCoreDotxmlRoute = SitemapCoreDotxmlRouteImport.update({
-  id: '/sitemap-core.xml',
-  path: '/sitemap-core.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SitemapDocsDotxmlRoute = SitemapDocsDotxmlRouteImport.update({
-  id: '/sitemap-docs.xml',
-  path: '/sitemap-docs.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
-  id: '/sitemap.xml',
-  path: '/sitemap.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const StatusRoute = StatusRouteImport.update({
-  id: '/status',
-  path: '/status',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SudoCoinRoute = SudoCoinRouteImport.update({
-  id: '/sudo-coin',
-  path: '/sudo-coin',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TruthCoinRoute = TruthCoinRouteImport.update({
-  id: '/truth-coin',
-  path: '/truth-coin',
+const VerifyRoute = VerifyRouteImport.update({
+  id: '/verify',
+  path: '/verify',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TruthPointRoute = TruthPointRouteImport.update({
@@ -195,52 +61,176 @@ const TruthPointRoute = TruthPointRouteImport.update({
   path: '/truth-point',
   getParentRoute: () => rootRouteImport,
 } as any)
-const VerifyRoute = VerifyRouteImport.update({
-  id: '/verify',
-  path: '/verify',
+const TruthCoinRoute = TruthCoinRouteImport.update({
+  id: '/truth-coin',
+  path: '/truth-coin',
   getParentRoute: () => rootRouteImport,
 } as any)
-const Char91DotmcpChar93ListToolsRoute =
-  Char91DotmcpChar93ListToolsRouteImport.update({
-    id: '/.mcp/list-tools',
-    path: '/.mcp/list-tools',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const Char91DotwellKnownChar93OauthProtectedResourceRoute =
-  Char91DotwellKnownChar93OauthProtectedResourceRouteImport.update({
-    id: '/.well-known/oauth-protected-resource',
-    path: '/.well-known/oauth-protected-resource',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const AuthenticatedAccountRoute = AuthenticatedAccountRouteImport.update({
-  id: '/account',
-  path: '/account',
-  getParentRoute: () => AuthenticatedRouteRoute,
+const SudoCoinRoute = SudoCoinRouteImport.update({
+  id: '/sudo-coin',
+  path: '/sudo-coin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StatusRoute = StatusRouteImport.update({
+  id: '/status',
+  path: '/status',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDocsDotxmlRoute = SitemapDocsDotxmlRouteImport.update({
+  id: '/sitemap-docs.xml',
+  path: '/sitemap-docs.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapCoreDotxmlRoute = SitemapCoreDotxmlRouteImport.update({
+  id: '/sitemap-core.xml',
+  path: '/sitemap-core.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapBladesDotxmlRoute = SitemapBladesDotxmlRouteImport.update({
+  id: '/sitemap-blades.xml',
+  path: '/sitemap-blades.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SeventhDimensionRoute = SeventhDimensionRouteImport.update({
+  id: '/seventh-dimension',
+  path: '/seventh-dimension',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SamCommandRoute = SamCommandRouteImport.update({
+  id: '/sam-command',
+  path: '/sam-command',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReflectiveIntelRoute = ReflectiveIntelRouteImport.update({
+  id: '/reflective-intel',
+  path: '/reflective-intel',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReclaimRoute = ReclaimRouteImport.update({
+  id: '/reclaim',
+  path: '/reclaim',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const QuantotalusRoute = QuantotalusRouteImport.update({
+  id: '/quantotalus',
+  path: '/quantotalus',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProofFulcrumRoute = ProofFulcrumRouteImport.update({
+  id: '/proof-fulcrum',
+  path: '/proof-fulcrum',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PricingRoute = PricingRouteImport.update({
+  id: '/pricing',
+  path: '/pricing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PamRoute = PamRouteImport.update({
+  id: '/pam',
+  path: '/pam',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OpsRoute = OpsRouteImport.update({
+  id: '/ops',
+  path: '/ops',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NebulaRoute = NebulaRouteImport.update({
+  id: '/nebula',
+  path: '/nebula',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MeshRoute = MeshRouteImport.update({
+  id: '/mesh',
+  path: '/mesh',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const McpRoute = McpRouteImport.update({
+  id: '/mcp',
+  path: '/mcp',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LedgerRoute = LedgerRouteImport.update({
+  id: '/ledger',
+  path: '/ledger',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GatewayRoute = GatewayRouteImport.update({
+  id: '/gateway',
+  path: '/gateway',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FleetRoute = FleetRouteImport.update({
+  id: '/fleet',
+  path: '/fleet',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DocsRoute = DocsRouteImport.update({
+  id: '/docs',
+  path: '/docs',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DigitalOreRoute = DigitalOreRouteImport.update({
+  id: '/digital-ore',
+  path: '/digital-ore',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuditRoute = AuditRouteImport.update({
+  id: '/audit',
+  path: '/audit',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const CheckoutReturnRoute = CheckoutReturnRouteImport.update({
   id: '/checkout/return',
   path: '/checkout/return',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DotlovableOauthConsentRoute = DotlovableOauthConsentRouteImport.update({
-  id: '/.lovable/oauth/consent',
-  path: '/.lovable/oauth/consent',
-  getParentRoute: () => rootRouteImport,
+const AuthenticatedAccountRoute = AuthenticatedAccountRouteImport.update({
+  id: '/account',
+  path: '/account',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const Char91DotwellKnownChar93OauthProtectedResourceRoute =
+  Char91DotwellKnownChar93OauthProtectedResourceRouteImport.update({
+    id: '/.well-known/oauth-protected-resource',
+    path: '/.well-known/oauth-protected-resource',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const Char91DotmcpChar93ListToolsRoute =
+  Char91DotmcpChar93ListToolsRouteImport.update({
+    id: '/.mcp/list-tools',
+    path: '/.mcp/list-tools',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const Char91DotmcpChar93InvokeToolToolRoute =
   Char91DotmcpChar93InvokeToolToolRouteImport.update({
     id: '/.mcp/invoke-tool/$tool',
     path: '/.mcp/invoke-tool/$tool',
     getParentRoute: () => rootRouteImport,
   } as any)
-const ApiPublicHooksNexinusRoute = ApiPublicHooksNexinusRouteImport.update({
-  id: '/api/public/hooks/nexinus',
-  path: '/api/public/hooks/nexinus',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiPublicHooksReprobeRoute = ApiPublicHooksReprobeRouteImport.update({
-  id: '/api/public/hooks/reprobe',
-  path: '/api/public/hooks/reprobe',
+const DotlovableOauthConsentRoute = DotlovableOauthConsentRouteImport.update({
+  id: '/.lovable/oauth/consent',
+  path: '/.lovable/oauth/consent',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicPaymentsWebhookRoute =
@@ -249,16 +239,26 @@ const ApiPublicPaymentsWebhookRoute =
     path: '/api/public/payments/webhook',
     getParentRoute: () => rootRouteImport,
   } as any)
-const ApiPublicHooksNexinusRegisterRoute =
-  ApiPublicHooksNexinusRegisterRouteImport.update({
-    id: '/register',
-    path: '/register',
-    getParentRoute: () => ApiPublicHooksNexinusRoute,
-  } as any)
+const ApiPublicHooksReprobeRoute = ApiPublicHooksReprobeRouteImport.update({
+  id: '/api/public/hooks/reprobe',
+  path: '/api/public/hooks/reprobe',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicHooksNexinusRoute = ApiPublicHooksNexinusRouteImport.update({
+  id: '/api/public/hooks/nexinus',
+  path: '/api/public/hooks/nexinus',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicHooksNexinusStatusRoute =
   ApiPublicHooksNexinusStatusRouteImport.update({
     id: '/status',
     path: '/status',
+    getParentRoute: () => ApiPublicHooksNexinusRoute,
+  } as any)
+const ApiPublicHooksNexinusRegisterRoute =
+  ApiPublicHooksNexinusRegisterRouteImport.update({
+    id: '/register',
+    path: '/register',
     getParentRoute: () => ApiPublicHooksNexinusRoute,
   } as any)
 
@@ -563,200 +563,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_authenticated': {
-      id: '/_authenticated'
-      path: ''
-      fullPath: '/'
-      preLoaderRoute: typeof AuthenticatedRouteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/audit': {
-      id: '/audit'
-      path: '/audit'
-      fullPath: '/audit'
-      preLoaderRoute: typeof AuditRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/auth': {
-      id: '/auth'
-      path: '/auth'
-      fullPath: '/auth'
-      preLoaderRoute: typeof AuthRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/digital-ore': {
-      id: '/digital-ore'
-      path: '/digital-ore'
-      fullPath: '/digital-ore'
-      preLoaderRoute: typeof DigitalOreRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/docs': {
-      id: '/docs'
-      path: '/docs'
-      fullPath: '/docs'
-      preLoaderRoute: typeof DocsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/fleet': {
-      id: '/fleet'
-      path: '/fleet'
-      fullPath: '/fleet'
-      preLoaderRoute: typeof FleetRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/gateway': {
-      id: '/gateway'
-      path: '/gateway'
-      fullPath: '/gateway'
-      preLoaderRoute: typeof GatewayRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/ledger': {
-      id: '/ledger'
-      path: '/ledger'
-      fullPath: '/ledger'
-      preLoaderRoute: typeof LedgerRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/mcp': {
-      id: '/mcp'
-      path: '/mcp'
-      fullPath: '/mcp'
-      preLoaderRoute: typeof McpRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/mesh': {
-      id: '/mesh'
-      path: '/mesh'
-      fullPath: '/mesh'
-      preLoaderRoute: typeof MeshRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/nebula': {
-      id: '/nebula'
-      path: '/nebula'
-      fullPath: '/nebula'
-      preLoaderRoute: typeof NebulaRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/ops': {
-      id: '/ops'
-      path: '/ops'
-      fullPath: '/ops'
-      preLoaderRoute: typeof OpsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/pam': {
-      id: '/pam'
-      path: '/pam'
-      fullPath: '/pam'
-      preLoaderRoute: typeof PamRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/pricing': {
-      id: '/pricing'
-      path: '/pricing'
-      fullPath: '/pricing'
-      preLoaderRoute: typeof PricingRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/proof-fulcrum': {
-      id: '/proof-fulcrum'
-      path: '/proof-fulcrum'
-      fullPath: '/proof-fulcrum'
-      preLoaderRoute: typeof ProofFulcrumRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/quantotalus': {
-      id: '/quantotalus'
-      path: '/quantotalus'
-      fullPath: '/quantotalus'
-      preLoaderRoute: typeof QuantotalusRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/reclaim': {
-      id: '/reclaim'
-      path: '/reclaim'
-      fullPath: '/reclaim'
-      preLoaderRoute: typeof ReclaimRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/reflective-intel': {
-      id: '/reflective-intel'
-      path: '/reflective-intel'
-      fullPath: '/reflective-intel'
-      preLoaderRoute: typeof ReflectiveIntelRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sam-command': {
-      id: '/sam-command'
-      path: '/sam-command'
-      fullPath: '/sam-command'
-      preLoaderRoute: typeof SamCommandRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/seventh-dimension': {
-      id: '/seventh-dimension'
-      path: '/seventh-dimension'
-      fullPath: '/seventh-dimension'
-      preLoaderRoute: typeof SeventhDimensionRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sitemap-blades.xml': {
-      id: '/sitemap-blades.xml'
-      path: '/sitemap-blades.xml'
-      fullPath: '/sitemap-blades.xml'
-      preLoaderRoute: typeof SitemapBladesDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sitemap-core.xml': {
-      id: '/sitemap-core.xml'
-      path: '/sitemap-core.xml'
-      fullPath: '/sitemap-core.xml'
-      preLoaderRoute: typeof SitemapCoreDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sitemap-docs.xml': {
-      id: '/sitemap-docs.xml'
-      path: '/sitemap-docs.xml'
-      fullPath: '/sitemap-docs.xml'
-      preLoaderRoute: typeof SitemapDocsDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sitemap.xml': {
-      id: '/sitemap.xml'
-      path: '/sitemap.xml'
-      fullPath: '/sitemap.xml'
-      preLoaderRoute: typeof SitemapDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/status': {
-      id: '/status'
-      path: '/status'
-      fullPath: '/status'
-      preLoaderRoute: typeof StatusRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sudo-coin': {
-      id: '/sudo-coin'
-      path: '/sudo-coin'
-      fullPath: '/sudo-coin'
-      preLoaderRoute: typeof SudoCoinRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/truth-coin': {
-      id: '/truth-coin'
-      path: '/truth-coin'
-      fullPath: '/truth-coin'
-      preLoaderRoute: typeof TruthCoinRouteImport
+    '/verify': {
+      id: '/verify'
+      path: '/verify'
+      fullPath: '/verify'
+      preLoaderRoute: typeof VerifyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/truth-point': {
@@ -766,25 +577,207 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TruthPointRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/verify': {
-      id: '/verify'
-      path: '/verify'
-      fullPath: '/verify'
-      preLoaderRoute: typeof VerifyRouteImport
+    '/truth-coin': {
+      id: '/truth-coin'
+      path: '/truth-coin'
+      fullPath: '/truth-coin'
+      preLoaderRoute: typeof TruthCoinRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/.mcp/list-tools': {
-      id: '/.mcp/list-tools'
-      path: '/.mcp/list-tools'
-      fullPath: '/.mcp/list-tools'
-      preLoaderRoute: typeof Char91DotmcpChar93ListToolsRouteImport
+    '/sudo-coin': {
+      id: '/sudo-coin'
+      path: '/sudo-coin'
+      fullPath: '/sudo-coin'
+      preLoaderRoute: typeof SudoCoinRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/.well-known/oauth-protected-resource': {
-      id: '/.well-known/oauth-protected-resource'
-      path: '/.well-known/oauth-protected-resource'
-      fullPath: '/.well-known/oauth-protected-resource'
-      preLoaderRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRouteImport
+    '/status': {
+      id: '/status'
+      path: '/status'
+      fullPath: '/status'
+      preLoaderRoute: typeof StatusRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-docs.xml': {
+      id: '/sitemap-docs.xml'
+      path: '/sitemap-docs.xml'
+      fullPath: '/sitemap-docs.xml'
+      preLoaderRoute: typeof SitemapDocsDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-core.xml': {
+      id: '/sitemap-core.xml'
+      path: '/sitemap-core.xml'
+      fullPath: '/sitemap-core.xml'
+      preLoaderRoute: typeof SitemapCoreDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-blades.xml': {
+      id: '/sitemap-blades.xml'
+      path: '/sitemap-blades.xml'
+      fullPath: '/sitemap-blades.xml'
+      preLoaderRoute: typeof SitemapBladesDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/seventh-dimension': {
+      id: '/seventh-dimension'
+      path: '/seventh-dimension'
+      fullPath: '/seventh-dimension'
+      preLoaderRoute: typeof SeventhDimensionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sam-command': {
+      id: '/sam-command'
+      path: '/sam-command'
+      fullPath: '/sam-command'
+      preLoaderRoute: typeof SamCommandRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reflective-intel': {
+      id: '/reflective-intel'
+      path: '/reflective-intel'
+      fullPath: '/reflective-intel'
+      preLoaderRoute: typeof ReflectiveIntelRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reclaim': {
+      id: '/reclaim'
+      path: '/reclaim'
+      fullPath: '/reclaim'
+      preLoaderRoute: typeof ReclaimRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/quantotalus': {
+      id: '/quantotalus'
+      path: '/quantotalus'
+      fullPath: '/quantotalus'
+      preLoaderRoute: typeof QuantotalusRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/proof-fulcrum': {
+      id: '/proof-fulcrum'
+      path: '/proof-fulcrum'
+      fullPath: '/proof-fulcrum'
+      preLoaderRoute: typeof ProofFulcrumRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pricing': {
+      id: '/pricing'
+      path: '/pricing'
+      fullPath: '/pricing'
+      preLoaderRoute: typeof PricingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pam': {
+      id: '/pam'
+      path: '/pam'
+      fullPath: '/pam'
+      preLoaderRoute: typeof PamRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ops': {
+      id: '/ops'
+      path: '/ops'
+      fullPath: '/ops'
+      preLoaderRoute: typeof OpsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/nebula': {
+      id: '/nebula'
+      path: '/nebula'
+      fullPath: '/nebula'
+      preLoaderRoute: typeof NebulaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mesh': {
+      id: '/mesh'
+      path: '/mesh'
+      fullPath: '/mesh'
+      preLoaderRoute: typeof MeshRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mcp': {
+      id: '/mcp'
+      path: '/mcp'
+      fullPath: '/mcp'
+      preLoaderRoute: typeof McpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ledger': {
+      id: '/ledger'
+      path: '/ledger'
+      fullPath: '/ledger'
+      preLoaderRoute: typeof LedgerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/gateway': {
+      id: '/gateway'
+      path: '/gateway'
+      fullPath: '/gateway'
+      preLoaderRoute: typeof GatewayRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/fleet': {
+      id: '/fleet'
+      path: '/fleet'
+      fullPath: '/fleet'
+      preLoaderRoute: typeof FleetRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/docs': {
+      id: '/docs'
+      path: '/docs'
+      fullPath: '/docs'
+      preLoaderRoute: typeof DocsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/digital-ore': {
+      id: '/digital-ore'
+      path: '/digital-ore'
+      fullPath: '/digital-ore'
+      preLoaderRoute: typeof DigitalOreRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/audit': {
+      id: '/audit'
+      path: '/audit'
+      fullPath: '/audit'
+      preLoaderRoute: typeof AuditRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/checkout/return': {
+      id: '/checkout/return'
+      path: '/checkout/return'
+      fullPath: '/checkout/return'
+      preLoaderRoute: typeof CheckoutReturnRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/account': {
@@ -794,18 +787,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAccountRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/checkout/return': {
-      id: '/checkout/return'
-      path: '/checkout/return'
-      fullPath: '/checkout/return'
-      preLoaderRoute: typeof CheckoutReturnRouteImport
+    '/.well-known/oauth-protected-resource': {
+      id: '/.well-known/oauth-protected-resource'
+      path: '/.well-known/oauth-protected-resource'
+      fullPath: '/.well-known/oauth-protected-resource'
+      preLoaderRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/.lovable/oauth/consent': {
-      id: '/.lovable/oauth/consent'
-      path: '/.lovable/oauth/consent'
-      fullPath: '/.lovable/oauth/consent'
-      preLoaderRoute: typeof DotlovableOauthConsentRouteImport
+    '/.mcp/list-tools': {
+      id: '/.mcp/list-tools'
+      path: '/.mcp/list-tools'
+      fullPath: '/.mcp/list-tools'
+      preLoaderRoute: typeof Char91DotmcpChar93ListToolsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/.mcp/invoke-tool/$tool': {
@@ -815,18 +808,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Char91DotmcpChar93InvokeToolToolRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/hooks/nexinus': {
-      id: '/api/public/hooks/nexinus'
-      path: '/api/public/hooks/nexinus'
-      fullPath: '/api/public/hooks/nexinus'
-      preLoaderRoute: typeof ApiPublicHooksNexinusRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/reprobe': {
-      id: '/api/public/hooks/reprobe'
-      path: '/api/public/hooks/reprobe'
-      fullPath: '/api/public/hooks/reprobe'
-      preLoaderRoute: typeof ApiPublicHooksReprobeRouteImport
+    '/.lovable/oauth/consent': {
+      id: '/.lovable/oauth/consent'
+      path: '/.lovable/oauth/consent'
+      fullPath: '/.lovable/oauth/consent'
+      preLoaderRoute: typeof DotlovableOauthConsentRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/payments/webhook': {
@@ -836,18 +822,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicPaymentsWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/hooks/nexinus/register': {
-      id: '/api/public/hooks/nexinus/register'
-      path: '/register'
-      fullPath: '/api/public/hooks/nexinus/register'
-      preLoaderRoute: typeof ApiPublicHooksNexinusRegisterRouteImport
-      parentRoute: typeof ApiPublicHooksNexinusRoute
+    '/api/public/hooks/reprobe': {
+      id: '/api/public/hooks/reprobe'
+      path: '/api/public/hooks/reprobe'
+      fullPath: '/api/public/hooks/reprobe'
+      preLoaderRoute: typeof ApiPublicHooksReprobeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/nexinus': {
+      id: '/api/public/hooks/nexinus'
+      path: '/api/public/hooks/nexinus'
+      fullPath: '/api/public/hooks/nexinus'
+      preLoaderRoute: typeof ApiPublicHooksNexinusRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/api/public/hooks/nexinus/status': {
       id: '/api/public/hooks/nexinus/status'
       path: '/status'
       fullPath: '/api/public/hooks/nexinus/status'
       preLoaderRoute: typeof ApiPublicHooksNexinusStatusRouteImport
+      parentRoute: typeof ApiPublicHooksNexinusRoute
+    }
+    '/api/public/hooks/nexinus/register': {
+      id: '/api/public/hooks/nexinus/register'
+      path: '/register'
+      fullPath: '/api/public/hooks/nexinus/register'
+      preLoaderRoute: typeof ApiPublicHooksNexinusRegisterRouteImport
       parentRoute: typeof ApiPublicHooksNexinusRoute
     }
   }
