@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { BLADES, BLADE_COUNT, type Blade } from "@/data/blades";
+import { BladeLivePill, useBladeLive } from "@/components/blades/BladeLivePill";
 
 export function AxisGrid() {
   return (
@@ -22,8 +23,9 @@ export function AxisGrid() {
 }
 
 function BladeTile({ blade }: { blade: Blade }) {
+  const live = useBladeLive(blade);
   const accent =
-    blade.status === "LIVE"
+    live.tone === "live"
       ? "border-gold/60 hover:border-gold"
       : "border-border hover:border-gold/60";
 
@@ -46,24 +48,12 @@ function BladeTile({ blade }: { blade: Blade }) {
           {blade.tagline}
         </p>
         <div className="mt-3 flex items-center justify-between">
-          <StatusPill status={blade.status} />
+          <BladeLivePill blade={blade} />
           <span className="font-mono text-[0.65rem] text-muted-foreground transition group-hover:text-gold">
             {blade.route} →
           </span>
         </div>
       </Link>
     </li>
-  );
-}
-
-function StatusPill({ status }: { status: Blade["status"] }) {
-  const cls =
-    status === "LIVE" ? "border-gold/60 text-gold" : "border-border text-muted-foreground";
-  return (
-    <span
-      className={`rounded border px-2 py-0.5 font-mono text-[0.6rem] uppercase tracking-[0.2em] ${cls}`}
-    >
-      {status}
-    </span>
   );
 }

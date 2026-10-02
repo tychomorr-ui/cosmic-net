@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { BladeLivePill } from "./BladeLivePill";
 import type { Blade } from "@/data/blades";
 
 export function BladeStandby({ blade, children }: { blade: Blade; children?: React.ReactNode }) {
@@ -17,7 +18,7 @@ export function BladeStandby({ blade, children }: { blade: Blade; children?: Rea
           <span className="text-gold">{blade.glyph}</span>&nbsp; {blade.name}
         </h1>
         <p className="max-w-3xl text-sm text-muted-foreground">{blade.tagline}</p>
-        <StatusBadge status={blade.status} />
+        <BladeLivePill blade={blade} />
       </header>
 
       <section className="rounded border border-border bg-card/40 p-6">
@@ -35,15 +36,5 @@ export function BladeStandby({ blade, children }: { blade: Blade; children?: Rea
 
       {children}
     </div>
-  );
-}
-
-function StatusBadge({ status }: { status: Blade["status"] }) {
-  const cls =
-    status === "LIVE" ? "border-gold text-gold" : "border-border text-muted-foreground";
-  return (
-    <span className={`inline-block rounded border px-2 py-0.5 font-mono text-[0.65rem] uppercase tracking-[0.2em] ${cls}`}>
-      {status}
-    </span>
   );
 }
