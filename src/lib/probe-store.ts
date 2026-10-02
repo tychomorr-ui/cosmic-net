@@ -81,8 +81,7 @@ async function runOne(id: string) {
   // Operator-supplied override (e.g. Valkyrie signed-status pubkey) wins.
   const ov = getOverride(id);
   const probe = ov ?? node.probe;
-  store.set(id, { state: "probing", at: Date.now() });
-  emit();
+  setStatus(id, { state: "probing", at: Date.now() });
   let status: ProbeStatus;
   if (probe.kind === "cors-json") {
     status = await probeCorsJson(probe.url, probe.okField);
