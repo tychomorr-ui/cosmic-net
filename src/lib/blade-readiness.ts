@@ -42,7 +42,7 @@ export type BladeReadiness = {
 // Static blade → node coupling. Only the three real nodes have a network
 // surface; the rest of the blades are UI surfaces (rendered or purged) and
 // MUST NOT be reported as bound to a node they don't actually verify.
-const BLADE_NODE_BINDING: Record<string, string> = {
+export const BLADE_NODE_BINDING: Record<string, string> = {
   "04": "resonate-earth",     // Network NEBULA samm mist-flow vertex
   "07": "root-gate",          // TERMINUS · ops surface against the control plane
   "13": "tesseract-a",        // PROOF FULCRUM · operator stamp / fleet witness
