@@ -5,7 +5,7 @@ import { getOverride } from "./node-overrides";
 
 type Store = Map<string, ProbeStatus>;
 
-const store: Store = new Map(NODES.map((n) => [n.id, { state: "idle" } as ProbeStatus]));
+let store: Store = new Map(NODES.map((n) => [n.id, { state: "idle" } as ProbeStatus]));
 const listeners = new Set<() => void>();
 
 // ---- bounded ticker event buffer (sliding window, max 64) ----
@@ -75,14 +75,20 @@ function detailFor(s: ProbeStatus): string {
   }
 }
 
+// Replace the Map with a fresh copy so useSyncExternalStore's Object.is
+// snapshot check sees a new reference and subscribers actually re-render.
+function setStatus(id: string, status: ProbeStatus) {
+  store = new Map(store).set(id, status);
+  emit();
+}
+
 async function runOne(id: string) {
   const node = NODES.find((n) => n.id === id);
   if (!node?.probe) return;
   // Operator-supplied override (e.g. Valkyrie signed-status pubkey) wins.
   const ov = getOverride(id);
   const probe = ov ?? node.probe;
-  store.set(id, { state: "probing", at: Date.now() });
-  emit();
+  setStatus(id, { state: "probing", at: Date.now() });
   let status: ProbeStatus;
   if (probe.kind === "cors-json") {
     status = await probeCorsJson(probe.url, probe.okField);
@@ -112,8 +118,7 @@ async function runOne(id: string) {
     );
     if (fb.state !== "unreachable") status = fb;
   }
-  store.set(id, status);
-  emit();
+  setStatus(id, status);
   pushEvent({
     ts: Date.now(),
     tag: node.name.toUpperCase(),
