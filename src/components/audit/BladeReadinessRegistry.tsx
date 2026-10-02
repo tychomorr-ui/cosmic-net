@@ -107,7 +107,7 @@ export function BladeReadinessRegistry() {
             Blade Readiness Registry
           </div>
           <h2 className="font-display text-lg tracking-[0.08em] text-foreground">
-            {BLADES.length} blades · ARCHANGEL/v0 coupling
+            {BLADE_COUNT} blades · ARCHANGEL/v0 coupling
           </h2>
         </div>
         <div className="flex flex-wrap items-center gap-2">

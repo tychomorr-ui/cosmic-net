@@ -53,15 +53,6 @@ export const CENTRALIZATION_INVENTORY: Centralized[] = [
       "Already sovereign per operator. Browser verifies signature locally; no managed service in the path.",
   },
   {
-    id: "valkyrie",
-    host: "valkyrie.nexinus.net",
-    purpose: "Operator-run gateway probe target.",
-    category: "probe",
-    removable: "operator-choice",
-    sovereignty_path:
-      "Operator infra. Probe currently failing — UI must surface UNREACHABLE honestly.",
-  },
-  {
     id: "resonate-earth",
     host: "resonate-earth.live",
     purpose: "Sovereign node opaque HEAD reach.",
