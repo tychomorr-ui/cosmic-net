@@ -13,6 +13,7 @@ import {
   Triangle,
   ShieldCheck,
   FileCheck,
+  MessagesSquare,
   type LucideIcon,
 } from "lucide-react";
 import { BLADE_COUNT } from "@/data/blades";
@@ -37,6 +38,7 @@ const NAV: NavItem[] = [
   { name: "Truth Substrate",  path: "/sudo-coin",       icon: Sparkles,       sigil: "◈", code: "TRS" },
   { name: "QUANTOTALUS",      path: "/quantotalus",     icon: Triangle,       sigil: "◬", code: "QUANT" },
   { name: "PROOF FULCRUM",    path: "/proof-fulcrum",   icon: ShieldCheck,    sigil: "◇", code: "PROOF" },
+  { name: "Messages",         path: "/messages",        icon: MessagesSquare, sigil: "✉", code: "MSG" },
   { name: "Audit Center",     path: "/audit",           icon: FileCheck,      sigil: "▤", code: "AUDIT" },
 ];
 
