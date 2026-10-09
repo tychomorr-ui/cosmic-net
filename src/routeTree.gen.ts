@@ -20,6 +20,7 @@ import { Route as GatewayRouteImport } from './routes/gateway'
 import { Route as LedgerRouteImport } from './routes/ledger'
 import { Route as McpRouteImport } from './routes/mcp'
 import { Route as MeshRouteImport } from './routes/mesh'
+import { Route as MessagesRouteImport } from './routes/messages'
 import { Route as NebulaRouteImport } from './routes/nebula'
 import { Route as OpsRouteImport } from './routes/ops'
 import { Route as PamRouteImport } from './routes/pam'
@@ -103,6 +104,11 @@ const McpRoute = McpRouteImport.update({
 const MeshRoute = MeshRouteImport.update({
   id: '/mesh',
   path: '/mesh',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MessagesRoute = MessagesRouteImport.update({
+  id: '/messages',
+  path: '/messages',
   getParentRoute: () => rootRouteImport,
 } as any)
 const NebulaRoute = NebulaRouteImport.update({
@@ -273,6 +279,7 @@ export interface FileRoutesByFullPath {
   '/ledger': typeof LedgerRoute
   '/mcp': typeof McpRoute
   '/mesh': typeof MeshRoute
+  '/messages': typeof MessagesRoute
   '/nebula': typeof NebulaRoute
   '/ops': typeof OpsRoute
   '/pam': typeof PamRoute
@@ -315,6 +322,7 @@ export interface FileRoutesByTo {
   '/ledger': typeof LedgerRoute
   '/mcp': typeof McpRoute
   '/mesh': typeof MeshRoute
+  '/messages': typeof MessagesRoute
   '/nebula': typeof NebulaRoute
   '/ops': typeof OpsRoute
   '/pam': typeof PamRoute
@@ -359,6 +367,7 @@ export interface FileRoutesById {
   '/ledger': typeof LedgerRoute
   '/mcp': typeof McpRoute
   '/mesh': typeof MeshRoute
+  '/messages': typeof MessagesRoute
   '/nebula': typeof NebulaRoute
   '/ops': typeof OpsRoute
   '/pam': typeof PamRoute
@@ -403,6 +412,7 @@ export interface FileRouteTypes {
     | '/ledger'
     | '/mcp'
     | '/mesh'
+    | '/messages'
     | '/nebula'
     | '/ops'
     | '/pam'
@@ -445,6 +455,7 @@ export interface FileRouteTypes {
     | '/ledger'
     | '/mcp'
     | '/mesh'
+    | '/messages'
     | '/nebula'
     | '/ops'
     | '/pam'
@@ -488,6 +499,7 @@ export interface FileRouteTypes {
     | '/ledger'
     | '/mcp'
     | '/mesh'
+    | '/messages'
     | '/nebula'
     | '/ops'
     | '/pam'
@@ -532,6 +544,7 @@ export interface RootRouteChildren {
   LedgerRoute: typeof LedgerRoute
   McpRoute: typeof McpRoute
   MeshRoute: typeof MeshRoute
+  MessagesRoute: typeof MessagesRoute
   NebulaRoute: typeof NebulaRoute
   OpsRoute: typeof OpsRoute
   PamRoute: typeof PamRoute
@@ -638,6 +651,13 @@ declare module '@tanstack/react-router' {
       path: '/mesh'
       fullPath: '/mesh'
       preLoaderRoute: typeof MeshRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/messages': {
+      id: '/messages'
+      path: '/messages'
+      fullPath: '/messages'
+      preLoaderRoute: typeof MessagesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/nebula': {
@@ -891,6 +911,7 @@ const rootRouteChildren: RootRouteChildren = {
   LedgerRoute: LedgerRoute,
   McpRoute: McpRoute,
   MeshRoute: MeshRoute,
+  MessagesRoute: MessagesRoute,
   NebulaRoute: NebulaRoute,
   OpsRoute: OpsRoute,
   PamRoute: PamRoute,
