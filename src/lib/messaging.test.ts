@@ -4,7 +4,7 @@ import { bytesToHex, hexToBytes } from "@noble/hashes/utils.js";
 import { canonicalize, valueToCid } from "./cid";
 import {
   backoffMs, buildEnvelope, generateKeypair, MAX_ATTEMPTS, MAX_BODY,
-  verifyEnvelope, type PeerConfig,
+  verifyEnvelope, verifyAck, retryPatch, type PeerConfig,
 } from "./messaging";
 
 const priv = "0".repeat(63) + "1";
@@ -65,5 +65,20 @@ describe("sovereign messaging", () => {
     expect((await verifyEnvelope(ack)).ok).toBe(true);
     expect((await verifyEnvelope({ ...ack, in_reply_to: "unrelated" })).ok).toBe(false);
     expect((await verifyEnvelope({ ...ack, prev_cid: null })).ok).toBe(false);
+  });
+  it("accepts only acknowledgments addressed by the intended peer", async () => {
+    const sent = await buildEnvelope(cfg, input);
+    const peer = { ...cfg, my_peer_id: "receiver" };
+    const ackInput = { recipient: "sender", body: "", type: "ack" as const, in_reply_to: sent.msg_id, prev_cid: null };
+    const ack = await buildEnvelope(peer, ackInput);
+    expect(await verifyAck(ack, sent, pub)).toBe(true);
+    expect(await verifyAck(await buildEnvelope({ ...peer, my_peer_id: "impostor" }, ackInput), sent, pub)).toBe(false);
+    expect(await verifyAck(await buildEnvelope(peer, { ...ackInput, recipient: "other" }), sent, pub)).toBe(false);
+    expect(await verifyAck(await buildEnvelope(peer, { ...ackInput, in_reply_to: "other" }), sent, pub)).toBe(false);
+    expect(await verifyAck(ack, sent, "a".repeat(64))).toBe(false);
+  });
+  it("fails at attempt 20, otherwise schedules the next retry", () => {
+    expect(retryPatch(19, "no ack", 1000)).toEqual({ state: "queued-retry", attempts: 19, reason: "no ack", next_retry_at: 601000 });
+    expect(retryPatch(20, "no ack", 1000)).toEqual({ state: "failed", attempts: 20, reason: "no ack", next_retry_at: undefined });
   });
 });
