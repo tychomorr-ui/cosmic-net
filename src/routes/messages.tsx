@@ -1,9 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 import {
-  CHANNEL_NAME, MAX_ATTEMPTS, MAX_BODY, backoffMs, buildEnvelope, generateKeypair,
-  loadConfig, loadInbox, loadOutbox, saveConfig, saveInbox, saveOutbox, verifyEnvelope,
+  CHANNEL_NAME, MAX_ATTEMPTS, MAX_BODY, buildEnvelope, generateKeypair,
+  loadConfig, loadInbox, loadOutbox, saveConfig, saveInbox, saveOutbox, verifyEnvelope, verifyAck, retryPatch,
   type MsgEnvelope, type MsgRecord, type MsgState, type PeerConfig,
 } from "@/lib/messaging";
 
@@ -59,6 +60,7 @@ function MessagesPage() {
   const chanRef = useRef<BroadcastChannel | null>(null);
   const sentHere = useRef(new Set<string>());
   const inflight = useRef(new Set<string>());
+  const cancelled = useRef(new Set<string>());
   const chain = useRef<Promise<unknown>>(Promise.resolve());
 
   // Serialized read-modify-write against IndexedDB (fresh read each time so
@@ -122,11 +124,15 @@ function MessagesPage() {
       if (data.kind !== "env" || !data.env) return;
       const env = data.env;
       if (sentHere.current.has(env.msg_id)) return;
-      const v = await verifyEnvelope(env);
+      const c = cfgRef.current;
+      if (!c) return;
+      const v = await verifyEnvelope(env, c.peer_public_key || undefined);
 
       if (env.type === "ack") {
         if (!env.in_reply_to || !sentHere.current.has(env.in_reply_to)) return;
-        if (!v.ok) {
+        const original = (await loadOutbox()).find((m) => m.env.msg_id === env.in_reply_to && m.transport === "local");
+        if (!original || cancelled.current.has(original.env.msg_id)) return;
+        if (!v.ok || !(await verifyAck(env, original.env, c.peer_public_key || undefined))) {
           setRejected((r) => [{ id: env.msg_id, reason: `ack ${v.reason}`, at: now() }, ...r]);
           return;
         }
@@ -141,6 +147,7 @@ function MessagesPage() {
         return;
       }
 
+      if (env.recipient_peer_id !== "local-peer" && env.recipient_peer_id !== c.my_peer_id) return;
       if (!v.ok) {
         setRejected((r) => [{ id: env.msg_id, reason: v.reason ?? "verification failed", at: now() }, ...r]);
         return;
@@ -150,13 +157,16 @@ function MessagesPage() {
           ? r
           : [{ env, state: "delivered", transport: "local", sig_valid: true, delivered_at: now(), attempts: 0, read: false }, ...r],
       );
-      const c = cfgRef.current;
       if (c?.my_private_key) {
-        const ack = await buildEnvelope(c, {
-          recipient: env.sender_peer_id, body: "", type: "ack", in_reply_to: env.msg_id, prev_cid: null,
-        });
-        sentHere.current.add(ack.msg_id);
-        ch.postMessage({ kind: "env", env: ack });
+        try {
+          const ack = await buildEnvelope(c, {
+            recipient: env.sender_peer_id, body: "", type: "ack", in_reply_to: env.msg_id, prev_cid: null,
+          });
+          sentHere.current.add(ack.msg_id);
+          ch.postMessage({ kind: "env", env: ack });
+        } catch {
+          toast.error("Message received; acknowledgment could not be signed");
+        }
       }
     };
     return () => {
@@ -169,37 +179,37 @@ function MessagesPage() {
   const deliverOverlay = useCallback(
     async (rec: MsgRecord) => {
       const c = cfgRef.current;
-      if (!c?.peer_address || inflight.current.has(rec.env.msg_id)) return;
+      if (!c?.peer_address || inflight.current.has(rec.env.msg_id) || cancelled.current.has(rec.env.msg_id)) return;
+      if (rec.attempts >= MAX_ATTEMPTS) {
+        await patchOut(rec.env.msg_id, retryPatch(rec.attempts, "retry limit reached"));
+        return;
+      }
       inflight.current.add(rec.env.msg_id);
       try {
         const res = await fetch(c.peer_address, {
           method: "POST",
           headers: { "content-type": "application/json" },
           body: JSON.stringify(rec.env),
+          signal: AbortSignal.timeout(15_000),
         });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         setLastOverlayOk(Date.now());
         const sentAt = now();
         let ack: MsgEnvelope | null = null;
         try { ack = (await res.json()) as MsgEnvelope; } catch { ack = null; }
+        if (cancelled.current.has(rec.env.msg_id)) return;
         if (ack && ack.type === "ack" && ack.in_reply_to === rec.env.msg_id) {
-          const v = await verifyEnvelope(ack, c.peer_public_key || undefined);
-          if (v.ok) {
-            await patchOut(rec.env.msg_id, { state: "acked", sent_at: sentAt, delivered_at: sentAt, acked_at: now(), attempts: rec.attempts + 1 });
+          if (await verifyAck(ack, rec.env, c.peer_public_key || undefined)) {
+            await patchOut(rec.env.msg_id, { state: "acked", sent_at: sentAt, delivered_at: sentAt, acked_at: now(), attempts: rec.attempts + 1, reason: undefined, next_retry_at: undefined });
             return;
           }
-          await patchOut(rec.env.msg_id, { state: "sent-overlay", sent_at: sentAt, reason: `ack rejected: ${v.reason}`, attempts: rec.attempts + 1 });
+          await patchOut(rec.env.msg_id, retryPatch(rec.attempts + 1, "ack rejected: verification or peer mismatch"));
           return;
         }
-        await patchOut(rec.env.msg_id, { state: "sent-overlay", sent_at: sentAt, reason: "200 without a valid ack", attempts: rec.attempts + 1 });
+        await patchOut(rec.env.msg_id, retryPatch(rec.attempts + 1, "response without a valid ack"));
       } catch (err) {
-        const attempts = rec.attempts + 1;
-        await patchOut(
-          rec.env.msg_id,
-          attempts >= MAX_ATTEMPTS
-            ? { state: "failed", attempts, reason: (err as Error).message, next_retry_at: undefined }
-            : { state: "queued-retry", attempts, reason: (err as Error).message, next_retry_at: Date.now() + backoffMs(attempts) },
-        );
+        if (!cancelled.current.has(rec.env.msg_id))
+          await patchOut(rec.env.msg_id, retryPatch(rec.attempts + 1, (err as Error).message));
       } finally {
         inflight.current.delete(rec.env.msg_id);
       }
@@ -220,7 +230,7 @@ function MessagesPage() {
         if (m.state === "signed" || (m.state === "queued-retry" && (m.next_retry_at ?? 0) <= t)) {
           void deliverOverlay(m);
         } else if (m.state === "sent-overlay" && m.sent_at && t - Date.parse(m.sent_at) > 60_000) {
-          await patchOut(m.env.msg_id, { state: "queued-retry", next_retry_at: t, reason: "no ack within 60s" });
+          await patchOut(m.env.msg_id, retryPatch(m.attempts, "no ack within 60s", t));
         }
       }
     };
@@ -267,13 +277,14 @@ function MessagesPage() {
       });
       sentHere.current.add(env.msg_id);
       const overlay = !!cfg.peer_address;
+      if (!overlay && !chanRef.current) throw new Error("Local transport unavailable");
       const rec: MsgRecord = { env, state: "signed", transport: overlay ? "overlay" : "local", sig_valid: true, attempts: 0 };
       await mutOut((r) => [rec, ...r]);
-      chanRef.current?.postMessage({ kind: "env", env });
       if (overlay) {
         void deliverOverlay(rec);
       } else {
         await patchOut(env.msg_id, { state: "sent-local", sent_at: now() });
+        chanRef.current?.postMessage({ kind: "env", env });
       }
       setBody("");
     } catch (err) {
@@ -282,10 +293,15 @@ function MessagesPage() {
   };
 
   const retryNow = async (m: MsgRecord) => {
+    if (inflight.current.has(m.env.msg_id)) return;
+    cancelled.current.delete(m.env.msg_id);
     await patchOut(m.env.msg_id, { state: "queued-retry", attempts: 0, next_retry_at: Date.now() });
     void deliverOverlay({ ...m, attempts: 0 });
   };
-  const cancel = (m: MsgRecord) => patchOut(m.env.msg_id, { state: "failed", reason: "cancelled by operator", next_retry_at: undefined });
+  const cancel = (m: MsgRecord) => {
+    cancelled.current.add(m.env.msg_id);
+    return patchOut(m.env.msg_id, { state: "failed", reason: "cancelled by operator", next_retry_at: undefined });
+  };
 
   // ---------- status ----------
   const counts = useMemo(() => {
@@ -301,7 +317,7 @@ function MessagesPage() {
     : lastOverlayOk && Date.now() - lastOverlayOk < 10 * 60_000 ? "ACTIVE" : "STANDBY";
   const bcActive = typeof BroadcastChannel !== "undefined";
   const mixedContent =
-    peerConfigured && typeof window !== "undefined" && window.location.protocol === "https:" && cfg!.peer_address.startsWith("http:");
+    peerConfigured && typeof window !== "undefined" && window.location.protocol === "https:" && cfg?.peer_address.startsWith("http:");
 
   const sendBlock = !cfg
     ? "loading config"
@@ -358,14 +374,14 @@ function MessagesPage() {
             />
             <div className="mt-2 flex items-center justify-between gap-2">
               <span className="font-mono text-[0.65rem] text-muted-foreground">{body.length}/{MAX_BODY}{sendBlock ? ` · ${sendBlock}` : ""}</span>
-              <button
+              <Button variant="ghost"
                 onClick={onSend}
                 disabled={!!sendBlock}
                 title={sendBlock ?? "Sign, address and send"}
                 className="rounded border border-gold px-3 py-1 font-mono text-xs uppercase tracking-[0.18em] text-gold disabled:opacity-40"
               >
                 Send
-              </button>
+              </Button>
             </div>
           </div>
 
@@ -377,19 +393,19 @@ function MessagesPage() {
               <ul className="mt-2 space-y-2">
                 {outbox.map((m) => (
                   <li key={m.env.msg_id} className="rounded border border-border bg-background/40 p-2 text-xs">
-                    <button className="w-full text-left" onClick={() => setSelected(m.env.msg_id)}>
+                    <Button variant="ghost" className="w-full text-left" onClick={() => setSelected(m.env.msg_id)}>
                       <div className="flex items-center justify-between gap-2">
                         <span className="truncate font-mono text-muted-foreground">→ {m.env.recipient_peer_id} · {m.transport}</span>
                         <Badge state={m.state} />
                       </div>
                       <div className="mt-1 line-clamp-2 break-words">{m.env.body}</div>
                       {m.reason && <div className="mt-1 font-mono text-[0.65rem] text-muted-foreground">{m.reason}</div>}
-                    </button>
+                    </Button>
                     {m.transport === "overlay" && (m.state === "failed" || m.state === "queued-retry") && (
                       <div className="mt-2 flex gap-2">
-                        <button onClick={() => retryNow(m)} className="rounded border border-border px-2 py-0.5 font-mono text-[0.6rem] uppercase">retry now</button>
+                        <Button variant="ghost" onClick={() => retryNow(m)} className="rounded border border-border px-2 py-0.5 font-mono text-[0.6rem] uppercase">retry now</Button>
                         {m.state === "queued-retry" && (
-                          <button onClick={() => cancel(m)} className="rounded border border-border px-2 py-0.5 font-mono text-[0.6rem] uppercase">cancel</button>
+                          <Button variant="ghost" onClick={() => cancel(m)} className="rounded border border-border px-2 py-0.5 font-mono text-[0.6rem] uppercase">cancel</Button>
                         )}
                       </div>
                     )}
@@ -420,7 +436,7 @@ function MessagesPage() {
               <ul className="mt-2 space-y-2">
                 {inbox.map((m) => (
                   <li key={m.env.msg_id}>
-                    <button
+                    <Button variant="ghost"
                       className="w-full rounded border border-border bg-background/40 p-2 text-left text-xs"
                       onClick={() => {
                         setSelected(m.env.msg_id);
@@ -432,7 +448,7 @@ function MessagesPage() {
                         <Badge state={m.state} />
                       </div>
                       <div className="mt-1 line-clamp-2 break-words">{m.env.body}</div>
-                    </button>
+                    </Button>
                   </li>
                 ))}
               </ul>
@@ -459,11 +475,11 @@ function MessagesPage() {
                   <input value={cfg.peer_public_key} onChange={(e) => updateCfg({ peer_public_key: e.target.value.trim() })} placeholder="ed25519 hex (64 chars)" className="mt-1 w-full rounded border border-border bg-background px-2 py-1 font-mono" />
                 </label>
                 <div className="flex flex-wrap gap-2 pt-1">
-                  <button onClick={onGenerate} className="rounded border border-gold px-2 py-1 font-mono text-[0.65rem] uppercase text-gold">
+                  <Button variant="ghost" onClick={onGenerate} className="rounded border border-gold px-2 py-1 font-mono text-[0.65rem] uppercase text-gold">
                     {cfg.my_public_key ? "Regenerate keypair" : "Generate my keypair"}
-                  </button>
-                  <button onClick={onExport} disabled={!cfg.my_public_key} title={cfg.my_public_key ? "" : "no keypair yet"} className="rounded border border-border px-2 py-1 font-mono text-[0.65rem] uppercase disabled:opacity-40">Export my public key</button>
-                  <button onClick={onSaveCfg} className="rounded border border-border px-2 py-1 font-mono text-[0.65rem] uppercase">Save peer config</button>
+                  </Button>
+                  <Button variant="ghost" onClick={onExport} disabled={!cfg.my_public_key} title={cfg.my_public_key ? "" : "no keypair yet"} className="rounded border border-border px-2 py-1 font-mono text-[0.65rem] uppercase disabled:opacity-40">Export my public key</Button>
+                  <Button variant="ghost" onClick={onSaveCfg} className="rounded border border-border px-2 py-1 font-mono text-[0.65rem] uppercase">Save peer config</Button>
                 </div>
                 <p className="text-[0.65rem] text-muted-foreground">All key material stays in this browser's IndexedDB. This is a two-peer transport, not a mesh.</p>
               </div>
@@ -474,13 +490,13 @@ function MessagesPage() {
             <div className="rounded border border-gold/40 bg-card/40 p-4 font-mono text-[0.7rem]">
               <div className="flex items-center justify-between">
                 <span className="text-[0.65rem] uppercase tracking-[0.22em] text-muted-foreground">receipt</span>
-                <button onClick={() => setSelected(null)} className="text-muted-foreground">close</button>
+                <Button variant="ghost" onClick={() => setSelected(null)} className="text-muted-foreground">close</Button>
               </div>
               <dl className="mt-2 space-y-1 break-all">
                 <div>msg_id: {sel.env.msg_id}</div>
                 <div className="flex items-start gap-2">
                   <span>cid: <span className="text-gold">{sel.env.cid}</span></span>
-                  <button onClick={() => void navigator.clipboard.writeText(sel.env.cid).then(() => toast.success("CID copied"))} className="shrink-0 rounded border border-border px-1">copy</button>
+                  <Button variant="ghost" onClick={() => void navigator.clipboard.writeText(sel.env.cid).then(() => toast.success("CID copied"))} className="shrink-0 rounded border border-border px-1">copy</Button>
                 </div>
                 <div>prev_cid: {sel.env.prev_cid ?? "null"}</div>
                 <div>sig: {sel.sig_valid === null ? "unchecked" : sel.sig_valid ? "valid" : "invalid"}</div>

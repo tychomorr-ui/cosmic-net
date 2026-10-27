@@ -8,6 +8,8 @@ import { fingerprint } from "@/lib/sovereign-keys";
 export const Route = createFileRoute("/fleet")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "Fleet · Signed Status · Nexinus Terminus" },
       {
         name: "description",

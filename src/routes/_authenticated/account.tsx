@@ -34,6 +34,11 @@ export const Route = createFileRoute("/_authenticated/account")({
   component: AccountPage,
   head: () => ({
     meta: [
+      { name: "description", content: "Manage your cMAP subscription and account." },
+      { property: "og:title", content: "Account — cMAP" },
+      { property: "og:description", content: "Manage your cMAP subscription and account." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "Account — cMAP" },
       { name: "robots", content: "noindex,nofollow" },
     ],

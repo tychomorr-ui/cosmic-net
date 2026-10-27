@@ -12,6 +12,8 @@ import { SovereignStatus } from "@/components/SovereignStatus";
 export const Route = createFileRoute("/seventh-dimension")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "Seventh Dimension · Unification Surface" },
       { name: "description", content: "The 7D unifier: Digital Ore × Truth Substrate × Truth Chain × Resonate-Earth, projected as a single sovereign axis." },
       { property: "og:title", content: "Seventh Dimension · Nexinus Terminus" },

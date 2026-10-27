@@ -15,6 +15,14 @@ type AuthOauth = {
 const authOauth = (supabase.auth as any).oauth as AuthOauth;
 
 export const Route = createFileRoute("/.lovable/oauth/consent")({
+  head: () => ({ meta: [
+    { title: "Authorize client — cMAP" },
+    { name: "description", content: "Approve or deny an external client connection to your cMAP account." },
+    { property: "og:title", content: "Authorize client — cMAP" },
+    { property: "og:description", content: "Review an external client connection to cMAP." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
   ssr: false,
   validateSearch: (s: Record<string, unknown>) => ({
     authorization_id: typeof s.authorization_id === "string" ? s.authorization_id : "",

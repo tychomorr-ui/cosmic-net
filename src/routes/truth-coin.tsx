@@ -10,6 +10,8 @@ import { ALLOCATIONS } from "@/data/truth-coin";
 export const Route = createFileRoute("/truth-coin")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "Truth Coin · TRC · Doctrine" },
       { name: "description", content: "The Truth Coin doctrine: pre-issuance, Bitcoin-anchored provenance, sovereign dignity-credit model — not legal tender, not investment advice." },
       { property: "og:title", content: "Truth Coin · TRC · Doctrine" },

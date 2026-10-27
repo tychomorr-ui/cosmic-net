@@ -5,6 +5,8 @@ import { type BtcSample, loadSamples, pushSample, sampleSubstrate, stamp } from 
 export const Route = createFileRoute("/sudo-coin")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "Truth Substrate · Truth Coin · Live BTC Readout" },
       { name: "description", content: "Truth Substrate: composite read of Bitcoin's unattributed substrate via public endpoints. Sovereign attestation, Pistifus-weighted." },
       { property: "og:title", content: "Truth Substrate · Nexinus Terminus" },

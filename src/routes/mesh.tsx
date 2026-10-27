@@ -6,6 +6,8 @@ import { FederationInbox } from "@/components/audit/FederationInbox";
 export const Route = createFileRoute("/mesh")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "Nebulous Mesh · Sovereign Internet Overlay" },
       {
         name: "description",

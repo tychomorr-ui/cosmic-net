@@ -16,6 +16,8 @@ import { loadFleet, upsertFleetNode, removeFleetNode, type FleetNode } from "@/d
 export const Route = createFileRoute("/gateway")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "Gateway Registry · Nexinus Terminus" },
       {
         name: "description",

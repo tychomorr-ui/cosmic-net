@@ -134,3 +134,19 @@ export async function verifyEnvelope(
 export function backoffMs(attempts: number): number {
   return Math.min(30_000 * 2 ** Math.max(0, attempts - 1), 600_000);
 }
+
+/** Bind a verified receipt to the intended message and both peer identities. */
+export async function verifyAck(ack: MsgEnvelope, sent: MsgEnvelope, pinnedPub?: string): Promise<boolean> {
+  if (ack.type !== "ack" || ack.in_reply_to !== sent.msg_id || ack.recipient_peer_id !== sent.sender_peer_id)
+    return false;
+  if (sent.recipient_peer_id !== "local-peer" && ack.sender_peer_id !== sent.recipient_peer_id)
+    return false;
+  return (await verifyEnvelope(ack, pinnedPub)).ok;
+}
+
+/** Exhaust every unsuccessful attempt, including successful HTTP without a receipt. */
+export function retryPatch(attempts: number, reason: string, at = Date.now()): Partial<MsgRecord> {
+  return attempts >= MAX_ATTEMPTS
+    ? { state: "failed", attempts, reason, next_retry_at: undefined }
+    : { state: "queued-retry", attempts, reason, next_retry_at: at + backoffMs(attempts) };
+}

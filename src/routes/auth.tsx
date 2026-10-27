@@ -11,6 +11,10 @@ export const Route = createFileRoute("/auth")({
   component: AuthPage,
   head: () => ({
     meta: [
+      { property: "og:title", content: "Sign in — cMAP" },
+      { property: "og:description", content: "Sign in or create an account to subscribe and connect the cMAP MCP server to ChatGPT, Claude, and other AI assistants." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "Sign in — cMAP" },
       { name: "description", content: "Sign in or create an account to subscribe and connect the cMAP MCP server to ChatGPT, Claude, and other AI assistants." },
       { name: "robots", content: "noindex,nofollow" },

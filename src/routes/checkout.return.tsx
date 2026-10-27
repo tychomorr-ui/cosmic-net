@@ -8,6 +8,11 @@ export const Route = createFileRoute("/checkout/return")({
   component: ReturnPage,
   head: () => ({
     meta: [
+      { name: "description", content: "View the cMAP checkout return and account status." },
+      { property: "og:title", content: "Payment received — cMAP" },
+      { property: "og:description", content: "View the cMAP checkout return and account status." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "Payment received — cMAP" },
       { name: "robots", content: "noindex,nofollow" },
     ],

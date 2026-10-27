@@ -8,6 +8,8 @@ import { ProvenanceList } from "@/components/truth-point/ProvenanceList";
 export const Route = createFileRoute("/truth-point")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "Truth Point · Nexinus Verification Matrix" },
       { name: "description", content: "A node-by-node verification matrix: measured, attested, or doctrine. Live browser probes against the sovereign fleet." },
       { property: "og:title", content: "Truth Point · Nexinus Verification Matrix" },
