@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
-  CHANNEL_NAME, MAX_ATTEMPTS, MAX_BODY, backoffMs, buildEnvelope, generateKeypair,
+  CHANNEL_NAME, MAX_ATTEMPTS, MAX_BODY, buildEnvelope, generateKeypair,
   loadConfig, loadInbox, loadOutbox, saveConfig, saveInbox, saveOutbox, verifyEnvelope, verifyAck, retryPatch,
   type MsgEnvelope, type MsgRecord, type MsgState, type PeerConfig,
 } from "@/lib/messaging";
@@ -374,14 +374,14 @@ function MessagesPage() {
             />
             <div className="mt-2 flex items-center justify-between gap-2">
               <span className="font-mono text-[0.65rem] text-muted-foreground">{body.length}/{MAX_BODY}{sendBlock ? ` · ${sendBlock}` : ""}</span>
-              <button
+              <Button variant="ghost"
                 onClick={onSend}
                 disabled={!!sendBlock}
                 title={sendBlock ?? "Sign, address and send"}
                 className="rounded border border-gold px-3 py-1 font-mono text-xs uppercase tracking-[0.18em] text-gold disabled:opacity-40"
               >
                 Send
-              </button>
+              </Button>
             </div>
           </div>
 
@@ -393,19 +393,19 @@ function MessagesPage() {
               <ul className="mt-2 space-y-2">
                 {outbox.map((m) => (
                   <li key={m.env.msg_id} className="rounded border border-border bg-background/40 p-2 text-xs">
-                    <button className="w-full text-left" onClick={() => setSelected(m.env.msg_id)}>
+                    <Button variant="ghost" className="w-full text-left" onClick={() => setSelected(m.env.msg_id)}>
                       <div className="flex items-center justify-between gap-2">
                         <span className="truncate font-mono text-muted-foreground">→ {m.env.recipient_peer_id} · {m.transport}</span>
                         <Badge state={m.state} />
                       </div>
                       <div className="mt-1 line-clamp-2 break-words">{m.env.body}</div>
                       {m.reason && <div className="mt-1 font-mono text-[0.65rem] text-muted-foreground">{m.reason}</div>}
-                    </button>
+                    </Button>
                     {m.transport === "overlay" && (m.state === "failed" || m.state === "queued-retry") && (
                       <div className="mt-2 flex gap-2">
-                        <button onClick={() => retryNow(m)} className="rounded border border-border px-2 py-0.5 font-mono text-[0.6rem] uppercase">retry now</button>
+                        <Button variant="ghost" onClick={() => retryNow(m)} className="rounded border border-border px-2 py-0.5 font-mono text-[0.6rem] uppercase">retry now</Button>
                         {m.state === "queued-retry" && (
-                          <button onClick={() => cancel(m)} className="rounded border border-border px-2 py-0.5 font-mono text-[0.6rem] uppercase">cancel</button>
+                          <Button variant="ghost" onClick={() => cancel(m)} className="rounded border border-border px-2 py-0.5 font-mono text-[0.6rem] uppercase">cancel</Button>
                         )}
                       </div>
                     )}
@@ -436,7 +436,7 @@ function MessagesPage() {
               <ul className="mt-2 space-y-2">
                 {inbox.map((m) => (
                   <li key={m.env.msg_id}>
-                    <button
+                    <Button variant="ghost"
                       className="w-full rounded border border-border bg-background/40 p-2 text-left text-xs"
                       onClick={() => {
                         setSelected(m.env.msg_id);
@@ -448,7 +448,7 @@ function MessagesPage() {
                         <Badge state={m.state} />
                       </div>
                       <div className="mt-1 line-clamp-2 break-words">{m.env.body}</div>
-                    </button>
+                    </Button>
                   </li>
                 ))}
               </ul>
@@ -475,11 +475,11 @@ function MessagesPage() {
                   <input value={cfg.peer_public_key} onChange={(e) => updateCfg({ peer_public_key: e.target.value.trim() })} placeholder="ed25519 hex (64 chars)" className="mt-1 w-full rounded border border-border bg-background px-2 py-1 font-mono" />
                 </label>
                 <div className="flex flex-wrap gap-2 pt-1">
-                  <button onClick={onGenerate} className="rounded border border-gold px-2 py-1 font-mono text-[0.65rem] uppercase text-gold">
+                  <Button variant="ghost" onClick={onGenerate} className="rounded border border-gold px-2 py-1 font-mono text-[0.65rem] uppercase text-gold">
                     {cfg.my_public_key ? "Regenerate keypair" : "Generate my keypair"}
-                  </button>
-                  <button onClick={onExport} disabled={!cfg.my_public_key} title={cfg.my_public_key ? "" : "no keypair yet"} className="rounded border border-border px-2 py-1 font-mono text-[0.65rem] uppercase disabled:opacity-40">Export my public key</button>
-                  <button onClick={onSaveCfg} className="rounded border border-border px-2 py-1 font-mono text-[0.65rem] uppercase">Save peer config</button>
+                  </Button>
+                  <Button variant="ghost" onClick={onExport} disabled={!cfg.my_public_key} title={cfg.my_public_key ? "" : "no keypair yet"} className="rounded border border-border px-2 py-1 font-mono text-[0.65rem] uppercase disabled:opacity-40">Export my public key</Button>
+                  <Button variant="ghost" onClick={onSaveCfg} className="rounded border border-border px-2 py-1 font-mono text-[0.65rem] uppercase">Save peer config</Button>
                 </div>
                 <p className="text-[0.65rem] text-muted-foreground">All key material stays in this browser's IndexedDB. This is a two-peer transport, not a mesh.</p>
               </div>
@@ -490,13 +490,13 @@ function MessagesPage() {
             <div className="rounded border border-gold/40 bg-card/40 p-4 font-mono text-[0.7rem]">
               <div className="flex items-center justify-between">
                 <span className="text-[0.65rem] uppercase tracking-[0.22em] text-muted-foreground">receipt</span>
-                <button onClick={() => setSelected(null)} className="text-muted-foreground">close</button>
+                <Button variant="ghost" onClick={() => setSelected(null)} className="text-muted-foreground">close</Button>
               </div>
               <dl className="mt-2 space-y-1 break-all">
                 <div>msg_id: {sel.env.msg_id}</div>
                 <div className="flex items-start gap-2">
                   <span>cid: <span className="text-gold">{sel.env.cid}</span></span>
-                  <button onClick={() => void navigator.clipboard.writeText(sel.env.cid).then(() => toast.success("CID copied"))} className="shrink-0 rounded border border-border px-1">copy</button>
+                  <Button variant="ghost" onClick={() => void navigator.clipboard.writeText(sel.env.cid).then(() => toast.success("CID copied"))} className="shrink-0 rounded border border-border px-1">copy</Button>
                 </div>
                 <div>prev_cid: {sel.env.prev_cid ?? "null"}</div>
                 <div>sig: {sel.sig_valid === null ? "unchecked" : sel.sig_valid ? "valid" : "invalid"}</div>
