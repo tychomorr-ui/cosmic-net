@@ -42,7 +42,7 @@ export function useBladeLive(blade: Blade): BladeLive {
 
 const TONE: Record<BladeLive["tone"], string> = {
   live: "border-gold/60 text-gold",
-  warn: "border-amber-500/50 text-amber-500",
+  warn: "border-warning/50 text-warning",
   down: "border-destructive/60 text-destructive",
   muted: "border-border text-muted-foreground",
 };

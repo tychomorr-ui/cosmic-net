@@ -8,3 +8,6 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Keep messaging cryptography and retry rules in browser-safe `src/lib/messaging.ts`, with regression tests alongside it; verification must not depend on a hosted service.
+- Represent unverified status through the global semantic warning token so every blade surface uses the same themed state.

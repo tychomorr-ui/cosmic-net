@@ -37,6 +37,7 @@
   --color-attested: var(--attested);
   --color-doctrine: var(--doctrine);
   --color-measured: var(--measured);
+  --color-warning: var(--warning);
   --font-display: var(--font-display);
   --font-mono: var(--font-mono);
 }
@@ -70,6 +71,7 @@
   --measured: #5fd1ff;
   --attested: #39ff88;
   --doctrine: #c08bff;
+  --warning: #e8c66a;
 
   --font-display: "Major Mono Display", "JetBrains Mono", ui-monospace, monospace;
   --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
