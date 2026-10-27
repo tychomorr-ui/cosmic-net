@@ -31,6 +31,8 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/pam")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "PAM · SOURCE&TRUTH · Lane Console" },
       {
         name: "description",

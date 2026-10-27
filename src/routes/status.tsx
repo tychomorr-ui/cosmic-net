@@ -20,6 +20,8 @@ import { FleetHosts } from "@/components/audit/FleetHosts";
 export const Route = createFileRoute("/status")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "Live Status · Nexinus Terminus" },
       {
         name: "description",

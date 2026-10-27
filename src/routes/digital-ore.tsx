@@ -8,6 +8,8 @@ import {
 export const Route = createFileRoute("/digital-ore")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "Digital Ore Ledger · Intellectual Byproduct Claims" },
       { name: "description", content: "Deterministic refinement of operator byproduct into hash-anchored DOU claims. Local. Sovereign. No third-party signer." },
       { property: "og:title", content: "Digital Ore Ledger · Nexinus Terminus" },

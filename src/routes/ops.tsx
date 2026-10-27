@@ -22,6 +22,8 @@ import { FleetHosts } from "@/components/audit/FleetHosts";
 export const Route = createFileRoute("/ops")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "Ops Ledger · Nexinus Terminus" },
       {
         name: "description",

@@ -8,6 +8,10 @@ const BLADE = BLADES.find((b) => b.n === "08")!;
 export const Route = createFileRoute("/sam-command")({
   head: () => ({
     meta: [
+      { property: "og:title", content: `${BLADE.name} · Blade ${BLADE.n}` },
+      { property: "og:description", content: BLADE.tagline },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: `${BLADE.name} · Blade ${BLADE.n}` },
       { name: "description", content: BLADE.tagline },
     ],

@@ -7,17 +7,19 @@ import { StancePanel, ManifestationQueue } from "@/components/console/StancePane
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "NEXINUS · TERMINUS · Sovereign Console" },
       {
         name: "description",
         content:
-          "Unified KETHER_GATE console for the NEXINUS mesh: TESSERACT-A / VALKYRIE / KETHER-GATE uplink, OMNI-SAM AXIS of 13 sovereign blades, and a live tesseract projection. Zero telemetry, real data or honest standby.",
+          "NEXINUS sovereign console with per-blade signed node status, local tools, and honest unverified or standby states.",
       },
       { property: "og:title", content: "NEXINUS · TERMINUS · Sovereign Console" },
       {
         property: "og:description",
         content:
-          "Witness, not control. 13-blade OMNI-SAM AXIS with live gateway probes.",
+          "NEXINUS blade registry with signed node checks and explicit fallback states.",
       },
     ],
   }),
