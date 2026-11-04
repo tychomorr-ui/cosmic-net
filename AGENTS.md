@@ -12,3 +12,4 @@
 - Keep messaging cryptography and retry rules in browser-safe `src/lib/messaging.ts`, with regression tests alongside it; verification must not depend on a hosted service.
 - Represent unverified status through the global semantic warning token so every blade surface uses the same themed state.
 - Run unit tests with the dedicated Vitest config and local protocol alias so tests do not boot the server runtime.
+- Keep the public reprobe hook disabled for both reads and writes until an authenticated operator-controlled replacement is explicitly authorized; public placement does not authorize privileged access.
