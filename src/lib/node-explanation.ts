@@ -15,8 +15,8 @@ export function failureEvidence(nodeId: string, status: ProbeStatus): FailureEvi
   const detail = status.detail.toLowerCase();
   const http = /^http (\d{3})$/i.exec(status.detail);
   const code = http ? "http" : /cid|hash/.test(detail) ? "cid"
-    : /sig|pubkey|public key|key mismatch/.test(detail) ? "signature"
-    : /stale|fresh|expired/.test(detail) ? "stale"
+    : /signature invalid|signature mismatch|pub malformed|pub mismatch|pubkey|public key|key mismatch/.test(detail) ? "signature"
+    : /stale|expired|ts in future/.test(detail) ? "stale"
     : /abort|timeout|timed out/.test(detail) ? "timeout"
     : /fetch|network/.test(detail) ? "network"
     : status.state === "reachable" ? "unsigned" : "other";
