@@ -9,17 +9,19 @@ import { supabase } from "@/integrations/supabase/client";
 
 export function NodeFailureExplanation({ nodeId, status }: { nodeId: string; status: ProbeStatus }) {
   const evidence = failureEvidence(nodeId, status);
-  if (!evidence) return null;
-  return <Explanation key={JSON.stringify(evidence)} evidence={evidence} />;
+  return <Explanation key={nodeId} evidence={evidence} />;
 }
 
-function Explanation({ evidence }: { evidence: FailureEvidence }) {
+function Explanation({ evidence }: { evidence: FailureEvidence | null }) {
   const run = useServerFn(explainNodeFailure);
   const [pending, setPending] = useState(false);
   const [text, setText] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [source, setSource] = useState<FailureEvidence | null>(null);
   async function explain() {
+    if (!evidence) return;
     setPending(true);
+    setSource(evidence);
     setError(null);
     try {
       const { data } = await supabase.auth.getSession();
@@ -30,13 +32,16 @@ function Explanation({ evidence }: { evidence: FailureEvidence }) {
     } catch { setError("AI explanation unavailable. Trust status is unchanged."); }
     finally { setPending(false); }
   }
+  if (!evidence) return null;
+  const sameFacts = source?.code === evidence.code && source?.httpStatus === evidence.httpStatus;
+  const visibleText = sameFacts ? text : null;
   return <div className="mt-2 text-xs leading-relaxed text-muted-foreground break-words" aria-live="polite">
     <div className="flex flex-wrap items-center gap-2">
       <span className="text-warning">AI explanation · not cryptographic verification</span>
-      {!text && <Button variant="ghost" size="sm" disabled={pending} onClick={() => void explain()} aria-label={`Explain failed check for ${evidence.nodeId}`}><Sparkles />{pending ? "Explaining…" : "Explain"}</Button>}
+      {!visibleText && <Button variant="ghost" size="sm" disabled={pending} onClick={() => void explain()} aria-label={`Explain failed check for ${evidence.nodeId}`}><Sparkles />{pending ? "Explaining…" : "Explain"}</Button>}
     </div>
-    {text && <p>{text}</p>}
-    {error && <p role="status">{error}</p>}
-    <span className="font-mono text-[0.6rem]">Recorded probe · {new Date(evidence.at).toISOString()}</span>
+    {visibleText && <p>{visibleText}</p>}
+    {sameFacts && error && <p role="status">{error}</p>}
+    <span className="font-mono text-[0.6rem]">Recorded probe · {new Date(visibleText && source ? source.at : evidence.at).toISOString()}</span>
   </div>;
 }
