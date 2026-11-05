@@ -12,6 +12,7 @@ import { useSyncExternalStore } from "react";
 import { NODES, probeTarget, type SovereignNode } from "@/data/nodes";
 import { useProbeStatus } from "@/lib/probe-store";
 import type { ProbeStatus } from "@/lib/probes";
+import { NodeFailureExplanation } from "./NodeFailureExplanation";
 
 type CouplingState = "live" | "broken" | "unsigned" | "doctrine";
 
@@ -108,6 +109,7 @@ function HealthRow({ node }: { node: SovereignNode }) {
         {probeTarget(node.probe) || node.region}
       </div>
       <div className="mt-1 font-mono text-[0.65rem]">{c.detail}</div>
+      <NodeFailureExplanation nodeId={node.id} status={s} />
     </li>
   );
 }

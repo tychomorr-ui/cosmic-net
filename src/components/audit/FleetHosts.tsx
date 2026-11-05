@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { NODES } from "@/data/nodes";
 import { probeNodeHosts } from "@/utils/nodes.functions";
+import { NodeFailureExplanation } from "./NodeFailureExplanation";
 
 export function FleetHosts() {
   const run = useServerFn(probeNodeHosts);
@@ -75,6 +76,7 @@ export function FleetHosts() {
               <div className="mt-1 font-mono text-[0.65rem]">
                 {p?.via ? `answered via ${p.via}` : "no answer recorded"}
               </div>
+              {p?.state === "DOWN" && <NodeFailureExplanation nodeId={n.id} status={{ state: "unreachable", at: Date.parse(p.checkedAt), detail: p.reason ?? "no answer recorded" }} />}
             </li>
           );
         })}
