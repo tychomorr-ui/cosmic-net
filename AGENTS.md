@@ -13,3 +13,4 @@
 - Represent unverified status through the global semantic warning token so every blade surface uses the same themed state.
 - Run unit tests with the dedicated Vitest config and local protocol alias so tests do not boot the server runtime.
 - Keep the public reprobe hook disabled for both reads and writes until an authenticated operator-controlled replacement is explicitly authorized; public placement does not authorize privileged access.
+- AI node explanations select bounded evidence-grounded sentences via an authenticated server function; never feed AI output into probe or trust stores.

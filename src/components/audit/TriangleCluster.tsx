@@ -6,6 +6,7 @@ import { useProbeStatus } from "@/lib/probe-store";
 import { getOverride } from "@/lib/node-overrides";
 import { probeTarget, type ClusterId, type SovereignNode } from "@/data/nodes";
 import type { ProbeStatus } from "@/lib/probes";
+import { NodeFailureExplanation } from "./NodeFailureExplanation";
 
 type Tone = "live" | "unsigned" | "broken" | "doctrine" | "idle";
 
@@ -171,6 +172,7 @@ function ClusterRow({ node }: { node: SovereignNode }) {
           {kindTag}
         </span>
       </div>
+      <NodeFailureExplanation nodeId={node.id} status={s} />
     </li>
   );
 }

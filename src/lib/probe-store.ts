@@ -5,7 +5,8 @@ import { getOverride } from "./node-overrides";
 
 type Store = Map<string, ProbeStatus>;
 
-let store: Store = new Map(NODES.map((n) => [n.id, { state: "idle" } as ProbeStatus]));
+const initialStore: Store = new Map(NODES.map((n) => [n.id, { state: "idle" } as ProbeStatus]));
+let store: Store = initialStore;
 const listeners = new Set<() => void>();
 
 // ---- bounded ticker event buffer (sliding window, max 64) ----
@@ -42,7 +43,7 @@ function getSnapshot(): Store {
   return store;
 }
 function getServerSnapshot(): Store {
-  return store;
+  return initialStore;
 }
 function getEventsSnapshot(): TickerEvent[] {
   return events;

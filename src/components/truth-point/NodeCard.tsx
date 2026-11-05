@@ -1,6 +1,7 @@
 import { probeTarget, type SovereignNode } from "@/data/nodes";
 import { useProbeStatus } from "@/lib/probe-store";
 import { TierBadge } from "./TierBadge";
+import { NodeFailureExplanation } from "@/components/audit/NodeFailureExplanation";
 
 export function NodeCard({ node }: { node: SovereignNode }) {
   const probe = useProbeStatus(node.id);
@@ -46,6 +47,7 @@ export function NodeCard({ node }: { node: SovereignNode }) {
           {"detail" in probe && (
             <div className="mt-1 text-foreground/70">{probe.detail}</div>
           )}
+          <NodeFailureExplanation nodeId={node.id} status={probe} />
         </div>
       )}
     </article>
