@@ -34,7 +34,7 @@ export const BLADES: Blade[] = [
     tagline: "truth-coin substrate · live BTC readout · pistifus-weighted" },
   { n: "12", glyph: "◬", name: "QUANTOTALUS",       route: "/quantotalus",     status: "STANDBY",
     tagline: "triadaxial spinner · Oregon · Ireland · Singapore",
-    blocker: "vertex registration manifest" },
+    blocker: "triad reachability is measured below; LIVE waits on signed status from all three vertices" },
   { n: "13", glyph: "◇", name: "PROOF FULCRUM",     route: "/proof-fulcrum",   status: "STANDBY",
     tagline: "ed25519 fleet witness · operator stamp",
     blocker: "first signed fleet receipt" },
