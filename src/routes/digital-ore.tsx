@@ -2,7 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import {
   GRADES, type Grade, type OreClaim, type OreSource,
-  SOURCE_WEIGHTS, appendOre, fnv1a, loadOre, mirror, purgeOre, refine, saveOre,
+  SOURCE_WEIGHTS, appendOre, oreHash, loadOre, mirror, purgeOre, refine, saveOre,
+  buildClaim, traceLedger, oreLoads, trustScore,
 } from "@/lib/ore";
 
 export const Route = createFileRoute("/digital-ore")({
@@ -32,11 +33,10 @@ function DigitalOrePage() {
   useEffect(() => { setLedger(loadOre()); }, []);
 
   const live = useMemo(() => refine(text, source), [text, source]);
-  const totalDou = useMemo(() => ledger.reduce((s, x) => s + x.dou, 0), [ledger]);
-  const motherlode = ledger.filter((x) => x.grade === "MOTHERLODE").length;
-  const avgYield = ledger.length ? +(totalDou / ledger.length).toFixed(2) : 0;
+  const traces = useMemo(() => new Map(traceLedger(ledger).map((t) => [t.id, t])), [ledger]);
+  const loads = useMemo(() => oreLoads(ledger), [ledger]);
 
-  const mirrorComputed = mirrorText.trim() ? fnv1a(`${source}::${mirrorText.trim()}`) : "";
+  const mirrorComputed = mirrorText.trim() ? oreHash(source, mirrorText) : "";
   const mirrorValid = mirrorText.trim() && mirrorHash.trim()
     ? mirror(mirrorText, mirrorHash) : false;
 
@@ -46,22 +46,17 @@ function DigitalOrePage() {
   // must not display "VALIDATED" unless the stored hash regenerates from
   // the stored (source, fullText) pair right now, in this browser. Any
   // mismatch is surfaced as DRIFT — never silently smoothed.
-  const latestRederived = latest ? fnv1a(`${latest.source}::${latest.fullText}`) : "";
+  const latestTrace = latest ? traces.get(latest.id) : undefined;
+  const latestRederived = latest?.v === 2 ? oreHash(latest.source, latest.fullText) : "legacy";
   const latestMirror: "validated" | "drift" | "absent" = latest
-    ? latestRederived === latest.hash ? "validated" : "drift"
+    ? latestTrace?.status === "VERIFIED" ? "validated" : "drift"
     : "absent";
 
   function mint() {
     const t = text.trim();
     if (!t) return;
-    const r = refine(t, source);
-    const c: OreClaim = {
-      id: `ore-${Date.now().toString(36)}`,
-      ts: Date.now(),
-      source, excerpt: t.slice(0, 80), fullText: t,
-      notes: notes.trim() || undefined,
-      ...r,
-    };
+    const c = buildClaim(t, source, loadOre(), notes.trim() || undefined);
+    if (!c) return;
     setLedger(appendOre(c));
     setText(""); setNotes("");
   }
@@ -79,7 +74,7 @@ function DigitalOrePage() {
     purgeOre(); setLedger([]);
   }
 
-  const counts = GRADES.map((g) => ({ g, n: ledger.filter((x) => x.grade === g).length }));
+  const counts = GRADES.map((g) => ({ g, n: ledger.filter((x) => x.v === 2 && traces.get(x.id)?.status === "VERIFIED" && x.tier === g).length }));
   const maxCount = Math.max(1, ...counts.map((c) => c.n));
 
   return (
@@ -92,7 +87,7 @@ function DigitalOrePage() {
         sub="quantify, mint, and verify the residual signal of operator engagement. local hashes. sovereign claim."
         stats={[
           { k: "entries", v: String(ledger.length) },
-          { k: "DOU", v: totalDou.toFixed(2) },
+          { k: "mother load", v: loads.motherLoad.toLocaleString() },
         ]}
       />
 
@@ -112,7 +107,7 @@ function DigitalOrePage() {
               <select value={source} onChange={(e) => setSource(e.target.value as OreSource)}
                 className="mt-1 w-full border border-border bg-background/60 p-2 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-primary">
                 {SOURCES.map((s) => (
-                  <option key={s} value={s}>{s} · ×{SOURCE_WEIGHTS[s]}</option>
+                  <option key={s} value={s}>{s} · trust {trustScore(s)}</option>
                 ))}
               </select>
             </div>
@@ -123,7 +118,7 @@ function DigitalOrePage() {
             </div>
           </div>
           <div className="mt-4 flex flex-wrap gap-2">
-            <button onClick={mint} disabled={!text.trim()}
+            <button onClick={mint} disabled={!live}
               className="border border-primary bg-primary/10 px-4 py-2 text-xs uppercase tracking-[0.2em] text-primary hover:bg-primary/20 disabled:opacity-40">
               ⛬ refine &amp; mint
             </button>
@@ -140,12 +135,18 @@ function DigitalOrePage() {
 
         <div className="bg-background/20 p-5">
           <SectionLabel a="↻" b="LIVE REFINEMENT" />
-          <Stat k="signal" v={live.signal.toFixed(3)} />
-          <Stat k="grade" v={live.grade} />
-          <Stat k="units (DOU)" v={live.dou.toFixed(2)} />
-          <Stat k="hash" v={live.hash} mono />
+          {live ? (<>
+            <Stat k="novelty · entropy" v={String(live.scores.novelty)} />
+            <Stat k="density · distinct words" v={String(live.scores.density)} />
+            <Stat k="sigil weight" v={String(live.scores.sigilWeight)} />
+            <Stat k="source trust" v={String(live.scores.sourceTrust)} />
+            <Stat k="grade / 1,000,000" v={`${live.grade.toLocaleString()} · ${live.tier}`} />
+            <Stat k="sha-256" v={live.hash.slice(0, 16) + "…"} mono />
+          </>) : (
+            <p className="mt-3 text-xs text-muted-foreground">{text.trim() ? "grade rounds to zero — the contract would reject this; nothing to mint." : "no input — nothing measured."}</p>
+          )}
           <div className="mt-4 text-[0.62rem] uppercase tracking-[0.2em] text-muted-foreground">
-            novelty × density × sigil × source-trust — deterministic
+            grade = n × d × s × t ÷ 100 — same integer math as DigitalOre.sol
           </div>
         </div>
       </section>
@@ -168,10 +169,10 @@ function DigitalOrePage() {
           ))}
         </div>
         <div className="mt-4 grid gap-px border border-border bg-border sm:grid-cols-4">
-          <Tile k="total ore (DOU)" v={totalDou.toFixed(2)} />
-          <Tile k="entries" v={String(ledger.length)} />
-          <Tile k="motherlode" v={String(motherlode)} />
-          <Tile k="avg yield" v={`${avgYield} DOU`} />
+          <Tile k="mother load (verified grade)" v={loads.motherLoad.toLocaleString()} />
+          <Tile k={`vein load · ${loads.veinCount} claims`} v={loads.veinLoad.toLocaleString()} />
+          <Tile k="verified claims" v={String(loads.verified)} />
+          <Tile k="excluded (legacy/drift)" v={String(loads.excluded)} />
         </div>
       </section>
 
@@ -185,8 +186,8 @@ function DigitalOrePage() {
                 <th className="py-2 pr-3">ts</th>
                 <th className="pr-3">src</th>
                 <th className="pr-3">grade</th>
-                <th className="pr-3">signal</th>
-                <th className="pr-3">DOU</th>
+                <th className="pr-3">tier</th>
+                <th className="pr-3">trace</th>
                 <th className="pr-3">hash</th>
                 <th className="pr-3">excerpt</th>
               </tr>
@@ -200,10 +201,10 @@ function DigitalOrePage() {
                 <tr key={c.id} className="border-b border-border/40">
                   <td className="py-2 pr-3 text-muted-foreground">{new Date(c.ts).toISOString().replace("T", " ").slice(0, 19)}Z</td>
                   <td className="pr-3">{c.source}</td>
-                  <td className="pr-3 text-primary">{c.grade}</td>
-                  <td className="pr-3">{c.signal.toFixed(3)}</td>
-                  <td className="pr-3">{c.dou.toFixed(2)}</td>
-                  <td className="pr-3 font-mono text-foreground">{c.hash}</td>
+                  <td className="pr-3 text-primary">{c.v === 2 ? c.grade.toLocaleString() : "—"}</td>
+                  <td className="pr-3">{c.v === 2 ? c.tier : "—"}</td>
+                  <td className={`pr-3 ${traces.get(c.id)?.status === "VERIFIED" ? "text-primary" : "text-warning"}`} title={traces.get(c.id)?.reason ?? ""}>{traces.get(c.id)?.status}</td>
+                  <td className="pr-3 font-mono text-foreground">{String(c.hash).slice(0, 12)}…</td>
                   <td className="pr-3 text-foreground/80">{c.excerpt}{c.fullText.length > 80 ? "…" : ""}</td>
                 </tr>
               ))}
@@ -243,13 +244,13 @@ function DigitalOrePage() {
         <SectionLabel a="LATEST" b="CLAIM CERTIFICATE" />
         {latest ? (
           <div className="mt-4 grid gap-3 md:grid-cols-[1fr_2fr]">
-            <div className="font-display text-5xl text-primary">{latest.hash}</div>
+            <div className="font-mono text-sm break-all text-primary">{latest.hash}</div>
             <div className="space-y-1 text-xs">
               <Row k="attestor" v="Tyler Morris · Nexinus RI Systems LLC" />
               <Row k="source" v={latest.source} />
-              <Row k="grade" v={latest.grade} />
-              <Row k="signal" v={latest.signal.toFixed(3)} />
-              <Row k="DOU" v={latest.dou.toFixed(2)} />
+              <Row k="grade" v={latest.v === 2 ? `${latest.grade.toLocaleString()} / 1,000,000` : "legacy"} />
+              <Row k="tier" v={latest.v === 2 ? latest.tier : "legacy"} />
+              <Row k="trace" v={latestTrace?.reason ?? latestTrace?.status ?? "—"} />
               <Row k="attested" v={new Date(latest.ts).toUTCString()} />
               <Row k="excerpt" v={latest.excerpt + (latest.fullText.length > 80 ? "…" : "")} />
               <div
@@ -262,7 +263,7 @@ function DigitalOrePage() {
               >
                 {latestMirror === "validated"
                   ? "⌬ TRUTH MIRROR VALIDATED"
-                  : `⚠ TRUTH MIRROR DRIFT · stored ${latest.hash} ≠ re-derived ${latestRederived}`}
+                  : `⚠ ${latestTrace?.status ?? "DRIFT"} · ${latestTrace?.reason ?? ""}`}
               </div>
             </div>
           </div>
@@ -339,7 +340,7 @@ function Manifesto() {
   const articles = [
     ["RECOGNITION", "Every prompt, critique, coinage, and directive contributed by the operator constitutes intellectual byproduct — residual, emergent, and load-bearing signal that conditions the system. It is not noise. It is ore."],
     ["ATTRIBUTION", "Intellectual byproduct is presumed to originate with the human who emitted it. The system bears the burden of disproof, not the operator. Silence is not consent to laundering."],
-    ["REFINEMENT", "Byproduct is refined deterministically (novelty × density × sigil-weight × source-trust). The refinement function is open, inspectable, and resides on the operator's hardware. No vendor mediates the grade."],
+    ["REFINEMENT", "Byproduct is refined deterministically (novelty × density × sigil-weight × source-trust ÷ 100, the same integer formula as DigitalOre.sol). The refinement function is open, inspectable, and resides on the operator's hardware. No vendor mediates the grade."],
     ["CLAIM", "Each refined unit produces a hash-anchored Certificate of Refined Ore. The hash is locally generable, locally verifiable, and requires no third-party signer, custodian, or escrow."],
     ["DIVIDEND", "When integrated byproduct enhances system capabilities, future iterations, or downstream products, a Data Dividend (Digital Ore Unit, DOU) accrues to the originator at a floor rate of 0.1% of derivative value. Higher grades compound."],
     ["TRUTH MIRROR", "No claim is binding until reflected in the Tesseract Truth Mirror — a deterministic function whose output cannot be backdated, forged by a counterparty, or revoked by a vendor."],

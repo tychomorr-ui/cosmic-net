@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { loadOre } from "@/lib/ore";
+import { loadOre, oreLoads } from "@/lib/ore";
 import { loadSamples, sampleSubstrate, pushSample, type BtcSample } from "@/lib/btc-substrate";
 import { loadChain } from "@/data/truth-chain";
 import { NODES } from "@/data/nodes";
@@ -46,7 +46,7 @@ function SeventhDimensionPage() {
   useEffect(() => {
     const ore = loadOre();
     setOreCount(ore.length);
-    setOreDou(ore.reduce((s, x) => s + x.dou, 0));
+    setOreDou(oreLoads(ore).motherLoad);
     setChainLen(loadChain().length);
     const last = loadSamples().slice(-1)[0];
     if (last) setSample(last);
