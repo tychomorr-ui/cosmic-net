@@ -33,7 +33,7 @@ export const BLADES: Blade[] = [
   { n: "11", glyph: "◈", name: "Truth Substrate",   route: "/sudo-coin",       status: "LIVE",
     tagline: "truth-coin substrate · live BTC readout · pistifus-weighted" },
   { n: "12", glyph: "◬", name: "QUANTOTALUS",       route: "/quantotalus",     status: "STANDBY",
-    tagline: "triadaxial spinner · Oregon · Ireland · Singapore",
+    tagline: "triadaxial spinner · tesseract · rootgate · truthtalk",
     blocker: "triad reachability is measured below; LIVE waits on signed status from all three vertices" },
   { n: "13", glyph: "◇", name: "PROOF FULCRUM",     route: "/proof-fulcrum",   status: "STANDBY",
     tagline: "ed25519 fleet witness · operator stamp",

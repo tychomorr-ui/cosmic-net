@@ -3,9 +3,9 @@
 export type VertexProbe = { id: string; state: "REACHABLE" | "DOWN"; ms: number };
 
 export const TRIAD = [
-  { id: "root-gate", label: "Oregon" },
-  { id: "xinus-clarity", label: "Ireland" },
-  { id: "kether-gate", label: "Singapore" },
+  { id: "tesseract", label: "tesseract.manus.space" },
+  { id: "rootgate", label: "rootgate.manus.space" },
+  { id: "truthtalk", label: "truthtalk.xinus.one" },
 ] as const;
 
 export type TriadState = "COHERENT" | "DEGRADED" | "BROKEN" | "UNMEASURED";
