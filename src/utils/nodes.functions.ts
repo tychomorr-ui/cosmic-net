@@ -55,3 +55,27 @@ export const probeNodeHosts = createServerFn({ method: "GET" }).handler(
       NODES.filter((n) => n.host).map((n) => probeHost(n.id, n.host as string)),
     ),
 );
+
+/** QUANTOTALUS triad vertices: the operator's hosted endpoints, probed over HTTPS. */
+export const TRIAD_HOSTS = [
+  { id: "tesseract", host: "tesseract.manus.space" },
+  { id: "rootgate", host: "rootgate.manus.space" },
+  { id: "truthtalk", host: "truthtalk.xinus.one" },
+] as const;
+
+export const probeTriadHosts = createServerFn({ method: "GET" }).handler(
+  async (): Promise<HostProbe[]> =>
+    Promise.all(
+      TRIAD_HOSTS.map(async ({ id, host }) => {
+        const started = Date.now();
+        const checkedAt = new Date().toISOString();
+        let status: number | null = null;
+        try {
+          const res = await fetch(`https://${host}/`, { redirect: "manual", signal: AbortSignal.timeout(10000) });
+          status = res.status;
+        } catch { /* down */ }
+        return { id, host, state: status !== null ? "REACHABLE" : "DOWN", via: status !== null ? `https ${status}` : null,
+          status, reason: status !== null ? null : "no_answer_within_10s", ms: Date.now() - started, checkedAt } as HostProbe;
+      }),
+    ),
+);

@@ -1,14 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { probeNodeHosts } from "@/utils/nodes.functions";
+import { probeTriadHosts } from "@/utils/nodes.functions";
 import { triadState } from "@/lib/quantotalus";
 
 const POS = [{ x: 150, y: 20 }, { x: 20, y: 240 }, { x: 280, y: 240 }];
 
 export function QuantotalusTriad() {
-  const run = useServerFn(probeNodeHosts);
+  const run = useServerFn(probeTriadHosts);
   const { data, isFetching, isError } = useQuery({
-    queryKey: ["node-hosts"], queryFn: () => run(), refetchInterval: 60_000, staleTime: 30_000,
+    queryKey: ["triad-hosts"], queryFn: () => run(), refetchInterval: 60_000, staleTime: 30_000,
   });
   const t = triadState(data);
   const tone = t.state === "COHERENT" ? "text-primary" : t.state === "UNMEASURED" ? "text-muted-foreground" : t.state === "DEGRADED" ? "text-warning" : "text-destructive";
