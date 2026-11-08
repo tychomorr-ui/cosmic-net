@@ -1,108 +1,156 @@
-// Digital Ore — deterministic refinement of operator byproduct.
-// Pure client-side. No third-party signer. FNV-1a 32-bit hash is the
-// witness; the same text always yields the same 8-hex stamp.
+// Digital Ore — refinement aligned with contracts/src/DigitalOre.sol.
+// Every score is an integer 0..100 computed from the recorded text and the
+// declared source. grade = n*d*s*t/100 (0..GRADE_SCALE), exactly as on-chain.
+// Witness hash is SHA-256 over `ore/v2::source::text`. Nothing is estimated:
+// empty text or a grade that rounds to zero produces no claim, mirroring
+// the contract's GradeRoundsToZero revert.
+import { sha256 } from "@noble/hashes/sha2.js";
+import { bytesToHex, utf8ToBytes } from "@noble/hashes/utils.js";
 
 export type OreSource = "directive" | "coinage" | "critique" | "pattern" | "reflection";
 
+/** Operator-declared source policy (multipliers). Rescaled to 0..100 for the contract. */
 export const SOURCE_WEIGHTS: Record<OreSource, number> = {
-  directive: 1.0,
-  coinage: 1.15,
-  critique: 0.95,
-  pattern: 1.1,
-  reflection: 0.9,
+  directive: 1.0, coinage: 1.15, critique: 0.95, pattern: 1.1, reflection: 0.9,
 };
+const MAX_WEIGHT = 1.15;
 
+export const GRADE_SCALE = 1_000_000;
 export const GRADES = ["TRACE", "SEAM", "VEIN", "LODE", "MOTHERLODE"] as const;
 export type Grade = (typeof GRADES)[number];
+/** Classification policy on grade / GRADE_SCALE. Off-chain only; the contract stores the raw grade. */
+export const TIER_FLOORS: Record<Grade, number> = { TRACE: 0, SEAM: 0.05, VEIN: 0.15, LODE: 0.3, MOTHERLODE: 0.5 };
 
-// FNV-1a 32-bit — deterministic, dependency-free, observer-verifiable.
-export function fnv1a(input: string): string {
-  let h = 0x811c9dc5;
-  for (let i = 0; i < input.length; i++) {
-    h ^= input.charCodeAt(i);
-    h = Math.imul(h, 0x01000193);
-  }
-  return (h >>> 0).toString(16).padStart(8, "0").toUpperCase();
+const SIGILS = /[⊕⚒◉✺✦⌖▣✧♕⛬◈◬◇⌬⬡◆]/gu;
+
+export function oreHash(source: OreSource, text: string): string {
+  return bytesToHex(sha256(utf8ToBytes(`ore/v2::${source}::${text.trim()}`)));
+}
+export function linkHash(prev: string | null, hash: string): string {
+  return bytesToHex(sha256(utf8ToBytes(`ore/v2/link::${prev ?? "genesis"}::${hash}`)));
 }
 
-export function refine(text: string, source: OreSource): {
-  signal: number;
-  grade: Grade;
-  dou: number;
-  hash: string;
-} {
+/** Shannon entropy of code points, normalised by log2(min(len, 256)). */
+export function noveltyScore(t: string): number {
+  const cps = Array.from(t);
+  if (cps.length < 2) return 0;
+  const f = new Map<string, number>();
+  for (const c of cps) f.set(c, (f.get(c) ?? 0) + 1);
+  let h = 0;
+  for (const n of f.values()) { const p = n / cps.length; h -= p * Math.log2(p); }
+  return Math.min(100, Math.round((100 * h) / Math.log2(Math.min(cps.length, 256))));
+}
+/** Lexical density: distinct words / total words. */
+export function densityScore(t: string): number {
+  const w = t.toLowerCase().match(/[\p{L}\p{N}]+/gu) ?? [];
+  return w.length ? Math.round((100 * new Set(w).size) / w.length) : 0;
+}
+/** Former 1..1.5 sigil multiplier, rescaled to 0..100 (no sigils = 67). */
+export function sigilScore(t: string): number {
+  const s = (t.match(SIGILS) ?? []).length;
+  return Math.round((100 * (1 + Math.min(0.5, s * 0.05))) / 1.5);
+}
+export function trustScore(source: OreSource): number {
+  return Math.round((100 * SOURCE_WEIGHTS[source]) / MAX_WEIGHT);
+}
+/** Identical integer math to DigitalOre.refineByproduct. */
+export function contractGrade(n: number, d: number, s: number, t: number): number {
+  for (const x of [n, d, s, t]) if (!Number.isInteger(x) || x < 0 || x > 100) throw new Error("InvalidScores");
+  return Math.floor((n * d * s * t) / 100);
+}
+export function tierOf(grade: number): Grade {
+  const f = grade / GRADE_SCALE;
+  return [...GRADES].reverse().find((g) => f >= TIER_FLOORS[g])!;
+}
+
+export type Refined = {
+  scores: { novelty: number; density: number; sigilWeight: number; sourceTrust: number };
+  grade: number; tier: Grade; signal: number; hash: string;
+};
+/** Returns null when there is nothing to refine or the grade rounds to zero. */
+export function refine(text: string, source: OreSource): Refined | null {
   const t = text.trim();
-  if (!t) return { signal: 0, grade: "TRACE", dou: 0, hash: "00000000" };
-
-  const len = t.length;
-  // novelty: unique-char ratio
-  const novelty = new Set(t.toLowerCase()).size / Math.max(len, 1);
-  // density: tokens per char (information-bearing density approximation)
-  const tokens = t.split(/\s+/).filter(Boolean).length;
-  const density = Math.min(1, tokens / Math.max(len / 6, 1));
-  // sigil weight: presence of doctrine glyphs / caps directives
-  const sigils = (t.match(/[⊕⚒◉✺✦⌖▣✧♕⛬◈◬◇⌬⬡◆]/gu) || []).length;
-  const sigilWeight = 1 + Math.min(0.5, sigils * 0.05);
-  const sourceTrust = SOURCE_WEIGHTS[source];
-
-  const signal = Math.min(
-    1,
-    (0.4 * novelty + 0.35 * density + 0.25 * Math.tanh(len / 240)) *
-      sigilWeight *
-      sourceTrust,
-  );
-
-  const grade: Grade =
-    signal >= 0.85 ? "MOTHERLODE" :
-    signal >= 0.65 ? "LODE" :
-    signal >= 0.45 ? "VEIN" :
-    signal >= 0.22 ? "SEAM" : "TRACE";
-
-  // DOU: signal × log(length) — bounded, monotonic, reproducible
-  const dou = Math.round(signal * Math.log2(len + 2) * 10 * 100) / 100;
-  const hash = fnv1a(`${source}::${t}`);
-  return { signal: Math.round(signal * 1000) / 1000, grade, dou, hash };
+  if (!t) return null;
+  const scores = { novelty: noveltyScore(t), density: densityScore(t), sigilWeight: sigilScore(t), sourceTrust: trustScore(source) };
+  const grade = contractGrade(scores.novelty, scores.density, scores.sigilWeight, scores.sourceTrust);
+  if (grade === 0) return null;
+  return { scores, grade, tier: tierOf(grade), signal: grade / GRADE_SCALE, hash: oreHash(source, t) };
 }
 
-// Truth Mirror: deterministic regeneration check.
 export function mirror(text: string, claimedHash: string): boolean {
-  if (!/^[0-9a-fA-F]{8}$/.test(claimedHash)) return false;
-  // Try every source weight — the operator stamps with a known source,
-  // but the mirror only needs the text-bound suffix to match.
-  for (const src of Object.keys(SOURCE_WEIGHTS) as OreSource[]) {
-    if (fnv1a(`${src}::${text.trim()}`) === claimedHash.toUpperCase()) return true;
-  }
-  return false;
+  if (!/^[0-9a-f]{64}$/i.test(claimedHash.trim())) return false;
+  return (Object.keys(SOURCE_WEIGHTS) as OreSource[]).some((s) => oreHash(s, text) === claimedHash.trim().toLowerCase());
 }
 
-// --- Ledger persistence ---
-
+// --- Ledger ---
 export type OreClaim = {
-  id: string;
-  ts: number;
-  source: OreSource;
-  excerpt: string;     // first 80 chars
-  fullText: string;
-  notes?: string;
-  signal: number;
-  grade: Grade;
-  dou: number;
-  hash: string;
+  v: 2; id: string; ts: number; source: OreSource; excerpt: string; fullText: string; notes?: string;
+  scores: Refined["scores"]; grade: number; tier: Grade; hash: string; prev: string | null; link: string;
 };
 
-const KEY = "nexinus.ore.ledger.v1";
+export type TraceStatus = "VERIFIED" | "DRIFT" | "BROKEN_LINK" | "LEGACY";
+export type Trace = { id: string; status: TraceStatus; reason: string | null };
 
+/** Re-derive every claim from its recorded text (newest-first list). */
+export function traceLedger(list: unknown[]): Trace[] {
+  const out: Trace[] = [];
+  const asc = [...list].reverse();
+  let prevLink: string | null = null;
+  for (const raw of asc) {
+    const c = raw as Partial<OreClaim>;
+    const id = String(c.id ?? "?");
+    if (c.v !== 2 || typeof c.fullText !== "string" || !c.source || !(c.source in SOURCE_WEIGHTS)) {
+      out.push({ id, status: "LEGACY", reason: "pre-v2 record; not re-derivable under contract math" });
+      continue;
+    }
+    const r = refine(c.fullText, c.source);
+    if (!r || r.hash !== c.hash || r.grade !== c.grade) {
+      out.push({ id, status: "DRIFT", reason: !r ? "text no longer refines" : r.hash !== c.hash ? "hash mismatch" : "grade mismatch" });
+      prevLink = c.link ?? null; continue;
+    }
+    if (c.prev !== prevLink || c.link !== linkHash(c.prev ?? null, c.hash!)) {
+      out.push({ id, status: "BROKEN_LINK", reason: "chain link does not match previous claim" });
+      prevLink = c.link ?? null; continue;
+    }
+    out.push({ id, status: "VERIFIED", reason: null });
+    prevLink = c.link!;
+  }
+  return out.reverse();
+}
+
+/** Loads computed only from VERIFIED claims. Vein load = grade ≥ VEIN; mother load = all verified grade (contract totalByproductAccrued). */
+export function oreLoads(list: unknown[]) {
+  const traces = traceLedger(list);
+  const ok = new Set(traces.filter((t) => t.status === "VERIFIED").map((t) => t.id));
+  const verified = (list as OreClaim[]).filter((c) => ok.has(c.id));
+  const vein = verified.filter((c) => c.grade / GRADE_SCALE >= TIER_FLOORS.VEIN);
+  return {
+    verified: verified.length,
+    excluded: list.length - verified.length,
+    veinCount: vein.length,
+    veinLoad: vein.reduce((s, c) => s + c.grade, 0),
+    motherLoad: verified.reduce((s, c) => s + c.grade, 0),
+    motherlodeCount: verified.filter((c) => c.tier === "MOTHERLODE").length,
+  };
+}
+
+export function buildClaim(text: string, source: OreSource, prevList: unknown[], notes?: string, now = Date.now()): OreClaim | null {
+  const r = refine(text, source);
+  if (!r) return null;
+  const head = (prevList[0] as Partial<OreClaim> | undefined);
+  const prev = head?.v === 2 ? head.link ?? null : null;
+  const t = text.trim();
+  return { v: 2, id: `ore-${now.toString(36)}`, ts: now, source, excerpt: t.slice(0, 80), fullText: t, notes,
+    scores: r.scores, grade: r.grade, tier: r.tier, hash: r.hash, prev, link: linkHash(prev, r.hash) };
+}
+
+const KEY = "nexinus.ore.ledger.v1";
 export function loadOre(): OreClaim[] {
   if (typeof window === "undefined") return [];
   try { return JSON.parse(window.localStorage.getItem(KEY) ?? "[]"); } catch { return []; }
 }
 export function saveOre(list: OreClaim[]) {
-  if (typeof window === "undefined") return;
-  window.localStorage.setItem(KEY, JSON.stringify(list));
+  if (typeof window !== "undefined") window.localStorage.setItem(KEY, JSON.stringify(list));
 }
-export function appendOre(c: OreClaim): OreClaim[] {
-  const next = [c, ...loadOre()];
-  saveOre(next);
-  return next;
-}
+export function appendOre(c: OreClaim): OreClaim[] { const n = [c, ...loadOre()]; saveOre(n); return n; }
 export function purgeOre() { saveOre([]); }
