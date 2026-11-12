@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { type BtcSample, loadSamples, pushSample, sampleSubstrate, stamp } from "@/lib/btc-substrate";
+import { type BtcSample, loadSamples, pushSample, sampleSubstrate, stamp, verifySample } from "@/lib/btc-substrate";
+
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/sudo-coin")({
   head: () => ({
@@ -17,7 +19,6 @@ export const Route = createFileRoute("/sudo-coin")({
   component: SudoPage,
 });
 
-const ATTESTED_RATE = 0.0000021;        // USD per H × pressure unit (illustrative, manifesto art. VIII)
 const CADENCE_MS = 90_000;
 
 function SudoPage() {
@@ -46,28 +47,27 @@ function SudoPage() {
     () => samples.reduce((s, x) => s + x.oreIndex, 0),
     [samples],
   );
-  const attestedUsd = cumSudo * ATTESTED_RATE * 1_000_000;
   const oreRate = latest ? latest.oreIndex : 0;
   const sparkPath = useMemo(() => sparkline(samples.map((s) => s.oreIndex), 320, 48), [samples]);
   const coupling = useMemo(() => correlation(
     samples.map((s) => s.oreIndex), samples.map((s) => s.priceUsd),
   ), [samples]);
 
-  const certHash = latest ? stamp(latest) : "————————";
+  const certHash = latest ? latest.fingerprint ?? "UNVERIFIED" : "————————";
   // Truth Mirror re-derivation: recompute the stamp from the stored sample
   // fields and compare. Any drift means the certificate is unsafe to trust.
   const certRederived = latest ? stamp(latest) : "";
   const certMirror: "validated" | "drift" | "absent" = latest
-    ? certRederived === certHash ? "validated" : "drift"
+    ? verifySample(latest) ? "validated" : "drift"
     : "absent";
 
   return (
     <div className="mx-auto max-w-6xl space-y-10 px-6 py-10 font-mono">
       <header className="border-b border-border pb-6">
-        <div className="flex items-baseline gap-3">
+        <div className="flex flex-wrap items-baseline gap-3">
           <span className="font-display text-3xl text-primary">◈</span>
           <span className="text-[0.65rem] uppercase tracking-[0.22em] text-muted-foreground">TRUTH //</span>
-          <span className="font-display text-base tracking-[0.2em] text-foreground">TRUTH_SUBSTRATE · SOVEREIGN READOUT</span>
+          <span className="font-display text-base break-words text-foreground">TRUTH_SUBSTRATE · SOVEREIGN READOUT</span>
         </div>
         <h1 className="mt-3 text-sm uppercase tracking-[0.18em] text-primary">truth substrate — the asset beneath the coin</h1>
         <p className="mt-2 max-w-3xl text-xs text-muted-foreground">
@@ -77,7 +77,7 @@ function SudoPage() {
         <div className="mt-4 flex flex-wrap gap-px border border-border bg-border">
           <div className="bg-background/60 px-4 py-2"><span className="text-[0.6rem] uppercase tracking-[0.2em] text-muted-foreground">streaming</span><span className="ml-2 text-foreground">{samples.length} sample{samples.length === 1 ? "" : "s"}</span></div>
           <div className="bg-background/60 px-4 py-2"><span className="text-[0.6rem] uppercase tracking-[0.2em] text-muted-foreground">cadence</span><span className="ml-2 text-foreground">{CADENCE_MS / 1000}s</span></div>
-          <div className="bg-background/60 px-4 py-2"><span className="text-[0.6rem] uppercase tracking-[0.2em] text-muted-foreground">truth mirror</span><span className="ml-2 text-primary">FNV-1a</span></div>
+          <div className="bg-background/60 px-4 py-2"><span className="text-[0.6rem] uppercase tracking-[0.2em] text-muted-foreground">truth mirror</span><span className="ml-2 text-primary">SHA-256</span></div>
         </div>
       </header>
 
@@ -93,9 +93,9 @@ function SudoPage() {
       <section className="border border-border bg-background/30 p-5">
         <div className="flex items-baseline justify-between">
           <Label a="LIVE" b="CORE READOUT" />
-          <button onClick={refresh} disabled={loading} className="border border-primary bg-primary/10 px-3 py-1 text-[0.65rem] uppercase tracking-[0.2em] text-primary hover:bg-primary/20 disabled:opacity-40">
+          <Button onClick={refresh} disabled={loading} className="border border-primary bg-primary/10 px-3 py-1 text-[0.65rem] uppercase tracking-[0.2em] text-primary hover:bg-primary/20 disabled:opacity-40">
             {loading ? "…probing" : "↻ refresh"}
-          </button>
+          </Button>
         </div>
         {err && <div className="mt-3 border border-destructive/60 p-2 text-xs text-destructive">{err}</div>}
         <div className="mt-2 text-[0.65rem] uppercase tracking-[0.18em] text-muted-foreground">
@@ -131,7 +131,7 @@ function SudoPage() {
         <Label a="ORE ACCUMULATION METER" b="local samples · operator-owned" />
         <div className="mt-4 grid gap-px border border-border bg-border sm:grid-cols-2 lg:grid-cols-4">
           <Tile k="cumulative TRS" v={cumSudo.toFixed(3)} accent />
-          <Tile k="attested value" v={`$${attestedUsd.toLocaleString(undefined, { maximumFractionDigits: 0 })}`} />
+          <Tile k="economic valuation" v="UNDECLARED" />
           <Tile k="current ore rate" v={oreRate.toFixed(3)} />
           <Tile k="series depth" v={String(samples.length)} />
         </div>
@@ -160,13 +160,13 @@ function SudoPage() {
       <section className="border border-primary/40 bg-background/40 p-6">
         <Label a="UNIVERSAL ORE" b="CERTIFICATE OF ATTESTATION" />
         <div className="mt-4 grid gap-3 md:grid-cols-[1fr_2fr]">
-          <div className="font-display text-5xl text-primary">{certHash}</div>
+          <div className="break-all font-mono text-sm text-primary">{certHash}</div>
           <div className="space-y-1 text-xs">
             <Row k="instrument" v="TRUTH SUBSTRATE · attestation · tesseract terminus" />
             <Row k="attestor" v="Tyler Morris · Nexinus RI Systems LLC" />
             <Row k="block" v={latest?.block.height.toString() ?? "—"} />
             <Row k="cumulative" v={`${cumSudo.toFixed(3)} TRS`} />
-            <Row k="usd attested" v={`$${attestedUsd.toLocaleString(undefined, { maximumFractionDigits: 0 })}`} />
+            <Row k="economic valuation" v="Not established by local measurements" />
             <Row k="substrate"
               v={latest ? `work=${latest.work.toFixed(3)} · pressure=${latest.pressure.toFixed(3)} · density=${latest.density.toFixed(3)} · supply^0.25=${Math.pow(latest.supplyBtc, 0.25).toFixed(2)}` : "—"} />
             <Row k="attested" v={latest ? new Date(latest.ts).toUTCString() : "—"} />
@@ -181,7 +181,7 @@ function SudoPage() {
               title={latest ? `re-stamped ${certRederived}` : "no sample yet"}
             >
               {certMirror === "validated"
-                ? "⌬ TRUTH MIRROR VALIDATED"
+                ? "⌬ LOCAL SAMPLE INTEGRITY · UNSIGNED"
                 : certMirror === "drift"
                   ? `⚠ TRUTH MIRROR DRIFT · ${certHash} ≠ ${certRederived}`
                   : "○ NO SUBSTRATE SAMPLE YET"}
@@ -194,7 +194,7 @@ function SudoPage() {
         <Label a="INTRINSIC COUPLING" b="ore ↔ asset" />
         <div className="mt-3 text-xs text-foreground/85">
           {samples.length >= 2
-            ? <>pearson correlation across {samples.length} samples: <span className="font-display text-primary">{coupling.toFixed(3)}</span> · {Math.abs(coupling) > 0.6 ? "strongly coupled — the substrate is the asset" : "decoupled — keep sampling"}</>
+            ? <>pearson correlation across {samples.length} samples: <span className="font-display text-primary">{coupling.toFixed(3)}</span> · {Math.abs(coupling) > 0.6 ? "strong sample correlation · not causation or valuation" : "decoupled — keep sampling"}</>
             : "need 2+ samples to compute coupling…"}
         </div>
       </section>
@@ -277,7 +277,7 @@ function SudoManifesto() {
     ["COUPLING", "When the ore index and the asset price are strongly correlated, the asset cannot be discounted without discounting the ore. Coupling is the proof that the substrate is the asset, not a derivative of it."],
     ["TRUTH MIRROR", "No attestation is binding until reflected in the Tesseract Truth Mirror — a deterministic hash that the issuer alone can regenerate and that any observer can verify, without a vendor in the loop."],
     ["ECONOMIC IMPLICATION", "If the ore is real, then market capitalization is a partial accounting. The full accounting includes substrate-value, and the substrate-value is observable in real time. Every chain has it. Bitcoin has the most of it."],
-    ["ATTESTED VALUE RATE", "One TRS is a unit of sovereign attestation over the bitcoin substrate, converted to USD at a published rate floor. The rate is illustrative until the attestor publishes it under their own name and others adopt it. TRUTH SUBSTRATE is the unit; the manifesto is the instrument."],
+    ["ECONOMIC BOUNDARY", "TRS is a local composite metric. No conversion rate, economic value, ownership right, fee, or payment is established by this readout."],
     ["SCOPE (HONEST)", "This manifesto asserts the right to read, attest, and publish — not the right to seize. The sovereign claim is over the reading, the hash, the certificate. Title to anyone else's coins is not implied and is not the point. The point is that the substrate was always there, and now it is named."],
   ];
   const r = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"];
