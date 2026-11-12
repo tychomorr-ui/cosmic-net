@@ -1,4 +1,6 @@
 # Remaining scope
+- [ ] All-blade Core hardening: preserve PAM history; test Ore tracing/loads; validate and fingerprint Truth Substrate; verify every blade page.
+- [ ] All-blade network completion: authenticated signed endpoints, operator key bindings, and real fleet receipts. Blocked on operator-owned evidence; reachability alone cannot grant LIVE.
 - [ ] Finish evidence-only AI node explanations and verify trust isolation, error handling and browser display.
 
 - [x] Disable the unauthenticated public reprobe writes and unrestricted read; 82 web-app/protocol tests pass and live GET/POST return 410. Scheduled updates through this hook are now disabled. Contract tests remain unverified because their separate Hardhat dependency is unavailable.
