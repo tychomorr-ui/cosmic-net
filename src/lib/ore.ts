@@ -1,7 +1,7 @@
 // Digital Ore — refinement aligned with contracts/src/DigitalOre.sol.
 // Every score is an integer 0..100 computed from the recorded text and the
 // declared source. grade = n*d*s*t/100 (0..GRADE_SCALE), exactly as on-chain.
-// Witness hash is SHA-256 over `ore/v2::source::text`. Nothing is estimated:
+// Witness hash is SHA-256 over `ore/v2::source::text`. Scores are local proxies:
 // empty text or a grade that rounds to zero produces no claim, mirroring
 // the contract's GradeRoundsToZero revert.
 import { sha256 } from "@noble/hashes/sha2.js";
@@ -60,7 +60,7 @@ export function contractGrade(n: number, d: number, s: number, t: number): numbe
 }
 export function tierOf(grade: number): Grade {
   const f = grade / GRADE_SCALE;
-  return [...GRADES].reverse().find((g) => f >= TIER_FLOORS[g])!;
+  return [...GRADES].reverse().find((g) => f >= TIER_FLOORS[g]) ?? "TRACE";
 }
 
 export type Refined = {
@@ -95,25 +95,37 @@ export type Trace = { id: string; status: TraceStatus; reason: string | null };
 export function traceLedger(list: unknown[]): Trace[] {
   const out: Trace[] = [];
   const asc = [...list].reverse();
-  let prevLink: string | null = null;
+  const ids = new Map<string, number>();
   for (const raw of asc) {
-    const c = raw as Partial<OreClaim>;
+    if (raw && typeof raw === "object" && "id" in raw) {
+      const id = String(raw.id);
+      ids.set(id, (ids.get(id) ?? 0) + 1);
+    }
+  }
+  let prevLink: string | null = null;
+  let broken = false;
+  for (const raw of asc) {
+    const c = (raw && typeof raw === "object" ? raw : {}) as Partial<OreClaim>;
     const id = String(c.id ?? "?");
-    if (c.v !== 2 || typeof c.fullText !== "string" || !c.source || !(c.source in SOURCE_WEIGHTS)) {
+    if (c.v !== 2 || typeof c.fullText !== "string" || !c.source || !Object.hasOwn(SOURCE_WEIGHTS, c.source)) {
       out.push({ id, status: "LEGACY", reason: "pre-v2 record; not re-derivable under contract math" });
       continue;
     }
     const r = refine(c.fullText, c.source);
-    if (!r || r.hash !== c.hash || r.grade !== c.grade) {
-      out.push({ id, status: "DRIFT", reason: !r ? "text no longer refines" : r.hash !== c.hash ? "hash mismatch" : "grade mismatch" });
+    if (!r || r.hash !== c.hash || r.grade !== c.grade || r.tier !== c.tier ||
+      !c.scores || Object.entries(r.scores).some(([k, v]) => c.scores?.[k as keyof Refined["scores"]] !== v) ||
+      ids.get(id) !== 1) {
+      out.push({ id, status: "DRIFT", reason: "recorded source, scores, grade, tier, hash or identity mismatch" });
+      broken = true;
       prevLink = c.link ?? null; continue;
     }
-    if (c.prev !== prevLink || c.link !== linkHash(c.prev ?? null, c.hash!)) {
+    if (broken || c.prev !== prevLink || c.link !== linkHash(c.prev ?? null, r.hash)) {
       out.push({ id, status: "BROKEN_LINK", reason: "chain link does not match previous claim" });
+      broken = true;
       prevLink = c.link ?? null; continue;
     }
     out.push({ id, status: "VERIFIED", reason: null });
-    prevLink = c.link!;
+    prevLink = c.link ?? null;
   }
   return out.reverse();
 }
@@ -121,8 +133,7 @@ export function traceLedger(list: unknown[]): Trace[] {
 /** Loads computed only from VERIFIED claims. Vein load = grade ≥ VEIN; mother load = all verified grade (contract totalByproductAccrued). */
 export function oreLoads(list: unknown[]) {
   const traces = traceLedger(list);
-  const ok = new Set(traces.filter((t) => t.status === "VERIFIED").map((t) => t.id));
-  const verified = (list as OreClaim[]).filter((c) => ok.has(c.id));
+  const verified = (list as OreClaim[]).filter((_, i) => traces[i]?.status === "VERIFIED");
   const vein = verified.filter((c) => c.grade / GRADE_SCALE >= TIER_FLOORS.VEIN);
   return {
     verified: verified.length,
@@ -137,17 +148,19 @@ export function oreLoads(list: unknown[]) {
 export function buildClaim(text: string, source: OreSource, prevList: unknown[], notes?: string, now = Date.now()): OreClaim | null {
   const r = refine(text, source);
   if (!r) return null;
+  if (traceLedger(prevList).some((t) => t.status !== "VERIFIED" && t.status !== "LEGACY"))
+    throw new Error("Ledger integrity fault — export the evidence before recording more claims");
   const head = (prevList[0] as Partial<OreClaim> | undefined);
   const prev = head?.v === 2 ? head.link ?? null : null;
   const t = text.trim();
-  return { v: 2, id: `ore-${now.toString(36)}`, ts: now, source, excerpt: t.slice(0, 80), fullText: t, notes,
+  return { v: 2, id: `ore-${now.toString(36)}-${crypto.randomUUID()}`, ts: now, source, excerpt: t.slice(0, 80), fullText: t, notes,
     scores: r.scores, grade: r.grade, tier: r.tier, hash: r.hash, prev, link: linkHash(prev, r.hash) };
 }
 
 const KEY = "nexinus.ore.ledger.v1";
 export function loadOre(): OreClaim[] {
   if (typeof window === "undefined") return [];
-  try { return JSON.parse(window.localStorage.getItem(KEY) ?? "[]"); } catch { return []; }
+  try { const value: unknown = JSON.parse(window.localStorage.getItem(KEY) ?? "[]"); return Array.isArray(value) ? value.filter((c) => c && typeof c === "object") : []; } catch { return []; }
 }
 export function saveOre(list: OreClaim[]) {
   if (typeof window !== "undefined") window.localStorage.setItem(KEY, JSON.stringify(list));

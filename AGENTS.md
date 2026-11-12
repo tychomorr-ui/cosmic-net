@@ -14,3 +14,6 @@
 - Run unit tests with the dedicated Vitest config and local protocol alias so tests do not boot the server runtime.
 - Keep the public reprobe hook disabled for both reads and writes until an authenticated operator-controlled replacement is explicitly authorized; public placement does not authorize privileged access.
 - AI node explanations select bounded evidence-grounded sentences via an authenticated server function; never feed AI output into probe or trust stores.
+- PAM refuses chain restamping and checks integrity plus concurrent writes before append, because recomputing history would erase evidence of drift.
+- Digital Ore traces rederive scores and tiers, reject duplicate identities, and exclude descendants of broken v2 claims, because loads must not launder damaged ancestry.
+- Truth Substrate stores full-sample SHA-256 fingerprints and validates measurements before persistence; local fingerprints are not signatures or economic valuations.
