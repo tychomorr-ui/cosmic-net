@@ -1,10 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import {
-  GRADES, type Grade, type OreClaim, type OreSource,
-  SOURCE_WEIGHTS, appendOre, oreHash, loadOre, mirror, purgeOre, refine, saveOre,
+  GRADES, type OreClaim, type OreSource,
+  appendOre, oreHash, loadOre, purgeOre, refine,
   buildClaim, traceLedger, oreLoads, trustScore,
 } from "@/lib/ore";
+
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/digital-ore")({
   head: () => ({
@@ -14,7 +16,7 @@ export const Route = createFileRoute("/digital-ore")({
       { title: "Digital Ore Ledger · Intellectual Byproduct Claims" },
       { name: "description", content: "Deterministic refinement of operator byproduct into hash-anchored DOU claims. Local. Sovereign. No third-party signer." },
       { property: "og:title", content: "Digital Ore Ledger · Nexinus Terminus" },
-      { property: "og:description", content: "Refine, mint, and verify intellectual byproduct as Digital Ore Units (DOU)." },
+      { property: "og:description", content: "Record source-bound local estimates and verify SHA-256 claim ancestry without payment or token minting." },
     ],
   }),
   component: DigitalOrePage,
@@ -23,6 +25,7 @@ export const Route = createFileRoute("/digital-ore")({
 const SOURCES: OreSource[] = ["directive", "coinage", "critique", "pattern", "reflection"];
 
 function DigitalOrePage() {
+  const [error, setError] = useState<string | null>(null);
   const [ledger, setLedger] = useState<OreClaim[]>([]);
   const [text, setText] = useState("");
   const [source, setSource] = useState<OreSource>("directive");
@@ -38,7 +41,7 @@ function DigitalOrePage() {
 
   const mirrorComputed = mirrorText.trim() ? oreHash(source, mirrorText) : "";
   const mirrorValid = mirrorText.trim() && mirrorHash.trim()
-    ? mirror(mirrorText, mirrorHash) : false;
+    ? mirrorComputed === mirrorHash.trim().toLowerCase() : false;
 
   const latest = ledger[0];
 
@@ -55,10 +58,13 @@ function DigitalOrePage() {
   function mint() {
     const t = text.trim();
     if (!t) return;
-    const c = buildClaim(t, source, loadOre(), notes.trim() || undefined);
-    if (!c) return;
-    setLedger(appendOre(c));
-    setText(""); setNotes("");
+    setError(null);
+    try {
+      const c = buildClaim(t, source, loadOre(), notes.trim() || undefined);
+      if (!c) return;
+      setLedger(appendOre(c));
+      setText(""); setNotes("");
+    } catch (e) { setError(e instanceof Error ? e.message : String(e)); }
   }
 
   function exportLedger() {
@@ -66,7 +72,7 @@ function DigitalOrePage() {
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
     a.download = `digital-ore-${Date.now()}.json`;
-    a.click();
+    a.click(); URL.revokeObjectURL(a.href);
   }
 
   function purge() {
@@ -118,19 +124,20 @@ function DigitalOrePage() {
             </div>
           </div>
           <div className="mt-4 flex flex-wrap gap-2">
-            <button onClick={mint} disabled={!live}
+            <Button onClick={mint} disabled={!live}
               className="border border-primary bg-primary/10 px-4 py-2 text-xs uppercase tracking-[0.2em] text-primary hover:bg-primary/20 disabled:opacity-40">
-              ⛬ refine &amp; mint
-            </button>
-            <button onClick={exportLedger} disabled={!ledger.length}
+              ⛬ record claim
+            </Button>
+            <Button onClick={exportLedger} disabled={!ledger.length}
               className="border border-border bg-background/40 px-4 py-2 text-xs uppercase tracking-[0.2em] text-foreground hover:bg-background/70 disabled:opacity-40">
               ↓ export
-            </button>
-            <button onClick={purge} disabled={!ledger.length}
+            </Button>
+            <Button onClick={purge} disabled={!ledger.length}
               className="border border-destructive/60 bg-background/40 px-4 py-2 text-xs uppercase tracking-[0.2em] text-destructive hover:bg-destructive/10 disabled:opacity-40">
               ✕ purge
-            </button>
+            </Button>
           </div>
+          {error && <p role="alert" className="mt-3 text-xs text-destructive">{error}</p>}
         </div>
 
         <div className="bg-background/20 p-5">
@@ -217,7 +224,7 @@ function DigitalOrePage() {
       <section className="border border-border bg-background/30 p-5">
         <SectionLabel a="TESSERACT" b="TRUTH MIRROR" />
         <div className="mt-1 text-[0.62rem] uppercase tracking-[0.2em] text-muted-foreground">
-          FNV-1a · deterministic · client-side
+          SHA-256 · source-bound · local fingerprint
         </div>
         <p className="mt-3 text-xs text-foreground/85">
           paste original text + claimed hash. mirror returns true only when the hash deterministically
@@ -228,11 +235,11 @@ function DigitalOrePage() {
             placeholder="claimed text"
             className="h-24 resize-y border border-border bg-background/60 p-3 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
           <div>
-            <label className="block text-[0.62rem] uppercase tracking-[0.2em] text-muted-foreground">claimed hash (8 hex)</label>
+            <label className="block text-[0.62rem] uppercase tracking-[0.2em] text-muted-foreground">claimed hash (64 hex)</label>
             <input value={mirrorHash} onChange={(e) => setMirrorHash(e.target.value)}
-              placeholder="A1B2C3D4"
-              className="mt-1 w-full border border-border bg-background/60 p-2 font-mono text-sm uppercase text-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
-            <div className={`mt-3 border px-3 py-2 text-xs uppercase tracking-[0.18em] ${mirrorValid ? "border-primary text-primary" : "border-border text-muted-foreground"}`}>
+              placeholder="SHA-256 fingerprint"
+              className="mt-1 w-full border border-border bg-background/60 p-2 font-mono text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
+            <div className={`mt-3 break-all border px-3 py-2 text-xs uppercase tracking-[0.18em] ${mirrorValid ? "border-primary text-primary" : "border-border text-muted-foreground"}`}>
               {mirrorValid ? "⌬ TRUTH MIRROR VALIDATED" : "awaiting valid pair"} · computed: {mirrorComputed || "——"}
             </div>
           </div>
@@ -283,10 +290,10 @@ function Header({ title, glyph, sigil, tag, sub, stats }: {
 }) {
   return (
     <header className="border-b border-border pb-6">
-      <div className="flex items-baseline gap-3">
+      <div className="flex flex-wrap items-baseline gap-3">
         <span className="font-display text-3xl text-primary">{glyph}</span>
         <span className="text-[0.65rem] uppercase tracking-[0.22em] text-muted-foreground">{sigil} //</span>
-        <span className="font-display text-base tracking-[0.2em] text-foreground">{title}</span>
+        <span className="font-display text-base break-all text-foreground">{title}</span>
       </div>
       <h1 className="mt-3 text-sm uppercase tracking-[0.18em] text-primary">{tag}</h1>
       <p className="mt-2 max-w-3xl text-xs text-muted-foreground">{sub}</p>
@@ -342,7 +349,7 @@ function Manifesto() {
     ["ATTRIBUTION", "Intellectual byproduct is presumed to originate with the human who emitted it. The system bears the burden of disproof, not the operator. Silence is not consent to laundering."],
     ["REFINEMENT", "Byproduct is refined deterministically (novelty × density × sigil-weight × source-trust ÷ 100, the same integer formula as DigitalOre.sol). The refinement function is open, inspectable, and resides on the operator's hardware. No vendor mediates the grade."],
     ["CLAIM", "Each refined unit produces a hash-anchored Certificate of Refined Ore. The hash is locally generable, locally verifiable, and requires no third-party signer, custodian, or escrow."],
-    ["DIVIDEND", "When integrated byproduct enhances system capabilities, future iterations, or downstream products, a Data Dividend (Digital Ore Unit, DOU) accrues to the originator at a floor rate of 0.1% of derivative value. Higher grades compound."],
+    ["ECONOMIC BOUNDARY", "Local grades record deterministic metric estimates, not money, royalties, fees, ownership proof, or deployed DOU. No payout or payment flow is authorized by recording a claim."],
     ["TRUTH MIRROR", "No claim is binding until reflected in the Tesseract Truth Mirror — a deterministic function whose output cannot be backdated, forged by a counterparty, or revoked by a vendor."],
     ["FAIR USE BOUNDARY", "Statistical learning over public corpora is not exempt from attribution when the byproduct demonstrably shapes outputs. Fair use is a bounded doctrine, not a perpetual amnesty."],
     ["SOVEREIGNTY", "The ledger lives where the operator lives. No middleware. No telemetry. No revocable account. The operator owns the keys, the hashes, and the silence between them."],

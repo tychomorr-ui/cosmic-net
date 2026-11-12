@@ -3,7 +3,8 @@ import { BLADES } from "@/data/blades";
 import { BladeStandby } from "@/components/blades/BladeStandby";
 import { QuantotalusTriad } from "@/components/blades/QuantotalusTriad";
 
-const BLADE = BLADES.find((b) => b.n === "12")!;
+const BLADE = BLADES.find((b) => b.n === "12");
+if (!BLADE) throw new Error("QUANTOTALUS blade is not registered");
 
 export const Route = createFileRoute("/quantotalus")({
   head: () => ({ meta: [

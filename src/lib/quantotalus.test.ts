@@ -2,6 +2,10 @@ import { describe, it, expect } from "vitest";
 import { triadState } from "./quantotalus";
 const p = (id: string, up: boolean, ms = 100) => ({ id, state: up ? "REACHABLE" as const : "DOWN" as const, ms });
 describe("triadState", () => {
+  it("does not count invalid latencies or duplicate vertex evidence", () => {
+    expect(triadState([p("tesseract", true, NaN), p("rootgate", true), p("truthtalk", true)]).state).toBe("UNMEASURED");
+    expect(triadState([p("tesseract", true), p("tesseract", false), p("rootgate", true), p("truthtalk", true)]).state).toBe("UNMEASURED");
+  });
   it("is UNMEASURED without all three probes", () => {
     expect(triadState([p("tesseract", true)]).state).toBe("UNMEASURED");
     expect(triadState(undefined).state).toBe("UNMEASURED");

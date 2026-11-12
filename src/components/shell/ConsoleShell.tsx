@@ -6,7 +6,6 @@ import {
   Eye,
   Network,
   TerminalSquare,
-  Compass,
   Crown,
   Gem,
   Sparkles,
@@ -32,13 +31,12 @@ const NAV: NavItem[] = [
   { name: "Reflective Intel", path: "/reflective-intel",icon: Eye,            sigil: "◉", code: "MIRROR" },
   { name: "Network NEBULA",   path: "/nebula",          icon: Network,        sigil: "✺", code: "NEBULA" },
   { name: "TERMINUS",         path: "/ops",             icon: TerminalSquare, sigil: "▣", code: "TERMI" },
-  { name: "SAM Command",      path: "/sam-command",     icon: Compass,        sigil: "✧", code: "OMNI" },
   { name: "PAM Monarch",      path: "/pam",             icon: Crown,          sigil: "♕", code: "PAM" },
   { name: "Digital Ore",      path: "/digital-ore",     icon: Gem,            sigil: "⛬", code: "ORE" },
   { name: "Truth Substrate",  path: "/sudo-coin",       icon: Sparkles,       sigil: "◈", code: "TRS" },
   { name: "QUANTOTALUS",      path: "/quantotalus",     icon: Triangle,       sigil: "◬", code: "QUANT" },
   { name: "PROOF FULCRUM",    path: "/proof-fulcrum",   icon: ShieldCheck,    sigil: "◇", code: "PROOF" },
-  { name: "Messages",         path: "/messages",        icon: MessagesSquare, sigil: "✉", code: "MSG" },
+  { name: "Sovereign Messaging", path: "/messages",     icon: MessagesSquare, sigil: "✉", code: "MSG" },
   { name: "Audit Center",     path: "/audit",           icon: FileCheck,      sigil: "▤", code: "AUDIT" },
 ];
 

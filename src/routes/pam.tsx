@@ -10,24 +10,12 @@ import {
   declareTruth,
   head as ledgerHead,
   loadEnvelopes,
-  repairChain,
   verifyChain,
 } from "@/data/truth-ledger";
 import { LANE_GLOSS, LANE_ORDER, detectDrift, mirror } from "@/lib/pam";
 import { pistifusReadout, type FaithScore } from "@/lib/pistifus";
 import { DoctrineAudit } from "@/components/audit/DoctrineAudit";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { toast } from "sonner";
-
+import { Button } from "@/components/ui/button";
 export const Route = createFileRoute("/pam")({
   head: () => ({
     meta: [
@@ -50,29 +38,6 @@ export const Route = createFileRoute("/pam")({
   component: PamConsole,
 });
 
-const PESHWIN_REQUEST =
-  "PESHWIN_V9 · Sri-Yantra MMR vector, Resonate-Earth attestation, SovereignStatus sigil, 7D Sri-Yantra overlay, /pam envelope.";
-
-async function seedPeshwinV9(): Promise<void> {
-  if (typeof window === "undefined") return;
-  if (loadEnvelopes().some((e) => e.request === PESHWIN_REQUEST)) return;
-  try {
-    await appendEnvelope({
-      lane: "Warrior",
-      request: PESHWIN_REQUEST,
-      reflection:
-        "PESHWIN_V9: 5-item subset shipped lane-clean; relay + Planck-loop + 9.9D refused as drift.",
-      truths: ["unledgered"],
-      next_move:
-        "Operator: click Verify on Earth Attestation panel at /seventh-dimension to flip PISTIFUS-VALIDATED.",
-      drift:
-        "refused: Pharo-Gapped WebSocket relay (centralized); Planck-loop frequency (browser ms scheduling); 9.9-dimensional naming (rebuilt as 7-axis MMR vector).",
-    });
-  } catch {
-    /* append-only invariants guard re-entry; ignore */
-  }
-}
-
 function PamConsole() {
   const [truths, setTruths] = useState<LedgerTruth[]>([]);
   const [envelopes, setEnvelopes] = useState<Envelope[]>([]);
@@ -90,7 +55,7 @@ function PamConsole() {
   const [supersedes, setSupersedes] = useState("");
 
   useEffect(() => {
-    void seedPeshwinV9().then(refresh);
+    void refresh();
   }, []);
 
   async function refresh() {
@@ -134,34 +99,6 @@ function PamConsole() {
     }
   }
 
-  async function onRepair() {
-    setError(null);
-    try {
-      const r = await repairChain();
-      if (r.repairedFrom >= 0) {
-        await appendEnvelope({
-          lane: "Warrior",
-          request: `chain repair · re-stamped ${r.rewritten} link(s) from index ${r.repairedFrom}`,
-          reflection:
-            "Append-only invariant preserved: only prev_cid + self-cid recomputed; no body mutated, no envelope deleted.",
-          truths: ["unledgered"],
-          next_move: "Re-verify chain badge reads `chain ok`.",
-          drift: `auto-heal: chain break @ ${r.repairedFrom} re-anchored to recomputed predecessor`,
-        });
-        toast.success("chain repaired", {
-          description: `re-stamped ${r.rewritten} link(s) from #${r.repairedFrom} · head ${r.headCid?.slice(0, 16)}…`,
-        });
-      } else {
-        toast("chain already ok", { description: "no break detected; nothing rewritten." });
-      }
-      await refresh();
-    } catch (e) {
-      const msg = e instanceof Error ? e.message : String(e);
-      setError(msg);
-      toast.error("repair refused", { description: msg });
-    }
-  }
-
   async function onDeclare() {
     if (!newTruth.trim()) return;
     declareTruth(newTruth.trim(), supersedes || undefined);
@@ -187,7 +124,7 @@ function PamConsole() {
           move. Sovereignty &gt; adaptation. Truths supersede — nothing is
           silently overwritten.
         </p>
-        <ChainBadge chain={chain} count={envelopes.length} headCid={headEnv?.cid ?? null} onRepair={onRepair} />
+        <ChainBadge chain={chain} count={envelopes.length} headCid={headEnv?.cid ?? null} />
       </header>
 
       <section className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
@@ -206,7 +143,7 @@ function PamConsole() {
               const active = lane === l;
               const emergency = l === "EMERGENCY";
               return (
-                <button
+                <Button
                   key={l}
                   onClick={() => setLane(l)}
                   className={`rounded border px-3 py-1.5 text-[0.7rem] uppercase tracking-[0.18em] transition ${
@@ -218,7 +155,7 @@ function PamConsole() {
                   }`}
                 >
                   {l}
-                </button>
+                </Button>
               );
             })}
           </div>
@@ -238,7 +175,7 @@ function PamConsole() {
               {truths.map((t) => {
                 const on = selectedTruths.has(t.id);
                 return (
-                  <button
+                  <Button
                     key={t.id}
                     onClick={() => toggleTruth(t.id)}
                     className={`rounded border px-2 py-1 font-mono text-[0.7rem] transition ${
@@ -249,7 +186,7 @@ function PamConsole() {
                     title={t.statement}
                   >
                     {t.id}
-                  </button>
+                  </Button>
                 );
               })}
             </div>
@@ -292,13 +229,13 @@ function PamConsole() {
             </div>
           )}
 
-          <button
+          <Button
             onClick={onAppend}
-            disabled={!request.trim() || !nextMove.trim()}
+            disabled={!request.trim() || !nextMove.trim() || !chain?.ok}
             className="w-full rounded border border-gold bg-gold/10 px-4 py-2 text-[0.75rem] uppercase tracking-[0.2em] text-gold transition hover:bg-gold/20 disabled:cursor-not-allowed disabled:opacity-40"
           >
             Append envelope to Truth Ledger
-          </button>
+          </Button>
         </div>
 
         <div className="space-y-5 rounded border border-border bg-card/40 p-5">
@@ -340,13 +277,13 @@ function PamConsole() {
               placeholder="supersedes (optional id)"
               className="flex-1 rounded border border-border bg-background px-3 py-1.5 font-mono text-[0.7rem] text-foreground"
             />
-            <button
+            <Button
               onClick={onDeclare}
               disabled={!newTruth.trim()}
               className="rounded border border-border px-3 py-1.5 text-[0.7rem] uppercase tracking-[0.18em] text-foreground transition hover:border-gold hover:text-gold disabled:opacity-40"
             >
               Declare
-            </button>
+            </Button>
           </div>
         </div>
       </section>
@@ -474,93 +411,23 @@ function LaneOrder({ current }: { current: Lane }) {
   );
 }
 
-function ChainBadge({
-  chain,
-  count,
-  headCid,
-  onRepair,
-}: {
+function ChainBadge({ chain, count, headCid }: {
   chain: { ok: boolean; breakAt?: number } | null;
   count: number;
   headCid: string | null;
-  onRepair: () => void | Promise<void>;
 }) {
-  const ok = chain?.ok ?? true;
-  const [confirmOpen, setConfirmOpen] = useState(false);
-  const [running, setRunning] = useState(false);
-  return (
-    <div className="flex flex-wrap items-center gap-3 font-mono text-[0.7rem]">
-      <span
-        className={`rounded border px-2 py-0.5 uppercase tracking-[0.18em] ${
-          ok
-            ? "border-gold/60 text-gold"
-            : "border-destructive text-destructive"
-        }`}
-      >
-        {ok ? "chain ok" : `chain break @ ${chain?.breakAt}`}
-      </span>
-      <span className="text-muted-foreground">
-        envelopes <span className="text-foreground">{count}</span>
-      </span>
-      {headCid && (
-        <span className="text-muted-foreground">
-          head <span className="text-foreground">{headCid.slice(0, 16)}…</span>
-        </span>
-      )}
-      {!ok && (
-        <>
-          <button
-            type="button"
-            onClick={() => setConfirmOpen(true)}
-            className="rounded border border-destructive/60 px-2 py-0.5 uppercase tracking-[0.18em] text-destructive transition hover:bg-destructive/10"
-            title="Re-stamp prev_cid + self-cid forward from the break. Bodies untouched. Heal is logged as a Warrior envelope."
-          >
-            fix chain break
-          </button>
-          <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Repair chain from break @ {chain?.breakAt}?</AlertDialogTitle>
-                <AlertDialogDescription asChild>
-                  <div className="space-y-2 text-xs">
-                    <p>
-                      This re-stamps <span className="font-mono text-foreground">prev_cid</span> and
-                      the self-CID forward from index{" "}
-                      <span className="font-mono text-foreground">{chain?.breakAt}</span>. Envelope
-                      bodies are not mutated and no envelope is deleted — the append-only invariant
-                      holds.
-                    </p>
-                    <p>
-                      The repair itself is appended as a <span className="text-gold">Warrior</span>{" "}
-                      envelope so the heal lives in-ledger. This action cannot be silently undone.
-                    </p>
-                  </div>
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel disabled={running}>Cancel</AlertDialogCancel>
-                <AlertDialogAction
-                  disabled={running}
-                  onClick={async (e) => {
-                    e.preventDefault();
-                    setRunning(true);
-                    try {
-                      await onRepair();
-                      setConfirmOpen(false);
-                    } finally {
-                      setRunning(false);
-                    }
-                  }}
-                >
-                  {running ? "repairing…" : "Confirm repair"}
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        </>
-      )}
-    </div>
-  );
+  function exportEvidence() {
+    const url = URL.createObjectURL(new Blob([JSON.stringify({ truths: activeTruths(), envelopes: loadEnvelopes() }, null, 2)], { type: "application/json" }));
+    const a = document.createElement("a"); a.href = url; a.download = "pam-evidence.json"; a.click(); URL.revokeObjectURL(url);
+  }
+  return <div className="flex flex-wrap items-center gap-3 font-mono text-xs">
+    <span className={chain === null ? "text-warning" : chain.ok ? "text-gold" : "text-destructive"}>
+      {chain === null ? "CHECKING" : chain.ok ? count ? "CHAIN OK · LOCAL" : "EMPTY · NO EVIDENCE" : `CHAIN BREAK @ ${chain.breakAt} · HISTORY PRESERVED`}
+    </span>
+    <span className="text-muted-foreground">envelopes {count}</span>
+    {headCid && <span className="break-all text-muted-foreground">head {headCid.slice(0, 16)}…</span>}
+    <Button variant="outline" size="sm" onClick={exportEvidence} disabled={!count}>Export evidence</Button>
+  </div>;
 }
 
 function Field({
@@ -582,7 +449,7 @@ function Field({
         {label}
       </dt>
       <dd
-        className={`mt-0.5 ${mono ? "font-mono" : ""} ${
+        className={`mt-0.5 ${mono ? "font-mono break-all" : ""} ${
           accent ? "text-gold" : destructive ? "text-destructive" : "text-foreground"
         }`}
       >
