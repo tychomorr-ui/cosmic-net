@@ -80,7 +80,8 @@ export function declareTruth(statement: string, supersedes?: string): LedgerTrut
 export function loadEnvelopes(): Envelope[] {
   if (typeof window === "undefined") return [];
   try {
-    return JSON.parse(kvGet(ENV_KEY) ?? "[]") as Envelope[];
+    const parsed = JSON.parse(kvGet(ENV_KEY) ?? "[]");
+    return Array.isArray(parsed) ? parsed : [];
   } catch {
     return [];
   }
@@ -114,8 +115,9 @@ export async function appendEnvelope(input: AppendInput): Promise<Envelope> {
   if (input.next_move.split(/\r?\n/).filter((l) => l.trim()).length > 1)
     throw new Error("next_move must collapse to one line");
 
-  if (!(await verifyChain()).ok) throw new Error("chain integrity fault — history preserved; append refused");
   const before = kvGet(ENV_KEY);
+  if (!(await verifyChain()).ok) throw new Error("chain integrity fault — history preserved; append refused");
+  if (kvGet(ENV_KEY) !== before) throw new Error("concurrent ledger update — review the new head");
   const prev = head();
   const body = {
     v: "pam.envelope/v0" as const,
@@ -136,16 +138,22 @@ export async function appendEnvelope(input: AppendInput): Promise<Envelope> {
 }
 
 export async function verifyChain(): Promise<{ ok: boolean; breakAt?: number }> {
+  try {
+  const raw = kvGet(ENV_KEY);
+  if (raw !== null && !Array.isArray(JSON.parse(raw))) return { ok: false, breakAt: 0 };
   const all = loadEnvelopes();
   let prev: string | null = null;
   for (let i = 0; i < all.length; i++) {
-    const { cid, ...body } = all[i];
+    const entry = all[i];
+    if (!entry || typeof entry !== "object") return { ok: false, breakAt: i };
+    const { cid, ...body } = entry;
     if (body.prev_cid !== prev) return { ok: false, breakAt: i };
     const recomputed = await valueToCid(body);
     if (recomputed !== cid) return { ok: false, breakAt: i };
     prev = cid;
   }
   return { ok: true };
+  } catch { return { ok: false, breakAt: 0 }; }
 }
 
 // History is evidence. Restamping a broken chain would conceal the fault.

@@ -17,3 +17,5 @@
 - PAM refuses chain restamping and checks integrity plus concurrent writes before append, because recomputing history would erase evidence of drift.
 - Digital Ore traces rederive scores and tiers, reject duplicate identities, and exclude descendants of broken v2 claims, because loads must not launder damaged ancestry.
 - Truth Substrate stores full-sample SHA-256 fingerprints and validates measurements before persistence; local fingerprints are not signatures or economic valuations.
+- Retired blade URLs redirect to an existing evidence surface; never dereference removed registry entries.
+- Seventh Dimension projects recorded local state and verified Ore loads; its CID is a snapshot fingerprint, not fleet verification.
