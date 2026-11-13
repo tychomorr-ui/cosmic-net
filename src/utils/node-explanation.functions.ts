@@ -5,7 +5,7 @@ import { NODES } from "@/data/nodes";
 
 export const explainNodeFailure = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) => evidenceSchema.parse(input))
+  .validator((input: unknown) => evidenceSchema.parse(input))
   .handler(async ({ data }) => {
     if (!NODES.some((node) => node.id === data.nodeId)) throw new Error("Unknown node");
     if (data.code === "http" && !data.httpStatus) throw new Error("Missing HTTP evidence");

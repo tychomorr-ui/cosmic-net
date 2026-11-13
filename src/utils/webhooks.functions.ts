@@ -17,7 +17,7 @@ export const listWebhooks = createServerFn({ method: "GET" })
 
 export const createWebhook = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((data: { url: string }) => {
+  .validator((data: { url: string }) => {
     const parsed = z
       .object({
         url: z.string().regex(URL_RE, "Must be an https:// URL").max(2048),
@@ -51,7 +51,7 @@ export const createWebhook = createServerFn({ method: "POST" })
 
 export const deleteWebhook = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((data: { id: string }) => data)
+  .validator((data: { id: string }) => data)
   .handler(async ({ data, context }) => {
     const { error } = await context.supabase
       .from("provenance_webhooks")
