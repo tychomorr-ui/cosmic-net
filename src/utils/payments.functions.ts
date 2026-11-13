@@ -52,7 +52,7 @@ async function resolveOrCreateCustomer(
 
 export const createMcpCheckoutSession = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator(
+  .validator(
     (data: { returnUrl: string; environment: StripeEnv; lookupKey?: string }) => data,
   )
   .handler(async ({ data, context }): Promise<CheckoutSessionResult> => {
@@ -90,7 +90,7 @@ export const createMcpCheckoutSession = createServerFn({ method: "POST" })
 
 export const createPortalSession = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((data: { returnUrl?: string; environment: StripeEnv }) => data)
+  .validator((data: { returnUrl?: string; environment: StripeEnv }) => data)
   .handler(async ({ data, context }): Promise<PortalSessionResult> => {
     const { supabase, userId } = context;
     const { data: sub, error: subError } = await supabase

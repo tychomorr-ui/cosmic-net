@@ -5,6 +5,14 @@ import { appendEnvelope, loadEnvelopes, repairChain, verifyChain } from "./truth
 const input = { lane: "Core" as const, request: "Audit evidence", reflection: "Mirror recorded truth", truths: [], next_move: "Verify the chain" };
 beforeEach(() => { store.clear(); vi.stubGlobal("window", {}); });
 describe("PAM append-only evidence", () => {
+  it("refuses malformed stored history without replacing its bytes", async () => {
+    for (const value of ["{", "{}", "[null]"]) {
+      store.set("nexinus.pam.envelopes.v1", value);
+      expect((await verifyChain()).ok).toBe(false);
+      await expect(appendEnvelope(input)).rejects.toThrow("chain integrity fault");
+      expect(store.get("nexinus.pam.envelopes.v1")).toBe(value);
+    }
+  });
   it("records reflection and verifies CID ancestry", async () => {
     const a = await appendEnvelope(input); const b = await appendEnvelope(input);
     expect(b.prev_cid).toBe(a.cid);

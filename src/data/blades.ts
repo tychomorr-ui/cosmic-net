@@ -38,6 +38,8 @@ export const BLADES: Blade[] = [
   { n: "13", glyph: "◇", name: "PROOF FULCRUM",     route: "/proof-fulcrum",   status: "STANDBY",
     tagline: "ed25519 fleet witness · operator stamp",
     blocker: "first signed fleet receipt" },
+  { n: "14", glyph: "⬡", name: "Seventh Dimension", route: "/seventh-dimension", status: "LIVE",
+    tagline: "local cross-axis snapshot · verified Ore loads · unsigned CID" },
 ];
 
 export const BLADE_COUNT = BLADES.length;

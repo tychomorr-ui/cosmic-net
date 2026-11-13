@@ -8,6 +8,9 @@ import { valueToCid } from "@/lib/cid";
 import { buildVector, coherence as mmrCoherence, type AxisKey } from "@/lib/mmr-vectors";
 import { SriYantraOverlay } from "@/components/SriYantraOverlay";
 import { SovereignStatus } from "@/components/SovereignStatus";
+import { loadEnvelopes, verifyChain } from "@/data/truth-ledger";
+import { loadOperatorKeys } from "@/lib/sovereign-keys";
+import { useProbeStatus } from "@/lib/probe-store";
 
 export const Route = createFileRoute("/seventh-dimension")({
   head: () => ({
@@ -42,11 +45,17 @@ function SeventhDimensionPage() {
   const [unityRederived, setUnityRederived] = useState<string>("");
   const [tick, setTick] = useState(0);
   const [rot, setRot] = useState(0);
+  const [pamCount, setPamCount] = useState(0);
+  const [keyPresent, setKeyPresent] = useState(false);
+  const earthProbe = useProbeStatus("resonate-earth");
 
   useEffect(() => {
     const ore = loadOre();
-    setOreCount(ore.length);
-    setOreDou(oreLoads(ore).motherLoad);
+    const loads = oreLoads(ore);
+    setOreCount(loads.verified);
+    setOreDou(loads.motherLoad);
+    void verifyChain().then((result) => setPamCount(result.ok ? loadEnvelopes().length : 0));
+    setKeyPresent(Boolean(loadOperatorKeys()));
     setChainLen(loadChain().length);
     const last = loadSamples().slice(-1)[0];
     if (last) setSample(last);
@@ -55,8 +64,8 @@ function SeventhDimensionPage() {
     })();
     const t = setInterval(() => setTick((x) => x + 1), 1000);
     // 8-fold resonance: rotation advances by 360/8 = 45° each beat, smoothed.
-    const r = setInterval(() => setRot((x) => (x + 0.6) % 360), 40);
-    return () => { clearInterval(t); clearInterval(r); };
+    const r = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? null : setInterval(() => setRot((x) => (x + 0.6) % 360), 40);
+    return () => { clearInterval(t); if (r !== null) clearInterval(r); };
   }, []);
 
   const resonateNode = NODES.find((n) => n.id === "resonate-earth");
@@ -72,7 +81,9 @@ function SeventhDimensionPage() {
         priceUsd: sample.priceUsd,
       } : null,
       chain: { links: chainLen },
-      earth: { node: resonateNode?.id ?? null, declared: resonateNode?.declared ?? null },
+      earth: { node: resonateNode?.id ?? null, probe: earthProbe.state },
+      pam: { verifiedEnvelopes: pamCount },
+      kether: { localKeyPresent: keyPresent },
     };
     // Truth Mirror: compute the CID twice — once as the primary witness,
     // once as an independent re-derivation. Any drift between them means
@@ -80,7 +91,7 @@ function SeventhDimensionPage() {
     // certificate must NOT display VALIDATED.
     void valueToCid(snapshot).then(setUnityCid);
     void valueToCid(snapshot).then(setUnityRederived);
-  }, [oreCount, oreDou, sample, chainLen, resonateNode]);
+  }, [oreCount, oreDou, sample, chainLen, resonateNode, earthProbe.state, pamCount, keyPresent]);
 
   const unityMirror: "validated" | "drift" | "computing" =
     !unityCid || !unityRederived
@@ -117,13 +128,13 @@ function SeventhDimensionPage() {
       ore: oreActivity,
       sudo: sudoActivity,
       chain: chainActivity,
-      earth: resonateNode ? 0.5 : 0,
-      pam: 0.7,
-      kether: 1,
+      earth: earthProbe.state === "reachable" ? 0.5 : 0,
+      pam: Math.min(1, pamCount / 7),
+      kether: keyPresent ? 1 : 0,
       axis: Math.max(oreActivity, sudoActivity, chainActivity),
     };
     return buildVector(raw);
-  }, [oreActivity, sudoActivity, chainActivity, resonateNode]);
+  }, [oreActivity, sudoActivity, chainActivity, earthProbe.state, pamCount, keyPresent]);
   const coh = mmrCoherence(mmr);
 
   return (
@@ -132,7 +143,7 @@ function SeventhDimensionPage() {
         <div className="flex items-baseline gap-3">
           <span className="font-display text-3xl text-primary">◬</span>
           <span className="text-[0.65rem] uppercase tracking-[0.22em] text-muted-foreground">7D //</span>
-          <span className="font-display text-base tracking-[0.2em] text-foreground">SEVENTH_DIMENSION · UNIFICATION_SURFACE</span>
+          <span className="min-w-0 break-all font-display text-base text-foreground">SEVENTH_DIMENSION · UNIFICATION_SURFACE</span>
         </div>
         <h1 className="mt-3 text-sm uppercase tracking-[0.18em] text-primary">one axis · seven projections</h1>
         <p className="mt-2 max-w-3xl text-xs text-muted-foreground">
@@ -145,7 +156,7 @@ function SeventhDimensionPage() {
           <Cell k="phase" v={`${phase + 1} · ${activeAxis.label}`} />
           <Cell k="axes" v="7" />
           <Cell k="resonance" v={`8 · ${pulse8}`} />
-          <Cell k="coherence" v={`${(coh * 100).toFixed(1)}%`} />
+          <Cell k="local projection" v={`${(coh * 100).toFixed(1)}%`} />
           <Cell k="cadence" v="coherence beat · ⟲ 25fps" />
         </div>
         <TruthChainOrgBanner cid={unityCid} />
@@ -192,12 +203,12 @@ function SeventhDimensionPage() {
         </div>
 
         <div className="space-y-px bg-border">
-          <AxisRow glyph="⛬" name="ORE" desc="operator-refined byproduct" v={`${oreCount} claims · ${oreDou.toFixed(2)} DOU`} activity={oreActivity} href="/digital-ore" />
+          <AxisRow glyph="⛬" name="ORE" desc="verified local estimates" v={`${oreCount} verified claims · ${oreDou.toFixed(0)} grade`} activity={oreActivity} href="/digital-ore" />
           <AxisRow glyph="◈" name="TRS" desc="bitcoin substrate read" v={sample ? `block ${sample.block.height.toLocaleString()} · ore=${sample.oreIndex.toFixed(2)}` : "awaiting sample"} activity={sudoActivity} href="/sudo-coin" />
           <AxisRow glyph="◇" name="CHAIN" desc="truth-chain links enrolled" v={`${chainLen} link${chainLen === 1 ? "" : "s"}`} activity={chainActivity} href="/fleet" />
-          <AxisRow glyph="⬡" name="EARTH" desc="resonate-earth.live" v={resonateNode?.declared ?? "—"} activity={0.5} href="/nebula" />
-          <AxisRow glyph="♕" name="PAM" desc="lane discipline ledger" v="CID-chained envelopes" activity={0.7} href="/pam" />
-          <AxisRow glyph="⊕" name="KETHER" desc="operator key custody" v="ed25519 · browser-local" activity={1} href="/gateway" />
+          <AxisRow glyph="⬡" name="EARTH" desc="resonate-earth.live" v={`${earthProbe.state.toUpperCase()} · signature unverified`} activity={earthProbe.state === "reachable" ? 0.5 : 0} href="/nebula" />
+          <AxisRow glyph="♕" name="PAM" desc="lane discipline ledger" v={`${pamCount} intact local envelopes`} activity={Math.min(1, pamCount / 7)} href="/pam" />
+          <AxisRow glyph="⊕" name="KETHER" desc="local key presence · not custody proof" v={keyPresent ? "local key present" : "no local key"} activity={keyPresent ? 1 : 0} href="/gateway" />
           <AxisRow glyph="◬" name="AXIS" desc="the unifier" v="this surface" activity={Math.max(oreActivity, sudoActivity, chainActivity)} href="/seventh-dimension" />
         </div>
       </section>
@@ -212,7 +223,7 @@ function SeventhDimensionPage() {
         </div>
         <div className="mt-3 grid gap-px border border-border bg-border sm:grid-cols-4">
           <Cell k="ore claims" v={String(oreCount)} />
-          <Cell k="cum DOU" v={oreDou.toFixed(2)} />
+          <Cell k="mother load · grade" v={oreDou.toFixed(0)} />
           <Cell k="trs block" v={sample?.block.height.toLocaleString() ?? "—"} />
           <Cell k="chain links" v={String(chainLen)} />
         </div>
@@ -227,7 +238,7 @@ function SeventhDimensionPage() {
           title={unityRederived ? `re-derived ${unityRederived}` : "awaiting re-derivation"}
         >
           {unityMirror === "validated"
-            ? "⌬ TRUTH MIRROR VALIDATED · CID re-derives"
+             ? "⌬ LOCAL SNAPSHOT CID · UNSIGNED"
             : unityMirror === "drift"
               ? `⚠ TRUTH MIRROR DRIFT · ${unityCid} ≠ ${unityRederived}`
               : "○ COMPUTING RE-DERIVATION…"}
@@ -282,7 +293,7 @@ function AxisRow({ glyph, name, desc, v, activity, href }: {
 }) {
   return (
     <Link to={href} className="block bg-background/40 p-4 hover:bg-background/70">
-      <div className="flex items-center justify-between gap-3">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-baseline gap-3">
           <span className="font-display text-xl text-primary">{glyph}</span>
           <div>
@@ -304,15 +315,14 @@ function TruthChainOrgBanner({ cid }: { cid: string }) {
     <div className="mt-4 border border-primary/40 bg-primary/5 px-4 py-3 text-xs">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <span className="text-[0.62rem] uppercase tracking-[0.22em] text-primary">
-          DOMAIN MIGRATION · truth-chain.org · ready
+          LOCAL SNAPSHOT · NOT DEPLOYMENT EVIDENCE
         </span>
         <span className="font-mono text-[0.65rem] text-muted-foreground">
           unity {cid ? cid.slice(0, 22) + "…" : "computing"}
         </span>
       </div>
       <p className="mt-1 text-foreground/80">
-        every unity CIDv1 above is ready for immediate deployment to the sovereign root.
-        no migration of state required — the hash IS the address.
+        The CID fingerprints this local snapshot; it does not verify node signatures, ownership, or market value.
       </p>
     </div>
   );

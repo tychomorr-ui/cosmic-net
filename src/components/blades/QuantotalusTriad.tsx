@@ -29,7 +29,7 @@ export function QuantotalusTriad() {
       </svg>
       <ul className="grid gap-2 text-xs sm:grid-cols-3">
         {t.vertices.map((v) => (
-          <li key={v.id} className="rounded border border-border p-3">
+          <li key={v.id} className="min-w-0 break-all rounded border border-border p-3">
             <div className="text-foreground">{v.label}</div>
             <div className="text-muted-foreground">{v.id}</div>
             <div className="mt-1">{v.probe ? `${v.probe.state} · ${v.probe.ms}ms` : "not measured"}</div>

@@ -10,12 +10,12 @@ type Row = {
 };
 
 const ROWS: Row[] = [
-  { key: "root-gate", label: "ROOT-GATE", host: "34.223.165.42 · Oregon",
-    meta: "16 GB · 4 vCPU · control plane", probeId: "root-gate" },
-  { key: "tesseract-terminus", label: "TESSERACT-TERMINUS", host: "34.216.185.65 · Oregon",
-    meta: "8 GB · 2 vCPU · app terminus", probeId: "tesseract-terminus" },
-  { key: "kether-gate", label: "KETHER-GATE", host: "18.138.160.99 · Singapore",
-    meta: "8 GB · 2 vCPU · APAC gateway", probeId: "kether-gate" },
+  { key: "root-gate", label: "ROOT-GATE", host: "rootgate.manus.space",
+    meta: "declared endpoint · signature unverified", probeId: "root-gate" },
+  { key: "tesseract-terminus", label: "TESSERACT-TERMINUS", host: "tesseract.manus.space",
+    meta: "declared endpoint · signature unverified", probeId: "tesseract-terminus" },
+  { key: "kether-gate", label: "TRUTH-TALK", host: "truthtalk.xinus.one",
+    meta: "declared endpoint · signature unverified", probeId: "kether-gate" },
 ];
 
 export function UplinkHeader() {

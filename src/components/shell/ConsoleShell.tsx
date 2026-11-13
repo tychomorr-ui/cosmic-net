@@ -37,13 +37,14 @@ const NAV: NavItem[] = [
   { name: "QUANTOTALUS",      path: "/quantotalus",     icon: Triangle,       sigil: "◬", code: "QUANT" },
   { name: "PROOF FULCRUM",    path: "/proof-fulcrum",   icon: ShieldCheck,    sigil: "◇", code: "PROOF" },
   { name: "Sovereign Messaging", path: "/messages",     icon: MessagesSquare, sigil: "✉", code: "MSG" },
+  { name: "Seventh Dimension", path: "/seventh-dimension", icon: Sparkles, sigil: "⬡", code: "7D" },
   { name: "Audit Center",     path: "/audit",           icon: FileCheck,      sigil: "▤", code: "AUDIT" },
 ];
 
 const STANCE_FEED: Array<{ tag: string; msg: string }> = [
   { tag: "STANCE",      msg: "zero third-party telemetry · zero vendor middleware · local-first" },
-  { tag: "PAM",         msg: "in-browser WebGPU runtime · no packets leave during inference" },
-  { tag: "SAA",         msg: "sovereign-node proxy · /api/saa/{stripe|paypal|chain|cashapp} · secrets node-side" },
+  { tag: "PAM",         msg: "local CID-linked reflections · no autonomous execution" },
+  { tag: "SAA",         msg: "payment code retained · no payment run authorized" },
 ];
 
 const CrtOverlay = memo(function CrtOverlay() {
@@ -128,18 +129,18 @@ export function ConsoleShell({ children }: { children: ReactNode }) {
             </div>
           </Link>
 
-          <div className="hidden items-center gap-6 border-r border-border px-5 text-[11px] md:flex">
-            <div title="Root-Gate · 34.223.165.42 · Oregon (us-west-2) Zone A">
+          <div className="hidden items-center gap-6 border-r border-border px-5 text-[11px] xl:flex">
+            <div title="Root-Gate · rootgate.manus.space · signature unverified">
               <div className="text-muted-foreground">ROOT-GATE</div>
-              <div className="phosphor-soft tracking-wider text-primary">34.223.165.42</div>
+              <div className="phosphor-soft tracking-wider text-primary">rootgate.manus.space</div>
             </div>
-            <div title="Tesseract-Terminus · 34.216.185.65 · Oregon (us-west-2) Zone A">
+            <div title="Tesseract · tesseract.manus.space · signature unverified">
               <div className="text-muted-foreground">TERMINUS</div>
-              <div className="phosphor-soft text-primary">34.216.185.65</div>
+              <div className="phosphor-soft text-primary">tesseract.manus.space</div>
             </div>
-            <div title="Kether-Gate · 18.138.160.99 · Singapore (ap-southeast-1) Zone A">
-              <div className="text-muted-foreground">KETHER-GATE</div>
-              <div className="phosphor-soft text-primary/70">18.138.160.99</div>
+            <div title="Truth-Talk · truthtalk.xinus.one · signature unverified">
+              <div className="text-muted-foreground">TRUTH-TALK</div>
+              <div className="phosphor-soft text-primary/70">truthtalk.xinus.one</div>
             </div>
             <div className="flex items-center gap-3" title="day 06:00 → 18:00 · night 18:00 → 06:00">
               <div className={isDay ? "phosphor-glow text-primary" : "text-muted-foreground/40"}>
@@ -172,7 +173,7 @@ export function ConsoleShell({ children }: { children: ReactNode }) {
         </div>
 
         {/* Top ticker */}
-        <div className="relative flex h-7 items-center overflow-hidden border-b border-border bg-black/80 backdrop-blur">
+        <div className="relative flex h-7 items-center overflow-hidden border-b border-border bg-background/80 backdrop-blur">
           <div className="flex h-full flex-shrink-0 items-center gap-2 border-r border-border bg-primary/10 px-3">
             <span className="pulse-dot h-1.5 w-1.5 rounded-full bg-primary" />
             <span className="terminal-font text-sm leading-none text-primary">UPLINK {utc} UTC</span>
@@ -197,8 +198,8 @@ export function ConsoleShell({ children }: { children: ReactNode }) {
 
       {/* Main */}
       <div className="relative z-10 flex flex-1 overflow-hidden">
-        <aside className="flex w-60 flex-col overflow-y-auto border-r border-border bg-background/60 backdrop-blur-sm">
-          <div className="px-4 pb-2 pt-4">
+        <aside className="flex w-14 shrink-0 flex-col md:w-60 overflow-y-auto border-r border-border bg-background/60 backdrop-blur-sm">
+          <div className="hidden px-4 pb-2 pt-4 md:block">
             <div className="text-[10px] tracking-[0.3em] text-muted-foreground">⟁ OMNI-SAM AXIS</div>
             <div className="phosphor-soft mt-0.5 text-[10px] tracking-[0.2em] text-primary/70">{BLADE_COUNT} BLADES · MONARCH · ORE · ◬ · ◇</div>
           </div>
@@ -210,6 +211,8 @@ export function ConsoleShell({ children }: { children: ReactNode }) {
                 <Link
                   key={item.path}
                   to={item.path as "/"}
+                  title={item.name}
+                  aria-label={item.name}
                   className={`group relative flex items-center gap-3 border px-3 py-2 transition-all ${
                     isActive
                       ? "phosphor-glow border-primary/40 bg-primary/10 text-primary"
@@ -217,9 +220,9 @@ export function ConsoleShell({ children }: { children: ReactNode }) {
                   }`}
                 >
                   <span className="terminal-font w-4 text-center text-base">{item.sigil}</span>
-                  <Icon className="h-3.5 w-3.5" strokeWidth={1.5} />
-                  <span className="flex-1 text-[12px]">{item.name}</span>
-                  <span className="text-[9px] tracking-widest text-muted-foreground/60">
+                  <Icon className="hidden h-3.5 w-3.5 md:block" strokeWidth={1.5} />
+                  <span className="hidden flex-1 text-[12px] md:block">{item.name}</span>
+                  <span className="hidden text-[9px] tracking-widest text-muted-foreground/60 md:block">
                     {String(idx + 1).padStart(2, "0")}
                   </span>
                   {isActive && <span className="absolute bottom-0 left-0 top-0 w-[2px] bg-primary" />}
@@ -228,7 +231,7 @@ export function ConsoleShell({ children }: { children: ReactNode }) {
             })}
           </nav>
 
-          <div className="mt-auto border-t border-border p-4">
+          <div className="mt-auto hidden border-t border-border p-4 md:block">
             <div className="mb-2 text-[10px] tracking-[0.25em] text-muted-foreground">STANCE</div>
             <ul className="space-y-1 text-[10.5px] text-muted-foreground">
               <li><span className="phosphor-soft text-primary">▸</span> zero third-party telemetry</li>
@@ -243,17 +246,17 @@ export function ConsoleShell({ children }: { children: ReactNode }) {
           </div>
         </aside>
 
-        <main className="relative flex-1 overflow-auto">{children}</main>
+        <main className="relative min-w-0 flex-1 overflow-auto">{children}</main>
       </div>
 
       {/* Footer */}
       <footer className="relative z-10 flex items-center justify-between border-t border-border bg-background/80 px-4 py-1.5 text-[10px] tracking-widest text-muted-foreground backdrop-blur">
-        <div className="flex flex-wrap gap-3">
-          <span><span className="text-primary/70">RG</span> Root-Gate · 34.223.165.42</span>
+        <div className="hidden flex-wrap gap-3 xl:flex">
+          <span><span className="text-primary/70">RG</span> Root-Gate · rootgate.manus.space</span>
           <span className="opacity-30">/</span>
-          <span><span className="text-primary/70">TT</span> Terminus · 34.216.185.65</span>
+          <span><span className="text-primary/70">TT</span> Terminus · tesseract.manus.space</span>
           <span className="opacity-30">/</span>
-          <span><span className="text-primary/70">KG</span> Kether-Gate · 18.138.160.99</span>
+          <span><span className="text-primary/70">TT</span> Truth-Talk · truthtalk.xinus.one</span>
         </div>
         <div className="hidden lg:block">SOVEREIGN CONSOLE · ZERO TELEMETRY · NO THIRD-PARTY MIDDLEWARE</div>
         <div className="phosphor-soft text-primary">⌬ NEXINUS MESH</div>
