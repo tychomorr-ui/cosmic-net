@@ -101,10 +101,14 @@ function PamConsole() {
 
   async function onDeclare() {
     if (!newTruth.trim()) return;
-    declareTruth(newTruth.trim(), supersedes || undefined);
-    setNewTruth("");
-    setSupersedes("");
-    await refresh();
+    setError(null);
+    try {
+      if (!(await verifyChain()).ok) throw new Error("chain integrity fault — history preserved");
+      declareTruth(newTruth.trim(), supersedes || undefined);
+      setNewTruth("");
+      setSupersedes("");
+      await refresh();
+    } catch (e) { setError(e instanceof Error ? e.message : String(e)); }
   }
 
   const headEnv = ledgerHead();
@@ -275,11 +279,11 @@ function PamConsole() {
               value={supersedes}
               onChange={(e) => setSupersedes(e.target.value)}
               placeholder="supersedes (optional id)"
-              className="flex-1 rounded border border-border bg-background px-3 py-1.5 font-mono text-[0.7rem] text-foreground"
+              className="min-w-0 flex-1 rounded border border-border bg-background px-3 py-1.5 font-mono text-[0.7rem] text-foreground"
             />
             <Button
               onClick={onDeclare}
-              disabled={!newTruth.trim()}
+              disabled={!newTruth.trim() || !chain?.ok}
               className="rounded border border-border px-3 py-1.5 text-[0.7rem] uppercase tracking-[0.18em] text-foreground transition hover:border-gold hover:text-gold disabled:opacity-40"
             >
               Declare

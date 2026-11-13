@@ -46,7 +46,7 @@ export const SITEMAP_SECTIONS: SitemapSection[] = [
       "/quantotalus",
       "/reclaim",
       "/reflective-intel",
-      "/sam-command",
+      "/messages",
       "/seventh-dimension",
       "/sudo-coin",
       "/truth-coin",
