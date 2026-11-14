@@ -7,5 +7,8 @@ export default defineConfig({
       "@cosmic-mesh/protocol": new URL("./packages/protocol/ts/index.ts", import.meta.url).pathname,
     },
   },
-  test: { environment: "node" },
+  test: {
+    environment: "node",
+    include: ["src/**/*.test.{ts,tsx}", "packages/**/*.test.{ts,tsx}"],
+  },
 });

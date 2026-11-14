@@ -8,7 +8,6 @@ import {
   activeTruths,
   appendEnvelope,
   declareTruth,
-  head as ledgerHead,
   loadEnvelopes,
   verifyChain,
 } from "@/data/truth-ledger";
@@ -111,7 +110,7 @@ function PamConsole() {
     } catch (e) { setError(e instanceof Error ? e.message : String(e)); }
   }
 
-  const headEnv = ledgerHead();
+  const headEnv = envelopes.at(-1);
 
   return (
     <div className="mx-auto max-w-6xl space-y-10 px-6 py-12">
